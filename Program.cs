@@ -25,8 +25,11 @@ if (args[0] == "read")
 if (args[0] == "cheep")
 {
     string message = args[1];
-   // log time
-   //log logged in user
-   // combine to one line seperator with " " and ,
-   // write to csv
+    string author = Environment.MachineName;
+    string date = DateTime.Now.ToString("yyyyMMdd");
+    
+    string csv = author + ",\"" + message + "\"," + date;
+    Console.WriteLine(csv);
+    StreamWriter sw = new StreamWriter("chirp_cli_db.csv");
+    sw.WriteLine(csv);
 }

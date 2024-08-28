@@ -30,3 +30,7 @@ if (args[0] == "cheep")
    // combine to one line seperator with " " and ,
    // write to csv
 }
+
+DateTimeOffset UnixConversion(int unixTime) {
+    return DateTimeOffset.FromUnixTimeSeconds(unixTime);
+}

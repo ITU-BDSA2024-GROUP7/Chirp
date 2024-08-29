@@ -7,8 +7,9 @@ if (args[0] == "read")
         {
             string line;
             sr.ReadLine();
-            while ((line = sr.ReadLine()) != null)
+            while (sr.ReadLine() != null)
             {
+                line = sr.ReadLine();
                 string[] status = line.Split('"');
                 status[0] = status[0].Trim(',');
                 status[2] = status[2].Trim(',');

@@ -1,40 +1,45 @@
 ﻿
-if (args[0] == "read")
+using System.Globalization;
+using CsvHelper;if (args[0] == "read")
 {
     try
     {
-        using (StreamReader sr = new StreamReader("chirp_cli_db.csv")) // dispose of the StreamReader after use so no use to close the reader
+        using (StreamReader sr = new StreamReader("chirp_cli_db.csv"))
+        using (var csv = new CsvReader(sr, CultureInfo.InvariantCulture))
         {
-            string line;
-            sr.ReadLine(); //Skip attributes 
-            while ((line = sr.ReadLine()) != null)
+            var records = csv.GetRecords<Cheep>();
+            foreach (var record in records)
             {
-                string[] status = line.Split('"');
-                status[0] = status[0].Trim(',');
-                status[2] = status[2].Trim(',');
-                Console.WriteLine((status[0] + " @ " + UnixConversion(int.Parse(status[2])).DateTime + ": " + status[1]).Replace("-", "/"));
+                Console.WriteLine(record.Author + " @ " + UnixConversion(record.Timestamp).DateTime + " " + record.Message);
             }
         }
-        
     }
     catch (Exception e){
         Console.WriteLine("Error");
     }
+    
 }
 
 if (args[0] == "cheep")
 {
-    string message = args[1];
+    string message = (args[1]);
     string author = Environment.MachineName;
-    string date = DateTime.Now.ToString("yyyyMMdd");
+    long date = DateTimeOffset.Now.ToUnixTimeSeconds();
     
-    string csv = author + ",\"" + message + "\"," + date;
-    StreamWriter sw = new StreamWriter("chirp_cli_db.csv", true); // consistency using in streamReader but not in StreamWriter
-    sw.WriteLine(csv);
-    sw.Close();
+    using (StreamWriter sw = new StreamWriter("chirp_cli_db.csv",true))
+    using (var csvWriter = new CsvWriter(sw, CultureInfo.InvariantCulture))
+    {
+        csvWriter.NextRecord();
+        csvWriter.WriteRecord(new Cheep(author, message, date));
+        
+    }
+        
+    
     
 }
 
-DateTimeOffset UnixConversion(int unixTime) {
+DateTimeOffset UnixConversion(long unixTime) {
     return DateTimeOffset.FromUnixTimeSeconds(unixTime);
 }
+
+public record Cheep(string Author, string Message, long Timestamp);

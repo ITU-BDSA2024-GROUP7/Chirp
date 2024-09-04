@@ -6,14 +6,13 @@ if (args[0] == "read")
         using (StreamReader sr = new StreamReader("chirp_cli_db.csv")) // dispose of the StreamReader after use so no use to close the reader
         {
             string line;
-            sr.ReadLine();
-            while (sr.ReadLine() != null)
+            sr.ReadLine(); //Skip attributes 
+            while ((line = sr.ReadLine()) != null)
             {
-                line = sr.ReadLine();
                 string[] status = line.Split('"');
                 status[0] = status[0].Trim(',');
                 status[2] = status[2].Trim(',');
-                Console.WriteLine(status[0] + " @ " + UnixConversion(int.Parse(status[2])).DateTime + " " + status[1]);
+                Console.WriteLine((status[0] + " @ " + UnixConversion(int.Parse(status[2])).DateTime + ": " + status[1]).Replace("-", "/"));
             }
         }
         

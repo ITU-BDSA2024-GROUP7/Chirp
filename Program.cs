@@ -3,7 +3,7 @@ if (args[0] == "read")
 {
     try
     {
-        using (StreamReader sr = new StreamReader("chirp_cli_db.csv"))
+        using (StreamReader sr = new StreamReader("chirp_cli_db.csv")) // dispose of the StreamReader after use so no use to close the reader
         {
             string line;
             sr.ReadLine();
@@ -29,7 +29,7 @@ if (args[0] == "cheep")
     string date = DateTime.Now.ToString("yyyyMMdd");
     
     string csv = author + ",\"" + message + "\"," + date;
-    StreamWriter sw = new StreamWriter("chirp_cli_db.csv", true);
+    StreamWriter sw = new StreamWriter("chirp_cli_db.csv", true); // consistency using in streamReader but not in StreamWriter
     sw.WriteLine(csv);
     sw.Close();
     

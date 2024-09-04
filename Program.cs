@@ -1,7 +1,18 @@
 ﻿
 using System.Globalization;
-using CsvHelper;if (args[0] == "read")
-{
+using CsvHelper;
+using DocoptNet;
+
+    const string usage = @"Chirp CLI version.
+
+    Usage:
+        chirp read
+        chirp cheep
+    ";
+
+    var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
+
+if (arguments["read"].IsTrue) {
     try
     {
         List<Cheep> cheeps = new List<Cheep>();
@@ -9,8 +20,7 @@ using CsvHelper;if (args[0] == "read")
         using (var csv = new CsvReader(sr, CultureInfo.InvariantCulture))
         {
             var records = csv.GetRecords<Cheep>();
-            foreach (var record in records)
-            {
+            foreach (var record in records) {
                 cheeps.Add(record);
                 //Console.WriteLine(record.Author + " @ " + UnixConversion(record.Timestamp).DateTime + " " + record.Message);
             }
@@ -23,7 +33,7 @@ using CsvHelper;if (args[0] == "read")
     
 }
 
-if (args[0] == "cheep")
+if (arguments["cheep"].IsTrue)
 {
     string message = (args[1]);
     string author = Environment.MachineName;

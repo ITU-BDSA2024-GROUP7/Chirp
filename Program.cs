@@ -4,18 +4,21 @@ using CsvHelper;if (args[0] == "read")
 {
     try
     {
+        List<Cheep> cheeps = new List<Cheep>();
         using (StreamReader sr = new StreamReader("chirp_cli_db.csv"))
         using (var csv = new CsvReader(sr, CultureInfo.InvariantCulture))
         {
             var records = csv.GetRecords<Cheep>();
             foreach (var record in records)
             {
-                Console.WriteLine(record.Author + " @ " + UnixConversion(record.Timestamp).DateTime + " " + record.Message);
+                cheeps.Add(record);
+                //Console.WriteLine(record.Author + " @ " + UnixConversion(record.Timestamp).DateTime + " " + record.Message);
             }
+            Userinterface.PrintCheeps(cheeps);
         }
     }
     catch (Exception e){
-        Console.WriteLine("Error");
+        Console.WriteLine("Error: " + e.Message);
     }
     
 }

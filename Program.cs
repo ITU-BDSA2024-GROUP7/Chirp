@@ -1,5 +1,5 @@
 ﻿
-if (args[0] == "read")
+using CsvHelper;if (args[0] == "read")
 {
     try
     {
@@ -39,3 +39,5 @@ if (args[0] == "cheep")
 DateTimeOffset UnixConversion(int unixTime) {
     return DateTimeOffset.FromUnixTimeSeconds(unixTime);
 }
+
+public record Cheep(string Author, string Message, long Timestamp);

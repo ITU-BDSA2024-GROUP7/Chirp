@@ -28,12 +28,12 @@ Go to the project directory
 For reading
 
 ```bash
-  dotnet run -- read
+  dotnet run read
 ```
 For Writing
 
 ```bash
-  dotnet run -- chirp "message"
+  dotnet run chirp "message"
 ```
 
 

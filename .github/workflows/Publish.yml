@@ -20,8 +20,8 @@ on:
           run: dotnet restore
 
         - name: Run tests
-          run: dotnet test path/to/your/test/project --no-restore --verbosity normal
-          # Needs to be changed to the test files being integration and unit test and 2-end-2
+          run: dotnet test --no-restore --verbosity normal
+       
     release:
     name: Release
     needs: test

@@ -8,7 +8,7 @@ Usage:
 ";
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-var database = new CSVDatabase<Cheep>("chirp_cli_db.csv");
+var database = new CSVDatabase<Cheep>("../../data/chirp_cli_db.csv");
 
 if (arguments["read"].IsTrue)
 {

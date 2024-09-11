@@ -1,18 +1,22 @@
 using System;
+using System.Reflection;
+using DocoptNet;
 
-namespace UnitTests.cs
+
+public class UnitTests
 {
+    // Used to simulate DocoptNet library inside the test enviorenment
+    private const string usage = @"Chirp CLI version.
+    Usage:
+        chirp read
+        chirp cheep
+
+    Options:
+        -h --help     Show this screen.
+        --version     Show version.
+    ";
+
     /*
-    public class PrimeService
-    {
-        public bool Program.cs(User user)
-        {
-
-            throw new NotImplementedException("Not implemented.");
-        }
-    }
-    */
-
     // Testing for if Unix Timestamp is converted correctly
     [Fact]
     private void TestUnixTimeStampConversion(){
@@ -30,7 +34,22 @@ namespace UnitTests.cs
         
         Assert.AreEqual("8/1/2023 10:16:00", convertUnixToRealTime, 0.001, "Convertion succeeds")
     }
-
-    // Test 2 Testing for if the instructions which comes up when you run "dotnet run" are correct
+    */
     
+    [Fact]
+    public void TestingReadCommand()
+    {
+        var args = new[] {"read"};
+        var docopt = new Docopt();
+        var arguments = docopt.Apply(usage, args, version: "Chirp CLI 1.0", help: true);
+        Assert.True(arguments["read"].IsTrue, "read command should parse as true");
+    }
+
+    [Fact]
+    public void TestingCheepCommand(){
+        var args = new[] {"cheep"};
+        var docopt = new Docopt();
+        var arguments = docopt.Apply(usage, args, version: "Chirp CLI 1.0", help: true);
+        Assert.True(arguments["cheep"].IsTrue, "cheep command should parse as true");
+    }
 }

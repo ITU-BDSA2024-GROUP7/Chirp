@@ -30,9 +30,7 @@ namespace UnitTests.cs
         
         Assert.AreEqual("8/1/2023 10:16:00", convertUnixToRealTime, 0.001, "Convertion succeeds")
     }
-    
-    // Test 2 Potentially check for if after converting from Unix to real time, if it converts correctly back again
 
-    // Test 3 Testing for if the instructions which comes up when you run "dotnet run" are correct
+    // Test 2 Testing for if the instructions which comes up when you run "dotnet run" are correct
     
 }

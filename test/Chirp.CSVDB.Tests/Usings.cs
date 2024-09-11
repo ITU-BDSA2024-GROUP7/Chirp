@@ -1,1 +1,2 @@
-global using xunit;
+global using Xunit;
+global using SimpleDB;

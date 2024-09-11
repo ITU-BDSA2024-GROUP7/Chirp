@@ -10,8 +10,7 @@ jobs:
     name: Add issue to project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@RELEASE_VERSION
-        with:
+      - uses: actions/add-to-project@v1.0.2
           # You can target a project in a different organization
           # to the issue
           project-url: https://github.com/orgs/ITU-BDSA2024-GROUP7/projects/1

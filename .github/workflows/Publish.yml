@@ -3,26 +3,27 @@ on:
   push:
     tags:
       - 'v*'  # This will trigger the workflow on any tag starting with 'v'
-    jobs:
-     test:
-      name: Run Tests
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
 
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v1
-          with:
-            dotnet-version: 7.0.x
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-        - name: Restore dependencies
-          run: dotnet restore
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
 
-        - name: Run tests
-          run: dotnet test --no-restore --verbosity normal
-       
-    release:
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal
+
+  release:
     name: Release
     needs: test
     strategy:
@@ -47,7 +48,8 @@ on:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 7.0.x
-           - name: Build
+
+      - name: Build
         shell: bash
         run: |
           # Define some variables for things we need
@@ -58,10 +60,12 @@ on:
           dotnet publish src/App/App.csproj --framework netcoreapp3.1 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
           # Pack files
-            7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+
           # Delete output directory
           rm -r "$release_name"
-           - name: Publish
+
+      - name: Publish
         uses: softprops/action-gh-release@v1
         with:
           files: "App*"

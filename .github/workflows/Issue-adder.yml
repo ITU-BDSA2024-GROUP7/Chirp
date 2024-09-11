@@ -1,4 +1,4 @@
-name: Add bugs to bugs project
+name: Issue adder to board
 
 on:
   issues:

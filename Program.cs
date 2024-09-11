@@ -33,3 +33,4 @@ if (arguments["cheep"].IsTrue)
 }
 
 public record Cheep(string Author, string Message, long Timestamp);
+// this is for creating a new cheep record

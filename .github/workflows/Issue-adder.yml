@@ -1,0 +1,17 @@
+name: Issue adder to board
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add issue to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/ITU-BDSA2024-GROUP7/projects/1
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}

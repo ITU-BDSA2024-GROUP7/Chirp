@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\src\Chirp.CLI.Client\Chirp.CLI.csproj" />
     <ProjectReference Include="..\..\src\Chirp.CSVDB\SimpleDB\SimpleDB.csproj" />
     <ProjectReference Include="..\path\to\Chirp.CSVDB\Chirp.CSVDB.csproj" />
+    <ProjectReference Include="..\..\src\Chirp.CSVDB\Chirp.CSVDB.csproj" />
   </ItemGroup>
 
 </Project>

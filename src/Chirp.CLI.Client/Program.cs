@@ -3,9 +3,10 @@ using SimpleDB;
 
 const string usage = @"Chirp CLI version.
 Usage:
-    chirp read
-    chirp cheep
+    chirp read [<limit>]
+    chirp cheep <message>
 ";
+
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
 var database = new CSVDatabase<Cheep>("../../data/chirp_cli_db.csv");
@@ -14,8 +15,18 @@ if (arguments["read"].IsTrue)
 {
     try
     {
-        List<Cheep> cheeps = database.Read().ToList();
-        Userinterface.PrintCheeps(cheeps);
+        if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
+        {
+            int limit = int.Parse(arguments["<limit>"]!.ToString());
+            List<Cheep> cheeps = database.Read().ToList();
+            Userinterface.PrintCheeps(cheeps, limit);
+        }
+        else
+        {
+            Console.WriteLine("Reading all Cheeps");
+            List<Cheep> cheeps = database.Read().ToList();
+            Userinterface.PrintCheeps(cheeps, 0);
+        }
     }
     catch (Exception e)
     {

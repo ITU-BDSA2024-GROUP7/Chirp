@@ -16,7 +16,7 @@ public class UnitTests
         --version     Show version.
     ";
 
-    /*
+    
     // Testing for if Unix Timestamp is converted correctly
     [Fact]
     private void TestUnixTimeStampConversion(){
@@ -30,11 +30,11 @@ public class UnitTests
         var cheep = new Cheep(author, message, unixTimestamp);
 
         // Converting Unix to Real Time
-        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
+        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime.ToString("M/d/yyyy HH:mm:ss");
         
-        Assert.AreEqual("8/1/2023 10:16:00", convertUnixToRealTime, 0.001, "Convertion succeeds")
+        Assert.Equal("8-1-2023 12:09:20", convertUnixToRealTime);
     }
-    */
+    
     
     [Fact]
     public void TestingReadCommand()

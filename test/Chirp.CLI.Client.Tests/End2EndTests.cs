@@ -32,11 +32,12 @@ public class End2End
             process.WaitForExit();
         }
 
-        string fstCheep = output.Split("\n")[1];
+        string fstCheep = output.Split("\n")[1].Trim();
 
         // Assert
         Console.WriteLine(fstCheep);
         Assert.StartsWith("ropf", fstCheep);
-        Assert.EndsWith(" 01-08-2023 12:09:20 Hello, BDSA students!", fstCheep);
+        bool endsWithExpected = fstCheep.EndsWith("@ 01-08-2023 12:09:20 Hello, BDSA students!");
+        Assert.True(endsWithExpected, $"Expected the cheep to end with the correct string, but got: {fstCheep}");
     }
 }

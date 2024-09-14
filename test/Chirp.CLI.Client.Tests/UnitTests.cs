@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using DocoptNet;
-
+using SimpleDB;
 
 public class UnitTests
 {
@@ -51,5 +51,19 @@ public class UnitTests
         var docopt = new Docopt();
         var arguments = docopt.Apply(usage, args, version: "Chirp CLI 1.0", help: true);
         Assert.True(arguments["cheep"].IsTrue, "cheep command should parse as true");
+    }
+
+    [Fact]
+    public void SingletonCheckIfInstancesAreSame()
+    {
+        // Arrange
+        string filePath = "../../data/chirp_cli_db.csv";
+
+        // Act
+        var instance1 = CSVDatabase<Cheep>.Instance(filePath);
+        var instance2 = CSVDatabase<Cheep>.Instance(filePath);
+
+        // Assert
+        Assert.Same(instance1, instance2);
     }
 }

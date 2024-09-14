@@ -39,7 +39,7 @@ if (arguments["read"].IsTrue)
 
 if (arguments["cheep"].IsTrue)
 {
-    string message = (args[1]);
+    string message = string.Join(" ", args.Skip(1));
     string author = Environment.MachineName;
     long date = DateTimeOffset.Now.ToUnixTimeSeconds();
 

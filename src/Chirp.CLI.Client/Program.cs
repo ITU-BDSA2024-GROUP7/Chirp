@@ -4,7 +4,7 @@ using SimpleDB;
 const string usage = @"Chirp CLI version.
 Usage:
     chirp read [<limit>]
-    chirp cheep <message>
+    chirp cheep <message>...
 ";
 
 
@@ -41,7 +41,10 @@ if (arguments["cheep"].IsTrue)
 {
     string message = string.Join(" ", args.Skip(1));
     string author = Environment.MachineName;
-    long date = DateTimeOffset.Now.ToUnixTimeSeconds();
+    // Conversion to correct time zone
+    TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+    DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
+    long date = cetTime.ToUnixTimeSeconds();
 
     database.Store(new Cheep(author, message, date));
 }

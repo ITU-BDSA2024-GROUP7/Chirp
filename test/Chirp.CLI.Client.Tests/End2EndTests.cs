@@ -1,8 +1,9 @@
+using System;
 using System.Diagnostics;
 
-public class End2End 
+public class End2End
 {
-     public record DataRecord(string Author, string Message, long Timestamp);
+    public record DataRecord(string Author, string Message, long Timestamp);
 
     [Fact]
     public void TestReadCheep()
@@ -39,5 +40,60 @@ public class End2End
         Assert.StartsWith("ropf", fstCheep);
         bool endsWithExpected = fstCheep.EndsWith("@ 01-08-2023 12:09:20 Hello, BDSA students!");
         Assert.True(endsWithExpected, $"Expected the cheep to end with the correct string, but got: {fstCheep}");
+    }
+
+    [Fact]
+    public void TestWriteReadCheep()
+    {
+        Console.WriteLine("test");
+        // Arrange
+        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/Chirp.CLI.Client/bin/Debug/net7.0/data", "chirp_cli_db.csv");
+        var db = new CSVDatabase<DataRecord>(dbPath);
+
+        // Act
+        string output = "";
+        TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        DateTimeOffset dt;
+
+        // Run the cheep command
+        using (var cheepProcess = new Process())
+        {
+            cheepProcess.StartInfo.FileName = "dotnet";
+            //log time
+            dt = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
+            // dt = DateTime.Now; // get the current time
+            cheepProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net7.0/Chirp.CLI.dll cheep Wassup World!";
+            cheepProcess.StartInfo.UseShellExecute = false;
+            cheepProcess.StartInfo.WorkingDirectory = "../../../../../";
+            cheepProcess.Start();
+            cheepProcess.WaitForExit();
+        }
+
+        // Run the read command
+        using (var readProcess = new Process())
+        {
+            readProcess.StartInfo.FileName = "dotnet";
+            readProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net7.0/Chirp.CLI.dll read 10";
+            readProcess.StartInfo.UseShellExecute = false;
+            readProcess.StartInfo.RedirectStandardOutput = true;
+            readProcess.StartInfo.WorkingDirectory = "../../../../../";
+            readProcess.Start();
+
+            // Synchronously read the standard output of the spawned process.
+            using (StreamReader reader = readProcess.StandardOutput)
+            {
+                output = reader.ReadToEnd();
+            }
+
+            readProcess.WaitForExit();
+        }
+        // Trimmed split to handle different line terminators
+        string lastCheep = output.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Trim();
+
+        // Assert
+        Assert.StartsWith(System.Environment.MachineName, lastCheep);
+        bool endsWithExpected = lastCheep.EndsWith($"Wassup World!");
+        Assert.True(endsWithExpected, $"Expected the cheep to end with the correct string, but got: {lastCheep}");
     }
 }

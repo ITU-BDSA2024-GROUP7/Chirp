@@ -30,7 +30,7 @@ public class UnitTests
         var cheep = new Cheep(author, message, unixTimestamp);
 
         // Converting Unix to Real Time
-        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime.ToString("M/d/yyyy HH:mm:ss");
+        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime.ToString("M-d-yyyy HH:mm:ss");
         
         Assert.Equal("8-1-2023 12:09:20", convertUnixToRealTime);
     }

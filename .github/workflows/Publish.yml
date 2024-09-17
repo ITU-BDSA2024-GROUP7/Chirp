@@ -34,6 +34,7 @@ jobs:
         run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
 
   release:
+    timeout-minutes: 60
     name: Release
     needs: test
     strategy:

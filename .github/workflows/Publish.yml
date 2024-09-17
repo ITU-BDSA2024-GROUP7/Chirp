@@ -67,8 +67,12 @@ jobs:
       - name: Zip the output
         if: env.SKIP_RELEASE != 'true'
         run: |
-          zip -r chirp-${{ matrix.target }}.zip publish/${{ matrix.target }}
-
+          if [ ${{ matrix.os }} = 'windows-latest' ]; then
+          Compress-Archive -Path publish/${{ matrix.target }}/* -DestinationPath chirp-${{ matrix.target }}.zip;
+          else
+          zip -r chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
+          fi
+        shell: bash
       # Upload the release artifacts and create the release
       - name: Create GitHub release
         if: env.SKIP_RELEASE != 'true'

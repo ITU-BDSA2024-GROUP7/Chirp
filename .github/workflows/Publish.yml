@@ -2,8 +2,8 @@ name: Publish
 on:
   push:
     tags:
-      - 'v*'  # This will trigger the workflow on any tag starting with 'v'
-#test
+      - 'v*'  # This will trigger the workflow on any tag starting with 'v' #remember to push a tag to trigger this workflow
+
 jobs:
   test:
     name: Run Tests
@@ -21,10 +21,10 @@ jobs:
         run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.csproj
 
       - name: Run tests integration
-        run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
       
       - name: Run tests unix
-        run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
 
   release:
     name: Release

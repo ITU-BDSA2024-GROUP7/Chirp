@@ -32,7 +32,7 @@ jobs:
       
       - name: Run tests unix
         run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
-
+# i don't know why this is not working
   release:
     timeout-minutes: 60
     name: Release

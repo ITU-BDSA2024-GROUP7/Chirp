@@ -63,16 +63,18 @@ jobs:
         if: env.SKIP_RELEASE != 'true'
         run: |
           dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --self-contained false -o publish/${{ matrix.target }}
-      # Create ZIP files
+           # Create ZIP files
       - name: Zip the output
         if: env.SKIP_RELEASE != 'true'
         run: |
-          if [ ${{ matrix.os }} = 'windows-latest' ]; then
-          Compress-Archive -Path publish/${{ matrix.target }}/* -DestinationPath chirp-${{ matrix.target }}.zip;
+          mkdir -p Chirp
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            powershell.exe Compress-Archive -Path publish/${{ matrix.target }}\* -DestinationPath Chirp/chirp-${{ matrix.target }}.zip;
           else
-          zip -r chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
+            zip -r Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
           fi
         shell: bash
+
       # Upload the release artifacts and create the release
       - name: Create GitHub release
         if: env.SKIP_RELEASE != 'true'
@@ -88,3 +90,4 @@ jobs:
         with:
           name: chirp-${{ matrix.target }}.zip
           path: Chirp/chirp-${{ matrix.target }}.zip
+  

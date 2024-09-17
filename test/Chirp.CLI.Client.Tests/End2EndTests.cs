@@ -33,7 +33,7 @@ public class End2End
             process.WaitForExit();
         }
 
-        string fstCheep = output.Split("\n")[1].Trim();
+        string fstCheep = output.Split("\n")[0].Trim();
 
         // Assert
         Console.WriteLine(fstCheep);

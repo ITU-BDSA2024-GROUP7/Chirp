@@ -14,6 +14,7 @@ var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_
 var database = new CSVDatabase<Cheep>(dbPath);
 
 
+
 if (arguments["read"].IsTrue)
 {
     try

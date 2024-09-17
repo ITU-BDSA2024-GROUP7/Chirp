@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using DocoptNet;
-
+using SimpleDB;
 
 public class UnitTests
 {
@@ -16,7 +16,7 @@ public class UnitTests
         --version     Show version.
     ";
 
-    /*
+    
     // Testing for if Unix Timestamp is converted correctly
     [Fact]
     private void TestUnixTimeStampConversion(){
@@ -30,11 +30,11 @@ public class UnitTests
         var cheep = new Cheep(author, message, unixTimestamp);
 
         // Converting Unix to Real Time
-        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
+        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime.ToString("M/d/yyyy HH:mm:ss");
         
-        Assert.AreEqual("8/1/2023 10:16:00", convertUnixToRealTime, 0.001, "Convertion succeeds")
+        Assert.Equal("8-1-2023 12:09:20", convertUnixToRealTime);
     }
-    */
+    
     
     [Fact]
     public void TestingReadCommand()
@@ -51,5 +51,19 @@ public class UnitTests
         var docopt = new Docopt();
         var arguments = docopt.Apply(usage, args, version: "Chirp CLI 1.0", help: true);
         Assert.True(arguments["cheep"].IsTrue, "cheep command should parse as true");
+    }
+
+    [Fact]
+    public void SingletonCheckIfInstancesAreSame()
+    {
+        // Arrange
+        string filePath = "../../data/chirp_cli_db.csv";
+
+        // Act
+        var instance1 = CSVDatabase<Cheep>.Instance(filePath);
+        var instance2 = CSVDatabase<Cheep>.Instance(filePath);
+
+        // Assert
+        Assert.Same(instance1, instance2);
     }
 }

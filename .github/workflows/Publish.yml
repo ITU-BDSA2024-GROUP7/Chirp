@@ -26,13 +26,12 @@ jobs:
       - name: Restore dependencies unix
         run: dotnet restore test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj
 
-
       - name: Run tests integration
         run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
       
       - name: Run tests unix
         run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
-# i don't know why this is not working
+
   release:
     timeout-minutes: 60
     name: Release
@@ -60,25 +59,31 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
-      - name: Build
-        shell: bash
+      - name: Build for all platforms
+        if: env.SKIP_RELEASE != 'true'
+        working-directory: Chirp
         run: |
-          # Define some variables for things we need
-          tag=$(git describe --tags --abbrev=0)
-          release_name="App-$tag-${{ matrix.target }}"
+          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} --self-contained false -o publish/${{ matrix.target }}
+    
+      # Create ZIP files
+      - name: Zip the output
+        if: env.SKIP_RELEASE != 'true'
+        working-directory: Chirp
+        run: |
+          zip -r chirp-${{ matrix.target }}.zip publish/${{ matrix.target }}
 
-          # Build everything
-          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj --framework --runtime "${{ matrix.target }}" -c Release -o "$release_name"
-
-          # Pack files
-          7z a -tzip "${release_name}.zip" "./${release_name}/*"
-
-          # Delete output directory
-          rm -r "$release_name"
-
-      - name: Publish
+      # Upload the release artifacts and create the release
+      - name: Create GitHub release
+        if: env.SKIP_RELEASE != 'true'
         uses: softprops/action-gh-release@v1
         with:
-          files: "App*"
+          tag_name: ${{ env.NEW_VERSION }}  # Use the new version tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release artifacts
+        if: env.SKIP_RELEASE != 'true'
+        uses: actions/upload-artifact@v2
+        with:
+          name: chirp-${{ matrix.target }}.zip
+          path: Chirp/chirp-${{ matrix.target }}.zip

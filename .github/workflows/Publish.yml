@@ -63,7 +63,7 @@ jobs:
         if: env.SKIP_RELEASE != 'true'
         working-directory: Chirp
         run: |
-          dotnet publish -c Release -r ${{ matrix.target }} --self-contained false -o publish/${{ matrix.target }}
+          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} --self-contained false -o publish/${{ matrix.target }}
     
       # Create ZIP files
       - name: Zip the output

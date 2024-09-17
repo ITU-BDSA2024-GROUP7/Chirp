@@ -61,14 +61,11 @@ jobs:
 
       - name: Build for all platforms
         if: env.SKIP_RELEASE != 'true'
-        working-directory: Chirp
         run: |
           dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} --self-contained false -o publish/${{ matrix.target }}
-    
       # Create ZIP files
       - name: Zip the output
         if: env.SKIP_RELEASE != 'true'
-        working-directory: Chirp
         run: |
           zip -r chirp-${{ matrix.target }}.zip publish/${{ matrix.target }}
 

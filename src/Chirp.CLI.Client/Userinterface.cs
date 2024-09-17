@@ -30,8 +30,8 @@ public static class Userinterface
         }
     }
 
-    public static DateTime ConvertFromUnixTimestamp(long timestamp)
+    public static String ConvertFromUnixTimestamp(long timestamp)
     {
-        return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+        return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime.ToString("dd-MM-yyyy HH:mm:ss");
     }
 }

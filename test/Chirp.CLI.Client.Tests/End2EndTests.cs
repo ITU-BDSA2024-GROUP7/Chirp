@@ -38,6 +38,7 @@ public class End2End
         // Assert
         Console.WriteLine(fstCheep);
         Assert.StartsWith("ropf", fstCheep);
+        //                                    ropf @ 08-01-2023 12:09:20 Hello, BDSA students!
         bool endsWithExpected = fstCheep.EndsWith("@ 01-08-2023 12:09:20 Hello, BDSA students!");
         Assert.True(endsWithExpected, $"Expected the cheep to end with the correct string, but got: {fstCheep}");
     }

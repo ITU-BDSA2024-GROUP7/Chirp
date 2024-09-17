@@ -17,8 +17,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore src\Chirp.CLI.Client\Chirp.CLI.csproj
+      run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.csproj
     - name: Build
-      run: dotnet build src\Chirp.CLI.Client\Chirp.CLI.csproj --no-restore
+      run: dotnet build src/Chirp.CLI.Client/Chirp.CLI.csproj --no-restore
     - name: Test
-      run: dotnet test test\Chirp.CLI.Client.Tests\Chirp.CLI.Client.Tests.csproj --no-build --verbosity normal
+      run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --no-build --verbosity normal

@@ -74,7 +74,7 @@ public class End2End
         using (var readProcess = new Process())
         {
             readProcess.StartInfo.FileName = "dotnet";
-            readProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net7.0/Chirp.CLI.dll read 10";
+            readProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net7.0/Chirp.CLI.dll read";
             readProcess.StartInfo.UseShellExecute = false;
             readProcess.StartInfo.RedirectStandardOutput = true;
             readProcess.StartInfo.WorkingDirectory = "../../../../../";

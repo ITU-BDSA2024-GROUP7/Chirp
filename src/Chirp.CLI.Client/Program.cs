@@ -3,19 +3,34 @@ using SimpleDB;
 
 const string usage = @"Chirp CLI version.
 Usage:
-    chirp read
-    chirp cheep
+    chirp read [<limit>]
+    chirp cheep <message>...
 ";
 
+
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-var database = CSVDatabase<Cheep>.Instance("../../data/chirp_cli_db.csv");
+var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
+var database = new CSVDatabase<Cheep>(dbPath);
+
+
 
 if (arguments["read"].IsTrue)
 {
     try
     {
-        List<Cheep> cheeps = database.Read().ToList();
-        Userinterface.PrintCheeps(cheeps);
+        if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
+        {
+            int limit = int.Parse(arguments["<limit>"]!.ToString());
+            List<Cheep> cheeps = database.Read().ToList();
+            Userinterface.PrintCheeps(cheeps, limit);
+        }
+        else
+        {
+            Console.WriteLine("Reading all Cheeps");
+            List<Cheep> cheeps = database.Read().ToList();
+            Userinterface.PrintCheeps(cheeps, 0);
+        }
     }
     catch (Exception e)
     {
@@ -25,9 +40,12 @@ if (arguments["read"].IsTrue)
 
 if (arguments["cheep"].IsTrue)
 {
-    string message = (args[1]);
+    string message = string.Join(" ", args.Skip(1));
     string author = Environment.MachineName;
-    long date = DateTimeOffset.Now.ToUnixTimeSeconds();
+    // Conversion to correct time zone
+    TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+    DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
+    long date = cetTime.ToUnixTimeSeconds();
 
     database.Store(new Cheep(author, message, date));
 }

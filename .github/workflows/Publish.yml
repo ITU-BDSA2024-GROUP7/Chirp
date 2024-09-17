@@ -2,7 +2,7 @@ name: Publish
 on:
   push:
     tags:
-      - 'v*'  # This will trigger the workflow on any tag starting with 'v' #remember to push a tag to trigger this workflow
+      - 'v*'  # This will trigger the workflow on any tag starting with 'v'
 
 jobs:
   test:
@@ -63,7 +63,7 @@ jobs:
           dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj --framework netcoreapp3.1 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
           # Pack files
-          zip -r "${release_name}.zip" "./${release_name}/*"
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
 
           # Delete output directory
           rm -r "$release_name"

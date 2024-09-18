@@ -15,10 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chirp.CSVDB\SimpleDB\SimpleDB.csproj" />
+    <EmbeddedResource Include="../../data/**/*" />
   </ItemGroup>
-
- 
-
 
   <!-- Copy data directory to output folder -->
   <ItemGroup>

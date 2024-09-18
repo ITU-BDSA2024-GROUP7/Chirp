@@ -77,18 +77,41 @@ jobs:
           fi
         shell: bash
 
-      # Upload the release artifacts and create the release
-      - name: Create GitHub release
-        if: env.SKIP_RELEASE != 'true'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.NEW_VERSION }}  # Use the new version tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload release artifacts
         if: env.SKIP_RELEASE != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: chirp-${{ matrix.target }}.zip
           path: Chirp/chirp-${{ matrix.target }}.zip
+
+      - name: Create GitHub Release (without source code)
+        if: env.SKIP_RELEASE != 'true'
+        run: |
+          # Create a release without attaching the source code files
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "${{ github.ref }}",
+              "target_commitish": "${{ github.sha }}",
+              "name": "Release ${{ github.ref }}",
+              "body": "Release notes for version ${{ github.ref }}",
+              "draft": false,
+              "prerelease": false
+            }' \
+            https://api.github.com/repos/${{ github.repository }}/releases
+
+      - name: Upload Artifacts to Release
+        if: env.SKIP_RELEASE != 'true'
+        run: |
+          # Get the release ID
+          RELEASE_ID=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }} | jq -r '.id')
+
+          # Upload the ZIP file to the release
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/zip" \
+            --data-binary @Chirp/chirp-${{ matrix.target }}.zip \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=chirp-${{ matrix.target }}.zip"

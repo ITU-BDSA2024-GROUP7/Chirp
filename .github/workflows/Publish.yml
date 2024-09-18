@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests integration
         run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
-
+      
       - name: Run tests unix
         run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
 
@@ -52,30 +52,37 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 7.0.x
+        
 
       - name: Build for all platforms
+       
         if: env.SKIP_RELEASE != 'true'
         run: |
-          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --self-contained false -o publish/${{ matrix.target }}
-
+          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --self-contained true -o publish/${{ matrix.target }}
+           # Create ZIP files
       - name: Zip the output
         if: env.SKIP_RELEASE != 'true'
         run: |
           mkdir -p Chirp
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            # Ensure only the .exe file is included in the ZIP
-            zip -j Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }}/Chirp.CLI.Client.exe
+            powershell.exe Compress-Archive -Path publish/${{ matrix.target }}\* -DestinationPath Chirp/chirp-${{ matrix.target }}.zip;
           else
-            # Ensure only the publish output is included in the ZIP
-            zip -r Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }}/*
+            zip -r Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
           fi
         shell: bash
+
+      # Upload the release artifacts and create the release
+      - name: Create GitHub release
+        if: env.SKIP_RELEASE != 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.NEW_VERSION }}  # Use the new version tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release artifacts
         if: env.SKIP_RELEASE != 'true'
@@ -83,35 +90,3 @@ jobs:
         with:
           name: chirp-${{ matrix.target }}.zip
           path: Chirp/chirp-${{ matrix.target }}.zip
-
-      - name: Create GitHub Release (without source code)
-        if: env.SKIP_RELEASE != 'true'
-        run: |
-          # Create a release without attaching the source code files
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "tag_name": "${{ github.ref }}",
-              "target_commitish": "${{ github.sha }}",
-              "name": "Release ${{ github.ref }}",
-              "body": "Release notes for version ${{ github.ref }}",
-              "draft": false,
-              "prerelease": false
-            }' \
-            https://api.github.com/repos/${{ github.repository }}/releases
-
-      - name: Upload Artifacts to Release
-        if: env.SKIP_RELEASE != 'true'
-        run: |
-          # Get the release ID
-          RELEASE_ID=$(curl -s \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref }} | jq -r '.id')
-
-          # Upload the ZIP file to the release
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/zip" \
-            --data-binary @Chirp/chirp-${{ matrix.target }}.zip \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=chirp-${{ matrix.target }}.zip"

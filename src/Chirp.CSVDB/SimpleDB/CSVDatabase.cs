@@ -29,7 +29,8 @@ namespace SimpleDB
             using (StreamReader reader = new StreamReader(_filepath))
             using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                records = csv.GetRecords<T>().ToList();
+                records = csv.GetRecords<T>().ToList().Take(limit ?? int.MaxValue);
+
             }
             return records;
         }

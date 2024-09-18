@@ -22,14 +22,14 @@ if (arguments["read"].IsTrue)
         if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
         {
             int limit = int.Parse(arguments["<limit>"]!.ToString());
-            List<Cheep> cheeps = database.Read().ToList();
-            Userinterface.PrintCheeps(cheeps, limit);
+            List<Cheep> cheeps = database.Read(limit).ToList();
+            Userinterface.PrintCheeps(cheeps);
         }
         else
         {
             Console.WriteLine("Reading all Cheeps");
             List<Cheep> cheeps = database.Read().ToList();
-            Userinterface.PrintCheeps(cheeps, 0);
+            Userinterface.PrintCheeps(cheeps);
         }
     }
     catch (Exception e)

@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests integration
         run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
-      
+
       - name: Run tests unix
         run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
 
@@ -56,26 +56,14 @@ jobs:
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
-        
+        with:
+          dotnet-version: 7.0.x
 
       - name: Build for all platforms
-       
         if: env.SKIP_RELEASE != 'true'
         run: |
           dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --self-contained false -o publish/${{ matrix.target }}
-           # Create ZIP files
-      - name: Zip the output
-        if: env.SKIP_RELEASE != 'true'
-        run: |
-          mkdir -p Chirp
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            powershell.exe Compress-Archive -Path publish/${{ matrix.target }}\* -DestinationPath Chirp/chirp-${{ matrix.target }}.zip;
-          else
-            zip -r Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
-          fi
-        shell: bash
 
-      # Upload the release artifacts and create the release
       - name: Create GitHub release
         if: env.SKIP_RELEASE != 'true'
         uses: softprops/action-gh-release@v1
@@ -86,8 +74,24 @@ jobs:
 
       - name: Upload release artifacts
         if: env.SKIP_RELEASE != 'true'
-        uses: actions/upload-artifact@v3
-        with:
-          name: chirp-${{ matrix.target }}.zip
-          path: Chirp/chirp-${{ matrix.target }}.zip
-  
+        run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            # For Windows, directly upload the .exe file
+            upload_file="publish/${{ matrix.target }}/Chirp.CLI.Client.exe"
+            echo "Uploading $upload_file"
+            gh release upload ${{ env.NEW_VERSION }} $upload_file
+          else
+            # Create and upload ZIP files for other platforms
+            mkdir -p Chirp
+            if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+              zip -r Chirp/chirp-${{ matrix.target }}.zip publish/${{ matrix.target }};
+            else
+              tar -czf Chirp/chirp-${{ matrix.target }}.tar.gz -C publish/${{ matrix.target }} .
+            fi
+            echo "Uploading Chirp/chirp-${{ matrix.target }}.zip"
+            actions/upload-artifact@v3
+            with:
+              name: chirp-${{ matrix.target }}.zip
+              path: Chirp/chirp-${{ matrix.target }}.zip
+          fi
+        shell: bash

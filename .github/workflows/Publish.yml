@@ -60,7 +60,7 @@ jobs:
           dotnet-version: 7.x.x
 
       - name: Build
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --self-contained -o publish/${{ matrix.target }}
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained -p:PublishSingleFile=true -o publish/${{ matrix.target }}
 
       - name: Prepare artifacts
         shell: bash
@@ -90,3 +90,19 @@ jobs:
           files: Chirp/chirp-${{ matrix.target }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete source code zip
+        run: |
+            # Get the latest release ID
+            RELEASE_ID=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }} | jq -r .id)
+            
+            # Delete the source code archives (zip and tar.gz)
+            for asset in $(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets | jq -r '.[] | select(.name | startswith("source")) | .id'); do
+              curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                https://api.github.com/repos/${{ github.repository }}/releases/assets/$asset
+            done
+  

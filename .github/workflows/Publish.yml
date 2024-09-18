@@ -60,8 +60,7 @@ jobs:
           dotnet-version: 7.x.x
 
       - name: Build
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained -p:PublishSingleFile=true -p:DebugType=None -p:DebugSymbols=false -p:EnableCompressionInSingleFile=true -o publish/${{ matrix.target }}
-  
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained  -p:PublishSingleFile=true -o publish/${{ matrix.target }}
 
       - name: Prepare artifacts
         shell: bash
@@ -91,6 +90,3 @@ jobs:
           files: Chirp/chirp-${{ matrix.target }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Clean up PDB files
-        run: |
-              find ./publish/${{ matrix.target }} -name "*.pdb" -type f -delete 

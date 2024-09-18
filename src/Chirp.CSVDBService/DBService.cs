@@ -1,29 +1,26 @@
-// var builder = WebApplication.CreateBuilder(args);
-// var app = builder.Build();
-
-// app.MapGet("/", () => "Hello World!");
-
-// app.Run();
-
 using SimpleDB;
+using System.Globalization;
+using CsvHelper;
+
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+// Our code implementation here:
+app.MapGet("/cheeps", (int? limit) => ReadFromDB(limit));
+
+app.MapPost("/cheep", (Cheep cheep) => PostToDB(cheep));
+
+app.Run();
+
+var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
+
+var database = new CSVDatabase<Cheep>(dbPath);
 
 class DBService<T>
 {
-    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-    WebApplication app = builder.Build();
-    // Our code implementation here:
+    string _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
 
-    var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-    var database = new CSVDatabase<Cheep>(dbPath);
-
-    public void StartService()
-    {
-        app.MapGet("/cheeps", (int? limit) => ReadFromDB(limit)); 
-        app.MapPost("/cheep", (Cheep cheep) => PostToDB(cheep)); 
-        app.Run();
-    }
-
-    public IEnumerable<T> ReadFromDB(int? limit = null)
+    IEnumerable<T> ReadFromDB(int? limit = null)
     {
         IEnumerable<T> records = new List<T>();
         using (StreamReader reader = new StreamReader(_filepath))
@@ -32,10 +29,9 @@ class DBService<T>
             records = csv.GetRecords<T>().ToList().Take(limit ?? int.MaxValue);
         }
         return records;
-
     }
 
-    public void PostToDB(T record)
+    void PostToDB(T record)
     {
         using (StreamWriter writer = new StreamWriter(_filepath, true))
         using (CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture))

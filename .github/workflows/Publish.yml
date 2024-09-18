@@ -39,7 +39,7 @@ jobs:
         do
           dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r $platform -p:PublishSingleFile=true --no-self-contained -o publish/$platform
           cd publish/$platform
-          zip -r ../../chirp-$platform.zip .
+          zip -r ../../chirp-$platform.zip . # change name
           cd ../..
         done
 

@@ -9,14 +9,11 @@ Usage:
 
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-var database = new CSVDatabase<Cheep>(dbPath);
-
-
 
 if (arguments["read"].IsTrue)
-{
+{       
+
+    // "/cheeps" --- object of Cheep
     try
     {
         if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))

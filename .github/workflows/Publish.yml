@@ -60,7 +60,7 @@ jobs:
           dotnet-version: 7.x.x
 
       - name: Build
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained -p:PublishSingleFile=true -o publish/${{ matrix.target }}
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained -p:DebugSymbols=false -p:PublishSingleFile=true -o publish/${{ matrix.target }}
 
       - name: Prepare artifacts
         shell: bash

@@ -93,5 +93,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean up PDB files
         run: |
-            find ./publish/${{ matrix.target }} -name "*.pdb" -type f -delete
-  
+              find ./publish/${{ matrix.target }} -name "*.pdb" -type f -delete 

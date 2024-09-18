@@ -1,92 +1,65 @@
-name: Publish
+name: Build and Release Chirp
+
 on:
   push:
     tags:
-      - 'v*'  # This will trigger the workflow on any tag starting with 'v'
+      - 'v*'
 
 jobs:
-  test:
-    name: Run Tests
+  build-test-release:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Restore dependencies
-        run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.csproj
-
-      - name: Restore dependencies CSVDB
-        run: dotnet restore test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj
-
-      - name: Restore dependencies unix
-        run: dotnet restore test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj
-
-      - name: Run tests integration
-        run: dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
-      
-      - name: Run tests unix
-        run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
-
-  release:
-    timeout-minutes: 60
-    name: Release
-    needs: test
     strategy:
       matrix:
-        kind: ['linux', 'windows', 'macOS']
-        include:
-          - kind: linux
-            os: ubuntu-latest
-            target: linux-x64
-          - kind: windows
-            os: windows-latest
-            target: win-x64
-          - kind: macOS
-            os: macos-latest
-            target: osx-x64
-    runs-on: ${{ matrix.os }}
+       platform: [win-x64, osx-x64, linux-x64, linux-arm64, osx-arm64]
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 7.0.x
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.x.x
 
-      - name: Build
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net7.0 --no-self-contained -o publish/${{ matrix.target }}
+    - name: Restore dependencies
+      run: |
+        dotnet restore src/Chirp.CLI.Client/Chirp.CLI.csproj
+        dotnet restore test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj
+        dotnet restore test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj
 
-      - name: Prepare artifacts
-        shell: bash
-        run: |
-          mkdir -p Chirp
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            # For Windows, zip all files including the .exe
-            7z a Chirp/chirp-${{ matrix.target }}.zip ./publish/${{ matrix.target }}/*
-          elif [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-            # For Linux, zip all files
-            zip -j Chirp/chirp-${{ matrix.target }}.zip ./publish/${{ matrix.target }}/*
-          else
-            # For macOS, zip all files
-            zip -j Chirp/chirp-${{ matrix.target }}.zip ./publish/${{ matrix.target }}/*
-          fi
+    - name: Run tests
+      run: |
+        dotnet test test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj --verbosity normal
+        dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
 
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: chirp-${{ matrix.target }}
-          path: Chirp/chirp-${{ matrix.target }}.zip
+    - name: Build and package for multiple platforms
+      run: |
+        platforms=("win-x64" "osx-x64" "linux-x64" "linux-arm64" "osx-arm64")
+        for platform in "${platforms[@]}"
+        do
+          dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r $platform -p:PublishSingleFile=true --no-self-contained -o publish/$platform
+          cd publish/$platform
+          zip -r ../../chirp-$platform.zip .
+          cd ../..
+        done
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: Chirp/chirp-${{ matrix.target }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./chirp-${{ matrix.platform }}.zip
+        asset_name: chirp-${{ matrix.platform }}.zip
+        asset_content_type: application/zip

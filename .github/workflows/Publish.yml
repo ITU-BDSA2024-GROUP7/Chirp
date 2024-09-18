@@ -91,6 +91,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete source code zip
+        shell: bash
         run: |
             # Get the latest release ID
             RELEASE_ID=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \

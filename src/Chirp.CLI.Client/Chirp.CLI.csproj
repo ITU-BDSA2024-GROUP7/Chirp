@@ -6,9 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <DebugType>None</DebugType>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chirp.CSVDB\SimpleDB\SimpleDB.csproj" />
-    <EmbeddedResource Include="../../data/**/*" />
   </ItemGroup>
 
  

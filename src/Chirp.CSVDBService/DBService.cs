@@ -14,7 +14,6 @@ app.MapPost("/cheep", (Cheep cheep, DBService<Cheep> dbService) => dbService.Pos
 
 
 app.Run();
-
 var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
 
 var database = new CSVDatabase<Cheep>(dbPath);
@@ -39,6 +38,7 @@ class DBService<T>
         using (StreamWriter writer = new StreamWriter(_filepath, true))
         using (CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
+            Console.WriteLine(record);
             csv.NextRecord();
             csv.WriteRecord(record);
         }

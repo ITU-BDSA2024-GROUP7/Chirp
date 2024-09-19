@@ -1,4 +1,8 @@
-﻿using DocoptNet;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;  // For simplified JSON handling
+using System.Text.Json;
+using DocoptNet;
 using SimpleDB;
 
 const string usage = @"Chirp CLI version.
@@ -9,25 +13,30 @@ Usage:
 
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-var database = new CSVDatabase<Cheep>(dbPath);
+
+const string baseUrl = "http://localhost:5118";
+using HttpClient client = new();
+client.BaseAddress = new Uri(baseUrl);
+
 if (arguments["read"].IsTrue)
 {       
-
     // "/cheeps" --- object of Cheep
     try
     {
         if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
         {
+            // Called with a limit
             int limit = int.Parse(arguments["<limit>"]!.ToString());
-            List<Cheep> cheeps = database.Read(limit).ToList();
+            var response = await client.GetAsync("/cheeps");
+            List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
             Userinterface.PrintCheeps(cheeps);
         }
         else
         {
+            // Called without any limit
             Console.WriteLine("Reading all Cheeps");
-            List<Cheep> cheeps = database.Read().ToList();
+            var response = await client.GetAsync("/cheeps");
+            List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
             Userinterface.PrintCheeps(cheeps);
         }
     }
@@ -46,7 +55,9 @@ if (arguments["cheep"].IsTrue)
     DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
     long date = cetTime.ToUnixTimeSeconds();
 
-    database.Store(new Cheep(author, message, date));
+    await client.PostAsJsonAsync("/cheep", new Cheep(author, message, date));
+    
+   // database.Store(new Cheep(author, message, date));
 }
 
 public record Cheep(string Author, string Message, long Timestamp);

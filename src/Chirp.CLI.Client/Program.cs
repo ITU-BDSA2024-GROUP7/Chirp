@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Net.Http.Json;  // For simplified JSON handling
 using System.Text.Json;
 using DocoptNet;
-using SimpleDB;
 
 const string usage = @"Chirp CLI version.
 Usage:

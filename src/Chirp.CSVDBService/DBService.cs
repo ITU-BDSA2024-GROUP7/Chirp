@@ -1,4 +1,3 @@
-using SimpleDB;
 using System.Globalization;
 using CsvHelper;
 
@@ -11,12 +10,7 @@ app.MapGet("/cheeps", (int? limit, DBService<Cheep> dbService) => dbService.Read
 
 // Route for posting a new "cheep"
 app.MapPost("/cheep", (Cheep cheep, DBService<Cheep> dbService) => dbService.PostToDB(cheep));
-
-
 app.Run();
-var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-
-var database = new CSVDatabase<Cheep>(dbPath);
 
 class DBService<T>
 {

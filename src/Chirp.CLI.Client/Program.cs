@@ -12,7 +12,7 @@ Usage:
 
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-const string baseUrl = "http://localhost:5118";
+const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
 using HttpClient client = new();
 client.BaseAddress = new Uri(baseUrl);
 

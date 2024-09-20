@@ -8,7 +8,7 @@ public class DatabaseTests
     public async Task TestWriteReadRecord(string authorData, string messageData, long timestampData)
     {
         // Arrange
-        const string baseUrl = "http://localhost:5118";
+        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
         using HttpClient client = new();
         client.BaseAddress = new Uri(baseUrl);
         var testRecord = new DataRecord(authorData, messageData, timestampData);
@@ -33,7 +33,7 @@ public class DatabaseTests
     public async Task TestReadWriteMultipleRecords()
     {
         // Arrange
-        const string baseUrl = "http://localhost:5118";
+        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
         using HttpClient client = new();
         client.BaseAddress = new Uri(baseUrl);
         long timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -70,7 +70,7 @@ public class DatabaseTests
     public async Task TestReadWriteCheep()
     {
         // Arrange
-        const string baseUrl = "http://localhost:5118";
+        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
         using HttpClient client = new();
         client.BaseAddress = new Uri(baseUrl);
 

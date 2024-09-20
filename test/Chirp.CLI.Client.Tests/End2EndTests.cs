@@ -8,11 +8,10 @@ public class End2End
     [Fact]
     public void TestReadCheep()
     {
-        Console.WriteLine("test");
         // Arrange
+        string output = "";
         
         // Act
-        string output = "";
         using (var process = new Process())
         {
             process.StartInfo.FileName = "dotnet";
@@ -42,15 +41,12 @@ public class End2End
     [Fact]
     public void TestWriteReadCheep()
     {
-        Console.WriteLine("test");
         // Arrange
-
-
-        // Act
         string output = "";
         TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
         DateTimeOffset dt;
 
+        // Act
         // Run the cheep command
         using (var cheepProcess = new Process())
         {

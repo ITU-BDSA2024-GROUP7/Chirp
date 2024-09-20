@@ -13,14 +13,23 @@ Usage:
 
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-
 const string baseUrl = "http://localhost:5118";
 using HttpClient client = new();
 client.BaseAddress = new Uri(baseUrl);
 
 if (arguments["read"].IsTrue)
 {       
-    // "/cheeps" --- object of Cheep
+    await ReadCheeps(arguments, client);
+    
+}
+
+if (arguments["cheep"].IsTrue)
+{
+    await PostCheep(arguments, client, args);
+}
+
+
+async Task ReadCheeps(IDictionary<string, ValueObject> arguments, HttpClient client){
     try
     {
         if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
@@ -46,18 +55,24 @@ if (arguments["read"].IsTrue)
     }
 }
 
-if (arguments["cheep"].IsTrue)
-{
-    string message = string.Join(" ", args.Skip(1));
-    string author = Environment.MachineName;
-    // Conversion to correct time zone
-    TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-    DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
-    long date = cetTime.ToUnixTimeSeconds();
+async Task PostCheep(IDictionary<string, ValueObject> arguments, HttpClient client, string[] args){
+    try{
+        string message = string.Join(" ", args.Skip(1));
+        string author = Environment.MachineName;
+        // Conversion to correct time zone
+        TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
+        long date = cetTime.ToUnixTimeSeconds();
 
-    await client.PostAsJsonAsync("/cheep", new Cheep(author, message, date));
+        await client.PostAsJsonAsync("/cheep", new Cheep(author, message, date));
+        
+    // database.Store(new Cheep(author, message, date));
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Could not post the wanted Cheep " + e.Message);
+    }
     
-   // database.Store(new Cheep(author, message, date));
 }
 
 public record Cheep(string Author, string Message, long Timestamp);

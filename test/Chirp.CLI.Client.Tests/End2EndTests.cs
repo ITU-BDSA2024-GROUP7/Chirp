@@ -10,11 +10,7 @@ public class End2End
     {
         Console.WriteLine("test");
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        // var dbPath = Path.Combine(baseDirectory, "../../../../../data/chirp_cli_db.csv");
-        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-        var db = new CSVDatabase<DataRecord>(dbPath);
-
+        
         // Act
         string output = "";
         using (var process = new Process())
@@ -48,9 +44,7 @@ public class End2End
     {
         Console.WriteLine("test");
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/Chirp.CLI.Client/bin/Debug/net7.0/data", "chirp_cli_db.csv");
-        var db = new CSVDatabase<DataRecord>(dbPath);
+
 
         // Act
         string output = "";

@@ -5,17 +5,23 @@ public class DatabaseTests
     [Theory]
     [InlineData("John Doe", "Hello World!", 1645480000)]
     [InlineData("Jane Doe", "Goodbye World!", 1645480001)]
-    public void TestWriteReadRecord(string authorData, string messageData, long timestampData)
+    public async Task TestWriteReadRecord(string authorData, string messageData, long timestampData)
     {
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(baseDirectory, "../../../../../data/chirp_cli_db.csv");
-        var db = new CSVDatabase<DataRecord>(dbPath);
+        const string baseUrl = "http://localhost:5118";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseUrl);
         var testRecord = new DataRecord(authorData, messageData, timestampData);
 
         // Act
-        db.Store(testRecord);
-        var result = db.Read(1).Last();
+        var postResponse = await client.PostAsJsonAsync("/cheep", testRecord);
+        postResponse.EnsureSuccessStatusCode();
+
+        // Fetch all cheeps to verify it was stored
+        var response = await client.GetAsync("/cheeps");
+        response.EnsureSuccessStatusCode();
+        List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+        var result = cheeps.Last();
 
         // Assert
         Assert.Equal(authorData, result.Author);
@@ -24,25 +30,30 @@ public class DatabaseTests
     }
 
     [Fact]
-    public void TestReadWriteMultipleRecords()
+    public async Task TestReadWriteMultipleRecords()
     {
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(baseDirectory, "../../../../../data/chirp_cli_db.csv");
-        var db = new CSVDatabase<Cheep>(dbPath);
+        const string baseUrl = "http://localhost:5118";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseUrl);
         long timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         var record1 = new Cheep("John Doe", "Hello World!", timeStamp);
         var record2 = new Cheep("Jane Doe", "Goodbye World!", timeStamp);
 
         // Act
-        db.Store(record1);
-        db.Store(record2);
-        // Cheep result = db.Read(1).Last();
-        List<Cheep> resultList = db.Read().ToList();
+        var postResponse = await client.PostAsJsonAsync("/cheep", record1);
+        postResponse.EnsureSuccessStatusCode();
+        postResponse = await client.PostAsJsonAsync("/cheep", record2);
+        postResponse.EnsureSuccessStatusCode();
+
+        // Fetch all cheeps to verify it was stored
+        var response = await client.GetAsync("/cheeps");
+        response.EnsureSuccessStatusCode();
+        List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
 
         // Get last and second last records
-        Cheep result1 = resultList[resultList.Count - 2]; // John Doe
-        Cheep result2 = resultList[resultList.Count - 1]; // Jane Doe
+        Cheep result1 = cheeps[cheeps.Count - 2]; // John Doe
+        Cheep result2 = cheeps[cheeps.Count - 1]; // Jane Doe
 
         // Assert
         // John Doe
@@ -56,20 +67,27 @@ public class DatabaseTests
     }
 
     [Fact]
-    public void TestReadWriteCheep()
+    public async Task TestReadWriteCheep()
     {
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(baseDirectory, "../../../../../data/chirp_cli_db.csv");
-        var db = new CSVDatabase<Cheep>(dbPath);
+        const string baseUrl = "http://localhost:5118";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseUrl);
+
         string author = "MelonMusk";
-        string message = "Wait this is not X the everuthing app";
+        string message = "Wait this is not X the everything app";
         long timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         var cheep = new Cheep(author, message, timeStamp);
 
         // Act
-        db.Store(cheep);
-        Cheep result = db.Read(1).Last();
+        var postResponse = await client.PostAsJsonAsync("/cheep", cheep);
+        postResponse.EnsureSuccessStatusCode();
+
+        // Fetch all cheeps to verify it was stored
+        var response = await client.GetAsync("/cheeps");
+        response.EnsureSuccessStatusCode();
+        List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+        var result = cheeps.Last();
 
         // Assert
         Assert.Equal(author, result.Author);

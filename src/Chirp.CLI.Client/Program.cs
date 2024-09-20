@@ -1,5 +1,8 @@
-﻿using DocoptNet;
-using SimpleDB;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;  // For simplified JSON handling
+using System.Text.Json;
+using DocoptNet;
 
 const string usage = @"Chirp CLI version.
 Usage:
@@ -9,27 +12,40 @@ Usage:
 
 
 var arguments = new Docopt().Apply(usage, args, version: "1.0", exit: true)!;
-var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-var database = new CSVDatabase<Cheep>(dbPath);
-
-
+const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
+using HttpClient client = new();
+client.BaseAddress = new Uri(baseUrl);
 
 if (arguments["read"].IsTrue)
+{       
+    await ReadCheeps(arguments, client);
+    
+}
+
+if (arguments["cheep"].IsTrue)
 {
+    await PostCheep(arguments, client, args);
+}
+
+
+async Task ReadCheeps(IDictionary<string, ValueObject> arguments, HttpClient client){
     try
     {
         if (arguments.ContainsKey("<limit>") && arguments["<limit>"] != null && !string.IsNullOrEmpty(arguments["<limit>"].ToString()))
         {
+            // Called with a limit
             int limit = int.Parse(arguments["<limit>"]!.ToString());
-            List<Cheep> cheeps = database.Read().ToList();
-            Userinterface.PrintCheeps(cheeps, limit);
+            var response = await client.GetAsync($"/cheeps?limit={limit}");
+            List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+            Userinterface.PrintCheeps(cheeps);
         }
         else
         {
+            // Called without any limit
             Console.WriteLine("Reading all Cheeps");
-            List<Cheep> cheeps = database.Read().ToList();
-            Userinterface.PrintCheeps(cheeps, 0);
+            var response = await client.GetAsync("/cheeps");
+            List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+            Userinterface.PrintCheeps(cheeps);
         }
     }
     catch (Exception e)
@@ -38,16 +54,24 @@ if (arguments["read"].IsTrue)
     }
 }
 
-if (arguments["cheep"].IsTrue)
-{
-    string message = string.Join(" ", args.Skip(1));
-    string author = Environment.MachineName;
-    // Conversion to correct time zone
-    TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-    DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
-    long date = cetTime.ToUnixTimeSeconds();
+async Task PostCheep(IDictionary<string, ValueObject> arguments, HttpClient client, string[] args){
+    try{
+        string message = string.Join(" ", args.Skip(1));
+        string author = Environment.MachineName;
+        // Conversion to correct time zone
+        TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        DateTimeOffset cetTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
+        long date = cetTime.ToUnixTimeSeconds();
 
-    database.Store(new Cheep(author, message, date));
+        await client.PostAsJsonAsync("/cheep", new Cheep(author, message, date));
+        
+    // database.Store(new Cheep(author, message, date));
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Could not post the wanted Cheep " + e.Message);
+    }
+    
 }
 
 public record Cheep(string Author, string Message, long Timestamp);

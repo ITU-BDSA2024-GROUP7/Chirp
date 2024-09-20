@@ -8,15 +8,10 @@ public class End2End
     [Fact]
     public void TestReadCheep()
     {
-        Console.WriteLine("test");
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        // var dbPath = Path.Combine(baseDirectory, "../../../../../data/chirp_cli_db.csv");
-        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
-        var db = new CSVDatabase<DataRecord>(dbPath);
-
-        // Act
         string output = "";
+        
+        // Act
         using (var process = new Process())
         {
             process.StartInfo.FileName = "dotnet";
@@ -46,17 +41,12 @@ public class End2End
     [Fact]
     public void TestWriteReadCheep()
     {
-        Console.WriteLine("test");
         // Arrange
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src/Chirp.CLI.Client/bin/Debug/net7.0/data", "chirp_cli_db.csv");
-        var db = new CSVDatabase<DataRecord>(dbPath);
-
-        // Act
         string output = "";
         TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
         DateTimeOffset dt;
 
+        // Act
         // Run the cheep command
         using (var cheepProcess = new Process())
         {

@@ -12,13 +12,7 @@
     <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="docopt.net" Version="0.8.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Chirp.CSVDB\SimpleDB\SimpleDB.csproj" />
-  </ItemGroup>
-
  
-
 
   <!-- Copy data directory to output folder -->
   <ItemGroup>

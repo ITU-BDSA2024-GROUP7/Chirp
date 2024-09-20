@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using DocoptNet;
 using SimpleDB;
+using static Userinterface;
 
 public class UnitTests
 {
@@ -19,20 +20,14 @@ public class UnitTests
     
     // Testing for if Unix Timestamp is converted correctly
     [Fact]
+
     private void TestUnixTimeStampConversion(){
 
-        // Setting up test cheep
-        string author = "Author";
-        string message = "Message";
-        long unixTimestamp = 1690891760; // Just a test timestamp
-
-        // Put the cheep together
-        var cheep = new Cheep(author, message, unixTimestamp);
-
-        // Converting Unix to Real Time
-        string convertUnixToRealTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime.ToString("M-d-yyyy HH:mm:ss");
-        
-        Assert.Equal("8-1-2023 12:09:20", convertUnixToRealTime);
+        new Cheep("Author", "Message", 1690891760);
+        // Testing
+        //var us = new Userinterface();
+        var result = Userinterface.ConvertFromUnixTimestamp(1690891760);
+        Assert.Equal("01-08-2023 12:09:20", result);
     }
     
     

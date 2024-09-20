@@ -27,7 +27,7 @@ if (arguments["read"].IsTrue)
         {
             // Called with a limit
             int limit = int.Parse(arguments["<limit>"]!.ToString());
-            var response = await client.GetAsync("/cheeps");
+            var response = await client.GetAsync($"/cheeps?limit={limit}");
             List<Cheep> cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
             Userinterface.PrintCheeps(cheeps);
         }

@@ -5,9 +5,12 @@ class MockServer<T> : IDisposable
 {
     private readonly WebApplication app;
     private readonly HttpClient client;
+    private readonly string filepath;
 
-    public static void StartServer()
+    public MockServer()
     {
+        filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
+
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddSingleton<DBService<Cheep>>(); /// singleton
         app = builder.Build();
@@ -16,17 +19,20 @@ class MockServer<T> : IDisposable
         app.MapGet("/cheeps", (int? limit, DBService<Cheep> dbService) => dbService.ReadFromDB(limit));
         // Route for posting a new "cheep"
         app.MapPost("/cheep", (Cheep cheep, DBService<Cheep> dbService) => dbService.PostToDB(cheep));
-        app.Start();
+
+        // Start the web application
+        Task.Run(() => app.RunAsync()); // Run the app in a separate task
+
+        // Initialize HttpClient for testing
+        client = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
     }
 
     // returns the servers client
     public HttpClient Client => client;
     public void Dispose()
     {
-        app.Dispose(); // Dispose the WebApplication
         client.Dispose(); // Dispose HttpClient
     }
-    string _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
 
     public IEnumerable<T> ReadFromDB(int? limit = null)
     {

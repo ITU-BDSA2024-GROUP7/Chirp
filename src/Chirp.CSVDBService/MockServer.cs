@@ -37,7 +37,7 @@ class MockServer<T> : IDisposable
     public IEnumerable<T> ReadFromDB(int? limit = null)
     {
         IEnumerable<T> records = new List<T>();
-        using (StreamReader reader = new StreamReader(_filepath))
+        using (StreamReader reader = new StreamReader(filepath))
         using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
             records = csv.GetRecords<T>().ToList().Take(limit ?? int.MaxValue);
@@ -47,7 +47,7 @@ class MockServer<T> : IDisposable
 
     public void PostToDB(T record)
     {
-        using (StreamWriter writer = new StreamWriter(_filepath, true))
+        using (StreamWriter writer = new StreamWriter(filepath, append: true))
         using (CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
             Console.WriteLine(record);

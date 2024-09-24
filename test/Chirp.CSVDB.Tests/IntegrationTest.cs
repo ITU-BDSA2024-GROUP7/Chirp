@@ -8,9 +8,8 @@ public class DatabaseTests
     public async Task TestWriteReadRecord(string authorData, string messageData, long timestampData)
     {
         // Arrange
-        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
-        using HttpClient client = new();
-        client.BaseAddress = new Uri(baseUrl);
+        using var server = new MockServer<Cheep>();
+        var client = server.Client;
         var testRecord = new DataRecord(authorData, messageData, timestampData);
 
         // Act
@@ -33,9 +32,9 @@ public class DatabaseTests
     public async Task TestReadWriteMultipleRecords()
     {
         // Arrange
-        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
-        using HttpClient client = new();
-        client.BaseAddress = new Uri(baseUrl);
+        using var server = new MockServer<Cheep>(); // Using ensure that Dispose() is called at the end of the block
+        var client = server.Client;
+
         long timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         var record1 = new Cheep("John Doe", "Hello World!", timeStamp);
         var record2 = new Cheep("Jane Doe", "Goodbye World!", timeStamp);
@@ -70,9 +69,8 @@ public class DatabaseTests
     public async Task TestReadWriteCheep()
     {
         // Arrange
-        const string baseUrl = "https://bdsagroup07chirpremotedb.azurewebsites.net/";
-        using HttpClient client = new();
-        client.BaseAddress = new Uri(baseUrl);
+        using var server = new MockServer<Cheep>();
+        var client = server.Client;
 
         string author = "MelonMusk";
         string message = "Wait this is not X the everything app";

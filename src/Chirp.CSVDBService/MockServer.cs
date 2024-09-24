@@ -8,7 +8,7 @@ class MockServer<T> : IDisposable
 
     public static void StartServer()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder();
         builder.Services.AddSingleton<DBService<Cheep>>(); /// singleton
         app = builder.Build();
 

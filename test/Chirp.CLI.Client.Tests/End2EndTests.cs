@@ -16,7 +16,7 @@ public class End2End
             process.StartInfo.FileName = "dotnet";
             //Console.WriteLine("This is DBPATH " + dbPath);
             // The argument
-            process.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.dll read 10";
+            process.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.Client.dll read 10";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.WorkingDirectory = "../../../../../";
             process.StartInfo.RedirectStandardOutput = true;
@@ -53,7 +53,7 @@ public class End2End
             //log time
             dt = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, cetZone);
             // dt = DateTime.Now; // get the current time
-            cheepProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.dll cheep Wassup World!";
+            cheepProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.Client.dll cheep Wassup World!";
             cheepProcess.StartInfo.UseShellExecute = false;
             cheepProcess.StartInfo.WorkingDirectory = "../../../../../";
             cheepProcess.Start();
@@ -64,7 +64,7 @@ public class End2End
         using (var readProcess = new Process())
         {
             readProcess.StartInfo.FileName = "dotnet";
-            readProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.dll read";
+            readProcess.StartInfo.Arguments = "./src/Chirp.CLI.Client/bin/Debug/net8.0/Chirp.CLI.Client.dll read";
             readProcess.StartInfo.UseShellExecute = false;
             readProcess.StartInfo.RedirectStandardOutput = true;
             readProcess.StartInfo.WorkingDirectory = "../../../../../";

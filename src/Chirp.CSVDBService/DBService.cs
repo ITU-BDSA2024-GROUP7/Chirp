@@ -14,15 +14,13 @@ app.Run();
 
 class DBService<T>
 {
-     var homePath = Environment.GetEnvironmentVariable("HOME") ?? Environment.CurrentDirectory;
-        _filepath = Path.Combine(homePath, "site", "wwwroot", "data", "chirp_cli_db.csv");
-        Console.WriteLine($"Using file path: {_filepath}");
+    string _filepath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "site", "wwwroot", "data", "chirp_cli_db.csv");
 
     public IEnumerable<T> ReadFromDB(int? limit = null)
     {
         if (!File.Exists(_filepath))
 {
-        Console.WriteLine($"File not found: {_filepath}");
+         Console.WriteLine($"File not found: {_filepath}");
         return Enumerable.Empty<T>();
 }
         try{

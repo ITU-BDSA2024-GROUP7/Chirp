@@ -14,10 +14,16 @@ app.Run();
 
 class DBService<T>
 {
-    string _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "chirp_cli_db.csv");
+    string _filepath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "site", "wwwroot", "data", "chirp_cli_db.csv");
 
     public IEnumerable<T> ReadFromDB(int? limit = null)
     {
+        if (!File.Exists(_filepath))
+{
+        Console.WriteLine($"File not found: {_filepath}");
+        return Enumerable.Empty<T>();
+}
+        try{
         IEnumerable<T> records = new List<T>();
         using (StreamReader reader = new StreamReader(_filepath))
         using (CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture))
@@ -25,6 +31,12 @@ class DBService<T>
             records = csv.GetRecords<T>().ToList().Take(limit ?? int.MaxValue);
         }
         return records;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error reading from DB " + e);
+            return null;
+        }
     }
 
     public void PostToDB(T record)

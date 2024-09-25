@@ -5,10 +5,10 @@ public class DatabaseTests
     [Theory]
     [InlineData("John Doe", "Hello World!", 1645480000)]
     [InlineData("Jane Doe", "Goodbye World!", 1645480001)]
-    public async Task TestWriteReadRecord(string authorData, string messageData, long timestampData)
+    public async Task TestWriteReadRecord(string authorData, string messageData, long timestampData) 
     {
         // Arrange
-        using var server = new MockServer<Cheep>();
+        using var server = new MockServer<Cheep>(); // "Using" ensures that Dispose() is called at the end of the block
         var client = server.Client;
         var testRecord = new DataRecord(authorData, messageData, timestampData);
 
@@ -32,7 +32,7 @@ public class DatabaseTests
     public async Task TestReadWriteMultipleRecords()
     {
         // Arrange
-        using var server = new MockServer<Cheep>(); // Using ensure that Dispose() is called at the end of the block
+        using var server = new MockServer<Cheep>(); // "Using" ensures that Dispose() is called at the end of the block
         var client = server.Client;
 
         long timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();

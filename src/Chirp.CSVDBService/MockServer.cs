@@ -1,7 +1,7 @@
 using System.Globalization;
 using CsvHelper;
 
-class MockServer<T> : IDisposable
+public class MockServer<T> : IDisposable
 {
     private readonly WebApplication app;
     private readonly HttpClient client;

@@ -28,7 +28,7 @@ class DBService<T>
         }
 
         // Ensure that the file exists
-        if (!_filepath.Exists(_filepath))
+        if (!File.Exists(_filepath))
         {
             // Create empty csv file at filepath
             using (var writer = new StreamWriter(_filepath, false));

@@ -14,7 +14,9 @@ app.Run();
 
 class DBService<T>
 {
-    string _filepath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "site", "wwwroot", "data", "chirp_cli_db.csv");
+     var homePath = Environment.GetEnvironmentVariable("HOME") ?? Environment.CurrentDirectory;
+        _filepath = Path.Combine(homePath, "site", "wwwroot", "data", "chirp_cli_db.csv");
+        Console.WriteLine($"Using file path: {_filepath}");
 
     public IEnumerable<T> ReadFromDB(int? limit = null)
     {

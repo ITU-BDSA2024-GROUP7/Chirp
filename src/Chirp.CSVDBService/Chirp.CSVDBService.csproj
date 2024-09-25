@@ -3,6 +3,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Chirp.CLI.Client\Chirp.CLI.csproj" />
   </ItemGroup>
+  <ItemGroup>
+  <None Update="wwwroot\data\chirp_cli_db.csv">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+  </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>

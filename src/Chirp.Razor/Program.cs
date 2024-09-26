@@ -1,4 +1,8 @@
 using Chirp.Razor;
+using SQLitePCL;
+
+// Initialize SQLite provider
+Batteries.Init(); // Ensure this method is available and correctly referenced
 
 var builder = WebApplication.CreateBuilder(args);
 

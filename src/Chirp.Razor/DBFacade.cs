@@ -15,6 +15,7 @@ public class DBFacade
         
         // string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
         connectionString = $"Data Source={sqlDBFilePath}";
+        embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
 
         // Ensure that the directory exists
         string directory = Path.GetDirectoryName(sqlDBFilePath);
@@ -30,27 +31,40 @@ public class DBFacade
             //using (var writer = new StreamWriter(sqlDBFilePath, false));
             Console.WriteLine($"Creating database: {sqlDBFilePath}");
             using (var stream = File.Create(sqlDBFilePath));
-            // Populate database
-            PopulateDatabase();
         }
         
-        embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
+        // Populate database
+        PopulateDatabase(); 
     }
 
     private void PopulateDatabase()
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
-            
-        var schema = ReadEmbeddedSqlFile("schema.sql");
-        var dump = ReadEmbeddedSqlFile("dump.sql");
-                    
+        
+        var resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+        Console.WriteLine("Here are the embedded resources: ");
+        foreach (var name in resourceNames)
+        {
+            Console.WriteLine(name);
+        }
+
+        Console.WriteLine("Attempting to read schema and dump using: Chirp.Razor.schema.sql and Chirp.Razor.dump.sql");
+        var schema = ReadEmbeddedSqlFile("Chirp.Razor.schema.sql");
+        var dump = ReadEmbeddedSqlFile("Chirp.Razor.dump.sql");
+        
+        Console.WriteLine("Schema SQL:");
+        Console.WriteLine(schema);
+        Console.WriteLine("Dump SQL:");
+        Console.WriteLine(dump);
+        
         ExecuteCommand(connection, schema);
         ExecuteCommand(connection, dump);
     }
 
     private string ReadEmbeddedSqlFile(string fileName)
     {
+        Console.WriteLine("Reading embedded sql file with path " + fileName);
         using var embedded = embeddedProvider.GetFileInfo(fileName).CreateReadStream();
         using var reader = new StreamReader(embedded);
         return reader.ReadToEnd();

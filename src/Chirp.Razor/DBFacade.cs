@@ -11,11 +11,13 @@ public class DBFacade
     
     public DBFacade(string sqlDBFilePath)
     {
+        Console.WriteLine($"DBFacade constructor called with path: {sqlDBFilePath}");
+        
         // string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
         connectionString = $"Data Source={sqlDBFilePath}";
 
         // Ensure that the directory exists
-        string directory = Path.GetDirectoryName(connectionString);
+        string directory = Path.GetDirectoryName(sqlDBFilePath);
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);

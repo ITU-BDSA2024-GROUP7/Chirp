@@ -15,12 +15,12 @@ public class CheepService : ICheepService
     public CheepService(DBFacade dbFacade)
     {
         _dbFacade = dbFacade;
+        Console.WriteLine($"CheepService constructor called with DBFacade");
     }
     
     private List<CheepViewModel> _cheeps = new List<CheepViewModel>();
     public List<CheepViewModel> GetCheeps()
     {
-
         return _cheeps;
     }
 

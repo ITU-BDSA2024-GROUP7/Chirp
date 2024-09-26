@@ -110,12 +110,12 @@ public class DBFacade
         connection.Open();
         //creates query
         using var command = connection.CreateCommand();
-        command.Parameters.AddWithValue("@Author", author);
         var query = @$"SELECT u.username, m.text, m.pub_date 
                         FROM message m 
                         JOIN user u ON u.user_id = m.author_id 
                         WHERE u.username=@Author;";
             // test query SELECT u.username,m.text,m.pub_date FROM message m JOIN user u ON u.user_id = m.author_id WHERE u.username = 'Helge';
+        command.Parameters.AddWithValue("@Author", author);
         command.CommandText = query;
         using var reader = command.ExecuteReader();
         while (reader.Read())

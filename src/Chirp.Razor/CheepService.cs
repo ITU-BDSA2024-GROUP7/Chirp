@@ -1,4 +1,5 @@
 
+using Chirp.Razor;
 public record CheepViewModel(string Author, string Message, string Timestamp);
 
 public interface ICheepService
@@ -9,6 +10,12 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
+    private readonly DBFacade _dbFacade;
+
+    public CheepService(DBFacade dbFacade)
+    {
+        _dbFacade = dbFacade;
+    }
     
     private List<CheepViewModel> _cheeps = new List<CheepViewModel>();
     public List<CheepViewModel> GetCheeps()

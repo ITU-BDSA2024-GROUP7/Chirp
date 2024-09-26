@@ -12,7 +12,7 @@ public class DBFacade
     public DBFacade()
     {
         string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
-
+        
         // Get CHIRPDB Environment Variable
         string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
 
@@ -20,23 +20,33 @@ public class DBFacade
         if (string.IsNullOrEmpty(chirpDbPath))
         {
             string tempDir = Path.GetTempPath();
-            chirpDbPath = Path.Combine(tempDir, "chirp.db");
+            chirpDbPath = Path.Combine(tempDir, "mychirp.db");
+            Environment.SetEnvironmentVariable("CHIRPDBPATH", chirpDbPath,EnvironmentVariableTarget.Machine);
+            
         }
         
         
-        connectionString = $"Data Source={sqlDBFilePath}";
+        connectionString = $"Data Source={chirpDbPath}";
         embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
         string directory = Path.GetDirectoryName(connectionString);
         // Ensure that the directory exists
         if (!Directory.Exists(directory))
         {
-            Directory.CreateDirectory(directory);
+            try
+            {
+                Directory.CreateDirectory(directory);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
+
         // Ensure that the file exists
         if (!File.Exists(sqlDBFilePath))
         {
-            // Create empty csv file at filepath
-            using (var writer = new StreamWriter(sqlDBFilePath, false)) ;
+            // Create empty db file at filepath
+            using (var writer = new StreamWriter(sqlDBFilePath, false));
         }
         
         // Populate database
@@ -57,7 +67,7 @@ public class DBFacade
 
     private string ReadEmbeddedSqlFile(string fileName)
     {
-        using var embedded = embeddedProvider.GetFileInfo("schema.sql").CreateReadStream();
+        using var embedded = embeddedProvider.GetFileInfo(fileName).CreateReadStream();
         using var reader = new StreamReader(embedded);
         return reader.ReadToEnd();
     }

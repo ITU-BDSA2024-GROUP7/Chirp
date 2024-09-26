@@ -12,6 +12,18 @@ public class DBFacade
     public DBFacade()
     {
         string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
+
+        // Get CHIRPDB Environment Variable
+        string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
+
+        // Check if CHIRPDBPATH is set.
+        if (string.IsNullOrEmpty(chirpDbPath))
+        {
+            string tempDir = Path.GetTempPath();
+            chirpDbPath = Path.Combine(tempDir, "chirp.db");
+        }
+        
+        
         connectionString = $"Data Source={sqlDBFilePath}";
         embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
         string directory = Path.GetDirectoryName(connectionString);
@@ -80,16 +92,29 @@ public class DBFacade
     
     
     //retrive chirps from author
-    
-    
-    
-    // Dependency to system enviroment for database path
-    
-    
-    
-    
-    
-    
+    public List<CheepViewModel> RetriveCheepFromAuthor(string author)
+    {
+        var cheeps = new List<CheepViewModel>();
+
+        using var connection = new SqliteConnection(connectionString);
+        connection.Open();
+        //creates query
+        using var command = connection.CreateCommand();
+        command.Parameters.AddWithValue("@Author", author);
+        var query = @$"SELECT u.username, m.text, m.pub_date 
+                        FROM message m 
+                        JOIN user u ON u.user_id = m.author_id 
+                        WHERE u.username=@Author;";
+            // test query SELECT u.username,m.text,m.pub_date FROM message m JOIN user u ON u.user_id = m.author_id WHERE u.username = 'Helge';
+        command.CommandText = query;
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            cheeps.Add(new CheepViewModel(reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+        }
+        //Returns a list of all cheeps from a certain author
+        return cheeps;
+    }
 }
     
 

@@ -50,13 +50,8 @@ public class DBFacade
         }
 
         Console.WriteLine("Attempting to read schema and dump using: Chirp.Razor.schema.sql and Chirp.Razor.dump.sql");
-        var schema = ReadEmbeddedSqlFile("Chirp.Razor.schema.sql");
-        var dump = ReadEmbeddedSqlFile("Chirp.Razor.dump.sql");
-        
-        Console.WriteLine("Schema SQL:");
-        Console.WriteLine(schema);
-        Console.WriteLine("Dump SQL:");
-        Console.WriteLine(dump);
+        var schema = ReadEmbeddedSqlFile("schema.sql");
+        var dump = ReadEmbeddedSqlFile("dump.sql");
         
         ExecuteCommand(connection, schema);
         ExecuteCommand(connection, dump);
@@ -64,7 +59,7 @@ public class DBFacade
 
     private string ReadEmbeddedSqlFile(string fileName)
     {
-        Console.WriteLine("Reading embedded sql file with path " + fileName);
+        string resourceName = $"Chirp.Razor.{fileName}";
         using var embedded = embeddedProvider.GetFileInfo(fileName).CreateReadStream();
         using var reader = new StreamReader(embedded);
         return reader.ReadToEnd();

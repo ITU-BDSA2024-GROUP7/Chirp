@@ -8,59 +8,41 @@ public class DBFacade
 {
     private readonly string connectionString;
     private readonly IFileProvider embeddedProvider;
-
-    public DBFacade()
+    
+    public DBFacade(string sqlDBFilePath)
     {
-        string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
-        
-        // Get CHIRPDB Environment Variable
-        string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
+        // string sqlDBFilePath = Path.Combine("tmp", "chirp.db");
+        connectionString = $"Data Source={sqlDBFilePath}";
 
-        // Check if CHIRPDBPATH is set.
-        if (string.IsNullOrEmpty(chirpDbPath))
-        {
-            string tempDir = Path.GetTempPath();
-            chirpDbPath = Path.Combine(tempDir, "mychirp.db");
-            Environment.SetEnvironmentVariable("CHIRPDBPATH", chirpDbPath,EnvironmentVariableTarget.Machine);
-            
-        }
-        
-        
-        connectionString = $"Data Source={chirpDbPath}";
-        embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
-        string directory = Path.GetDirectoryName(connectionString);
         // Ensure that the directory exists
+        string directory = Path.GetDirectoryName(connectionString);
         if (!Directory.Exists(directory))
         {
-            try
-            {
-                Directory.CreateDirectory(directory);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Directory.CreateDirectory(directory);
         }
 
         // Ensure that the file exists
         if (!File.Exists(sqlDBFilePath))
         {
             // Create empty db file at filepath
-            using (var writer = new StreamWriter(sqlDBFilePath, false));
+            //using (var writer = new StreamWriter(sqlDBFilePath, false));
+            Console.WriteLine($"Creating database: {sqlDBFilePath}");
+            using (var stream = File.Create(sqlDBFilePath));
+            // Populate database
+            PopulateDatabase();
         }
         
-        // Populate database
-        PopulateDatabase();
+        embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
     }
 
     private void PopulateDatabase()
     {
         using var connection = new SqliteConnection(connectionString);
         connection.Open();
-
+            
         var schema = ReadEmbeddedSqlFile("schema.sql");
         var dump = ReadEmbeddedSqlFile("dump.sql");
-        
+                    
         ExecuteCommand(connection, schema);
         ExecuteCommand(connection, dump);
     }

@@ -12,10 +12,24 @@ public class PublicModel : PageModel
     {
         _service = service;
     }
-
+    /// <summary>
+    /// Gets cheeps and stores them in a list, when the page is loaded
+    /// </summary>
+    /// <returns></returns>
     public ActionResult OnGet()
     {
         Cheeps = _service.GetCheeps();
         return Page();
     }
+    /// <summary>
+    /// Gets cheeps based on a query to get the Cheeps dedicated to the given page (or just the default start page), when the page is loaded
+    /// </summary>
+    /// <param name="page"></param>
+    /// <returns></returns>
+    // public ActionResult OnGet([FromQuery] int? page)
+    // {
+    //     int startPage = page ?? 1;
+    //     Cheeps = _service.GetCheeps();
+    //     return Page();
+    // }
 }

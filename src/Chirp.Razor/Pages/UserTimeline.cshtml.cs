@@ -13,6 +13,7 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
+    // Runs when site is loaded (Request Method:GET)
     public ActionResult OnGet(string author)
     {
         Cheeps = _service.GetCheepsFromAuthor(author);

@@ -1,0 +1,49 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{430C3F51-F7D9-4677-9994-BA6EABAA6C38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client", "src\Chirp.CLI.Client\Chirp.CLI.Client.csproj", "{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CSVDBService", "src\Chirp.CSVDBService\Chirp.CSVDBService.csproj", "{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7420877A-8C4F-48A4-87A6-9F70A959BF75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client.Tests", "test\Chirp.CLI.Client.Tests\Chirp.CLI.Client.Tests.csproj", "{A9FF33C9-9846-4213-A89B-B5F279C7FD9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CSVDB.Tests", "test\Chirp.CSVDB.Tests\Chirp.CSVDB.Tests.csproj", "{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9FF33C9-9846-4213-A89B-B5F279C7FD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9FF33C9-9846-4213-A89B-B5F279C7FD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9FF33C9-9846-4213-A89B-B5F279C7FD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9FF33C9-9846-4213-A89B-B5F279C7FD9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7D3CE346-0B4F-45C3-9131-DDA4E1C471A8} = {430C3F51-F7D9-4677-9994-BA6EABAA6C38}
+		{2DBE8997-FB0F-4C0B-9F97-2835F6BA7FA3} = {430C3F51-F7D9-4677-9994-BA6EABAA6C38}
+		{A9FF33C9-9846-4213-A89B-B5F279C7FD9D} = {7420877A-8C4F-48A4-87A6-9F70A959BF75}
+		{6CD0EF82-D095-4A46-A87C-4F0EEA284FC5} = {7420877A-8C4F-48A4-87A6-9F70A959BF75}
+	EndGlobalSection
+EndGlobal

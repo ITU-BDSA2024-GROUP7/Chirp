@@ -18,7 +18,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.csproj
+        run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.Client.csproj
 
       - name: Restore dependencies CSVDB
         run: dotnet restore test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj
@@ -60,7 +60,7 @@ jobs:
           dotnet-version: 8.x.x
 
       - name: Build
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r ${{ matrix.target }} -f net8.0 --no-self-contained  -p:PublishSingleFile=true -o publish/${{ matrix.target }}
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.Client.csproj -c Release -r ${{ matrix.target }} -f net8.0 --no-self-contained  -p:PublishSingleFile=true -o publish/${{ matrix.target }}
 
       - name: Prepare artifacts
         shell: bash

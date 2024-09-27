@@ -87,7 +87,7 @@ public class DBFacade
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            cheeps.Add(new CheepViewModel(reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+            cheeps.Add(new CheepViewModel(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
         }
         //Returns a list of cheeps
         return cheeps;
@@ -113,10 +113,19 @@ public class DBFacade
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            cheeps.Add(new CheepViewModel(reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+            var timeStamp = UnixTimeStampToDateTimeString(Double.Parse(reader.GetString(2)));
+            cheeps.Add(new CheepViewModel(reader.GetString(0), reader.GetString(1), timeStamp));
         }
         //Returns a list of all cheeps from a certain author
         return cheeps;
+    }
+    
+    private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
+    {
+        // Unix timestamp is seconds past epoch
+        DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        dateTime = dateTime.AddSeconds(unixTimeStamp);
+        return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
 }
     

@@ -18,23 +18,17 @@ public class CheepService : ICheepService
         Console.WriteLine($"CheepService constructor called with DBFacade");
     }
     
-    private List<CheepViewModel> _cheeps = new List<CheepViewModel>();
+    
     public List<CheepViewModel> GetCheeps()
     {
-        return _cheeps;
+        return _dbFacade.RetriveAllCheeps();
     }
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author)
     {
-        // filter by the provided author name
-        return _cheeps.Where(x => x.Author == author).ToList();
+       return _dbFacade.RetriveCheepFromAuthor(author);
+        
     }
 
-    private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
-    {
-        // Unix timestamp is seconds past epoch
-        DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        dateTime = dateTime.AddSeconds(unixTimeStamp);
-        return dateTime.ToString("MM/dd/yy H:mm:ss");
-    }
+   
 }

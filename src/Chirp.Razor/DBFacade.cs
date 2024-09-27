@@ -74,7 +74,7 @@ public class DBFacade
     
     
     //metode retrive entire list
-    public List<CheepViewModel> RetriveAllCheeps()
+    public List<CheepViewModel> RetriveAllCheeps(int page)
     {
         var cheeps = new List<CheepViewModel>();
         
@@ -82,7 +82,14 @@ public class DBFacade
         connection.Open();
         //creates query
         using var command = connection.CreateCommand();
-        var query = "SELECT u.username,m.text,m.pub_date FROM message m JOIN user u ON u.user_id = m.author_id;";
+        // (1 - 1) * 32 <=> 0 * 32 = ]0 - 32]
+        // (2 - 1) * 32 <=> 1 * 32 = ]32 - 64]
+        // (3 - 1) * 32 <=> 2 * 32 = ]64 - 96]
+        // Query: SELECT * FROM cheeps ORDER BY unixtimestamp ASC OFFSET (page - 1) * 32 LIMIT 32
+        var query = @$"SELECT u.username,m.text,m.pub_date 
+                        FROM message m JOIN user u ON u.user_id = m.author_id
+                        ORDER BY m.pub_date ASC LIMIT 32 OFFSET (@page - 1) * 32;";
+        command.Parameters.AddWithValue("@page", page);
         command.CommandText = query;
         using var reader = command.ExecuteReader();
         while (reader.Read())

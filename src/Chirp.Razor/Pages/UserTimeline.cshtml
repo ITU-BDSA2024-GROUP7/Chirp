@@ -21,8 +21,9 @@
                         <strong>
                             <a href="/@cheep.Author">@cheep.Author</a>
                         </strong>
+                        <small>&mdash; @cheep.Timestamp</small> <br>
                         @cheep.Message
-                        <small>&mdash; @cheep.Timestamp</small>
+                        
                     </p>
                 </li>
             }
@@ -32,13 +33,18 @@
     {
         <em>There are no cheeps so far.</em>
     }
-    
-    <div>
-        @if (@pageNumber != 1)
-        {
-            <a href="/@authorName?page=@(pageNumber - 1)"><p>Previous Page: @(pageNumber - 1)</p></a>
-        }
-        <p>Current page: @pageNumber</p>
-        <a href="/@authorName?page=@(pageNumber + 1)"><p>Next Page: @(pageNumber + 1)</p></a>
+    <div style="text-align: center;">
+        <div style="display: inline-block;">
+            @if (@pageNumber != 1)
+            {
+                <a href="/@authorName?page=@(pageNumber - 1)" style="text-decoration: none; margin-right: 15px;">
+                    <button style="display: inline; margin: 0;">&lt;</button>
+                </a>
+            }
+            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber</p>
+            <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
+                <button style="display: inline; margin: 0;">&gt;</button>
+            </a>
+        </div>
     </div>
 </div>

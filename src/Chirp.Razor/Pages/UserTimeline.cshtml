@@ -5,15 +5,7 @@
     Layout = "Shared/_Layout";
     var authorName = HttpContext.GetRouteValue("author");
     
-    int pageNumber;
-    if (!Request.Query.ContainsKey("page"))
-    {
-        pageNumber = 1;
-    }
-    else
-    {
-        pageNumber = int.Parse(Request.Query["page"]);
-    }
+    int pageNumber = Model.pageNumber;
 }
 
 <div>

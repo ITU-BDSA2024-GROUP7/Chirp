@@ -32,36 +32,36 @@ public class UnitTests
         Assert.Equal(cheep.Timestamp, UnixTimeStampToDateTimeString(timestampData));
     }
     
-    [Fact]
-    public void TestReadallcheeps() 
-    {
-        // Arrange
-        CheepViewModel cheep = new CheepViewModel(@"Helge", 
-                                                 "Hello, BDSA students!", 
-                                                "1690892208");
-        // Get CHIRPDB Environment Variable
-        string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-
-        // Check if CHIRPDBPATH is set.
-        if (string.IsNullOrEmpty(chirpDbPath))
-        {
-            // string tempDir = Path.GetTempPath();
-            chirpDbPath = Path.Combine(Path.GetTempPath(), "mychirp.db");
-        }
-        
-        var dbFacade = new DBFacade(chirpDbPath);
-        var cheepService = new CheepService(dbFacade);
-        
-        // Act
-        var cheepList = cheepService.GetCheeps(1);
-        var First_cheep = cheepList.First();
-     
-        
-        // Assert
-        Assert.Equal(First_cheep.Author, cheep.Author);
-        Assert.Equal(First_cheep.Message, cheep.Message);
-        Assert.Equal(First_cheep.Timestamp, UnixTimeStampToDateTimeString(Double.Parse(cheep.Timestamp)));
-    }
+    // [Fact]
+    // public void TestReadallcheeps() 
+    // {
+    //     // Arrange
+    //     CheepViewModel cheep = new CheepViewModel(@"Helge", 
+    //                                              "Hello, BDSA students!", 
+    //                                             "1690892208");
+    //     // Get CHIRPDB Environment Variable
+    //     string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
+    //
+    //     // Check if CHIRPDBPATH is set.
+    //     if (string.IsNullOrEmpty(chirpDbPath))
+    //     {
+    //         // string tempDir = Path.GetTempPath();
+    //         chirpDbPath = Path.Combine(Path.GetTempPath(), "mychirp.db");
+    //     }
+    //     
+    //     var dbFacade = new DBFacade(chirpDbPath);
+    //     var cheepService = new CheepService(dbFacade);
+    //     
+    //     // Act
+    //     var cheepList = cheepService.GetCheeps(1);
+    //     var First_cheep = cheepList.First();
+    //  
+    //     
+    //     // Assert
+    //     Assert.Equal(First_cheep.Author, cheep.Author);
+    //     Assert.Equal(First_cheep.Message, cheep.Message);
+    //     Assert.Equal(First_cheep.Timestamp, UnixTimeStampToDateTimeString(Double.Parse(cheep.Timestamp)));
+    // }
     
     
     

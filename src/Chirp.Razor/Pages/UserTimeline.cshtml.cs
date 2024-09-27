@@ -14,7 +14,7 @@ public class UserTimelineModel : PageModel
     }
 
     // Runs when site is loaded (Request Method:GET)
-    public ActionResult OnGet(string author, int page)
+    public ActionResult OnGet(string author, [FromQuery] int page)
     {
         Cheeps = _service.GetCheepsFromAuthor(author, page);
         return Page();

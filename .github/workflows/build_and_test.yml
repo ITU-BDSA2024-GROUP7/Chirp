@@ -17,16 +17,13 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore src/Chirp.CLI.Client/Chirp.CLI.Client.csproj
+      run: dotnet restore src/Chirp.Razor/Chirp.Razor.csproj
 
     - name: Restore dependencies for test
-      run: dotnet restore test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj
-
-    - name: Restore dependencies for test csvdb
-      run: dotnet restore test/Chirp.CSVDB.Tests/Chirp.CSVDB.Tests.csproj
-
+      run: dotnet restore test/Chirp.Razor.test/Chirp.Razor.test.csproj
+      
     - name: Build
-      run: dotnet build src/Chirp.CLI.Client/Chirp.CLI.Client.csproj --no-restore
+      run: dotnet build src/Chirp.Razor/Chirp.Razor.csproj --no-restore
 
     - name: Test
-      run: dotnet test test/Chirp.CLI.Client.Tests/Chirp.CLI.Client.Tests.csproj --verbosity normal
+      run: dotnet test test/Chirp.Razor.test/Chirp.Razor.test.csproj --verbosity normal

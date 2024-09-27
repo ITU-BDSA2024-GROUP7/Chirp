@@ -74,7 +74,7 @@ public class DBFacade
     
     
     //metode retrive entire list
-    public List<CheepViewModel> RetriveAllCheeps()
+    public List<CheepViewModel> RetriveAllCheeps(int page)
     {
         var cheeps = new List<CheepViewModel>();
         
@@ -82,7 +82,11 @@ public class DBFacade
         connection.Open();
         //creates query
         using var command = connection.CreateCommand();
-        var query = "SELECT u.username,m.text,m.pub_date FROM message m JOIN user u ON u.user_id = m.author_id;";
+        // Selects cheeps in the range from (page - 1) * 32 to page * 32, fetching 32 cheeps per page
+        var query = @$"SELECT u.username,m.text,m.pub_date 
+                        FROM message m JOIN user u ON u.user_id = m.author_id
+                        ORDER BY m.pub_date ASC LIMIT 32 OFFSET (@page - 1) * 32;";
+        command.Parameters.AddWithValue("@page", page);
         command.CommandText = query;
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -96,7 +100,7 @@ public class DBFacade
     
     
     //retrive chirps from author
-    public List<CheepViewModel> RetriveCheepFromAuthor(string author)
+    public List<CheepViewModel> RetriveCheepFromAuthor(string author, int page)
     {
         var cheeps = new List<CheepViewModel>();
 
@@ -107,9 +111,11 @@ public class DBFacade
         var query = @$"SELECT u.username, m.text, m.pub_date 
                         FROM message m 
                         JOIN user u ON u.user_id = m.author_id 
-                        WHERE u.username=@Author;";
+                        WHERE u.username=@Author
+                        ORDER BY m.pub_date ASC LIMIT 32 OFFSET (@page - 1) * 32;";
             // test query SELECT u.username,m.text,m.pub_date FROM message m JOIN user u ON u.user_id = m.author_id WHERE u.username = 'Helge';
         command.Parameters.AddWithValue("@Author", author);
+        command.Parameters.AddWithValue("@page", page);
         command.CommandText = query;
         using var reader = command.ExecuteReader();
         while (reader.Read())

@@ -12,10 +12,13 @@ public class PublicModel : PageModel
     {
         _service = service;
     }
-
-    public ActionResult OnGet()
+    /// <summary>
+    /// Gets cheeps and stores them in a list, when the page is loaded
+    /// </summary>
+    /// <returns></returns>
+    public ActionResult OnGet([FromQuery] int page)
     {
-        Cheeps = _service.GetCheeps();
+        Cheeps = _service.GetCheeps(page);
         return Page();
     }
 }

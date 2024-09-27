@@ -3,9 +3,19 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
+    
+    int pageNumber;
+    if (!Request.Query.ContainsKey("page"))
+    {
+        pageNumber = 1;
+    }
+    else
+    {
+        pageNumber = int.Parse(Request.Query["page"]);
+    }
 }
 
-<div>
+<div xmlns="http://www.w3.org/1999/html">
     <h2> Public Timeline </h2>
 
     @if (Model.Cheeps.Any())
@@ -29,4 +39,15 @@
     {
         <em>There are no cheeps so far.</em>
     }
+    
+    <div>
+        @if (@pageNumber != 1)
+        {
+            <a href="/?page=@(pageNumber - 1)"><p>Previous Page: @(pageNumber - 1)</p></a>
+        }
+        <p>Current page: @pageNumber</p>
+        <a href="/?page=@(pageNumber + 1)"><p>Next Page: @(pageNumber + 1)</p></a>
+    </div>
+    
+    
 </div>

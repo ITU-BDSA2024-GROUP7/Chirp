@@ -22,7 +22,7 @@ public class UnitTests
         var cheepService = new CheepService(dbFacade);
         
         // Act
-        var cheepList = cheepService.GetCheepsFromAuthor(authorData);
+        var cheepList = cheepService.GetCheepsFromAuthor(authorData, 1);
         var cheep = cheepList.First();
      
         
@@ -36,9 +36,9 @@ public class UnitTests
     public void TestReadallcheeps() 
     {
         // Arrange
-        CheepViewModel cheep = new CheepViewModel(@"Jacqualine Gilcoine", 
-                                                 "They were married in Chicago, with old Smith, and was expected aboard every day; meantime, the two went past me.", 
-                                                "1690895677");
+        CheepViewModel cheep = new CheepViewModel(@"Helge", 
+                                                 "Hello, BDSA students!", 
+                                                "1690892208");
         // Get CHIRPDB Environment Variable
         string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
 
@@ -53,7 +53,7 @@ public class UnitTests
         var cheepService = new CheepService(dbFacade);
         
         // Act
-        var cheepList = cheepService.GetCheeps();
+        var cheepList = cheepService.GetCheeps(1);
         var First_cheep = cheepList.First();
      
         

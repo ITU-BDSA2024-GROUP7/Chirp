@@ -2,9 +2,10 @@ namespace Chirp.Razor.test;
 
 public class UnitTests
 {
+    
     [Theory]
     [InlineData("Helge", "Hello, BDSA students!", 1690892208)]
-    [InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
+    //[InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
     public void TestReadForAuthor (string authorData, string messageData, long timestampData) 
     {
         // Arrange

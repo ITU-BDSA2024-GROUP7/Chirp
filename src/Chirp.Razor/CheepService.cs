@@ -29,5 +29,4 @@ public class CheepService : ICheepService
        return _dbFacade.RetriveCheepFromAuthor(author);
     }
 
-   
 }

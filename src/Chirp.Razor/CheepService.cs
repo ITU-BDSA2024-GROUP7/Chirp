@@ -27,7 +27,6 @@ public class CheepService : ICheepService
     public List<CheepViewModel> GetCheepsFromAuthor(string author)
     {
        return _dbFacade.RetriveCheepFromAuthor(author);
-        
     }
 
    

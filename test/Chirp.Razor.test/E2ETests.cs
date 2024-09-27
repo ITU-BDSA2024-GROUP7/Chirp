@@ -39,5 +39,4 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         // Check for the actual content on the page
         content.Should().Contain("There are no cheeps so far.");
     }
-
 }

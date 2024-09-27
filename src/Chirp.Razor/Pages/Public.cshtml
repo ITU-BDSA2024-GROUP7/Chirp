@@ -5,7 +5,7 @@
     Layout = "Shared/_Layout";
 }
 
-<div>
+<div xmlns="http://www.w3.org/1999/html">
     <h2> Public Timeline </h2>
 
     @if (Model.Cheeps.Any())
@@ -29,4 +29,16 @@
     {
         <em>There are no cheeps so far.</em>
     }
+    <div>
+        @if (@Request.Query["page"] != "1")
+        {
+            <a href="/?page=@(int.Parse(Request.Query["page"]) - 1)"><p>Previous Page: @(int.Parse(Request.Query["page"]) - 1)</p></a>
+        }
+        <p>Current page: @Request.Query["page"]</p>
+        <a href="/?page=@(int.Parse(Request.Query["page"]) + 1)"><p>Next Page: @(int.Parse(Request.Query["page"]) + 1)</p></a>
+    </div>
+    
+    
+    
+    
 </div>

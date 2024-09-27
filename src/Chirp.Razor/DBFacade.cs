@@ -82,10 +82,7 @@ public class DBFacade
         connection.Open();
         //creates query
         using var command = connection.CreateCommand();
-        // (1 - 1) * 32 <=> 0 * 32 = ]0 - 32]
-        // (2 - 1) * 32 <=> 1 * 32 = ]32 - 64]
-        // (3 - 1) * 32 <=> 2 * 32 = ]64 - 96]
-        // Query: SELECT * FROM cheeps ORDER BY unixtimestamp ASC OFFSET (page - 1) * 32 LIMIT 32
+        // Selects cheeps in the range from (page - 1) * 32 to page * 32, fetching 32 cheeps per page
         var query = @$"SELECT u.username,m.text,m.pub_date 
                         FROM message m JOIN user u ON u.user_id = m.author_id
                         ORDER BY m.pub_date ASC LIMIT 32 OFFSET (@page - 1) * 32;";
@@ -102,7 +99,7 @@ public class DBFacade
     
     
     //retrive chirps from author
-    public List<CheepViewModel> RetriveCheepFromAuthor(string author)
+    public List<CheepViewModel> RetriveCheepFromAuthor(string author, int page)
     {
         var cheeps = new List<CheepViewModel>();
 

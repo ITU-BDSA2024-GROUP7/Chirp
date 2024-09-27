@@ -21,15 +21,4 @@ public class PublicModel : PageModel
         Cheeps = _service.GetCheeps(page);
         return Page();
     }
-    /// <summary>
-    /// Gets cheeps based on a query to get the Cheeps dedicated to the given page (or just the default start page), when the page is loaded
-    /// </summary>
-    /// <param name="page"></param>
-    /// <returns></returns>
-    // public ActionResult OnGet([FromQuery] int? page)
-    // {
-    //     int startPage = page ?? 1;
-    //     Cheeps = _service.GetCheeps();
-    //     return Page();
-    // }
 }

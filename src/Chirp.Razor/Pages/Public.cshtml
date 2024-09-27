@@ -4,15 +4,8 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
     
-    int pageNumber;
-    if (!Request.Query.ContainsKey("page"))
-    {
-        pageNumber = 1;
-    }
-    else
-    {
-        pageNumber = int.Parse(Request.Query["page"]);
-    }
+    int pageNumber = Model.pageNumber;
+
 }
 
 <div xmlns="http://www.w3.org/1999/html">

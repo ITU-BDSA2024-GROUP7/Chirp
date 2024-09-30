@@ -31,13 +31,43 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     {
         var client = _factory.CreateClient();
     
-        var response = await client.GetAsync("/Testperson?page=1");
+        var response = await client.GetAsync("/Testperson");
     
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
     
         // Check for the actual content on the page
         content.Should().Contain("There are no cheeps so far.");
+    }
+    
+    [Fact]
+    public async Task DoesPublicTimelineContainHelgeTest()
+    {
+        var client = _factory.CreateClient();
+    
+        var response = await client.GetAsync("/");
+    
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+    
+        // Check for the actual content on the page
+        content.Should().Contain("Helge");
+        content.Should().Contain("Hello, BDSA students!");
+    }
+    
+    [Fact]
+    public async Task DoesPrivateTimelineContainAdrianTest()
+    {
+        var client = _factory.CreateClient();
+    
+        var response = await client.GetAsync("/Adrian");
+    
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+    
+        // Check for the actual content on the page
+        content.Should().Contain("Adrian");
+        content.Should().Contain("Hej, velkommen til kurset");
     }
 
 }

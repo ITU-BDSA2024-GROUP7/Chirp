@@ -22,18 +22,13 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd Chirp
+  cd Chirp/Chirp.Razor
 ```
 
-For reading
+Run the web application
 
 ```bash
-  dotnet run read
-```
-For Writing
-
-```bash
-  dotnet run chirp "message"
+  dotnet run
 ```
 
 

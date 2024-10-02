@@ -1,55 +1,86 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Chirp.Razor;
-
-public interface ICheepRepository
+namespace Chirp.Razor
 {
-    Task CreateMessage(CheepDTO newCheep);
-    Task<List<CheepDTO>> ReadMessages(string userName);
-    Task UpdateMessage(CheepDTO alteredMessage);
-}
-
-public class CheepRepository : ICheepRepository
-{
-    private readonly CheepDBContext _dbContext; // dependency injection
-    public CheepRepository(CheepDBContext dbContext)
+    public interface ICheepRepository
     {
-        _dbContext = dbContext;
+        Task CreateMessage(CheepDTO newCheep);
+        Task<List<CheepDTO>> ReadMessages(string userName);
+        Task UpdateMessage(CheepDTO alteredMessage);
     }
-    
-    public async Task<List<CheepDTO>> ReadMessages(string userName)
-    {
-        // Formulate the query - will be translated to SQL by EF Core
-        var query = _dbContext.Cheeps.Select(message => new { message.Author, message.Text });
-        // Execute the query
-        var result = await query.ToListAsync();
-        return result;
-        // ...
-    }
-    
-    public async Task CreateMessage(CheepDTO cheep)
-    {
-        // Define the query - with our setup, EF Core translates this to an SQLite query in the background
-        var query = from cheep in _dbContext.Cheeps
-            where cheep.Author.Name == "Adrian"
-            select new { cheep.Text, cheep.Author };
-            // Execute the query and store the results
-        var result = await query.ToListAsync();
-        
-        Cheep newCheep = new() { Text = cheep.Text, Author = cheep.AuthorId, TimeStamp = long.Parse(cheep.TimeStamp) };
-        
-        // Messages Text , Author som skal reference til, System date time to long
-        
-        var queryResult = await _dbContext.cheep.AddAsync(newMessage); // does not write to the database!
 
-        await _dbContext.SaveChangesAsync(); // persist the changes in the database
-        return queryResult.Entity.MessageId;
-    }
-}
+    public class CheepRepository : ICheepRepository
+    {
+        private readonly CheepDBContext _dbContext;
 
-public class CheepDTO
-{
-    public string Text { get; set; }
-    public int AuthorId { get; set; }
-    public long TimeStamp { get; set; }
+        public CheepRepository(CheepDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        // Read messages by a specific user and map to CheepDTO
+        public async Task<List<CheepDTO>> ReadMessages(string userName)
+        {
+            var query = from cheep in _dbContext.Cheeps
+                        where cheep.Author.Name == userName
+                        select new CheepDTO
+                        {
+                            AuthorName = cheep.Author.Name,
+                            Text = cheep.Text,
+                            FormattedTimeStamp = cheep.TimeStamp.ToString() // You might want to format this better
+                        };
+
+            // Execute the query and return the list of messages
+            return await query.ToListAsync();
+        }
+
+        // Create a new message
+        public async Task CreateMessage(CheepDTO cheepDTO)
+        {
+            // Find the author by name
+            var author = await (from a in _dbContext.Authors
+                                where a.Name == cheepDTO.AuthorName
+                                select a).FirstOrDefaultAsync();
+
+            if (author == null)
+            {
+                throw new Exception($"Author {cheepDTO.AuthorName} not found");
+            }
+
+            // Create a new Cheep
+            Cheep newCheep = new Cheep
+            {
+                Text = cheepDTO.Text,
+                Author = author,
+                TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
+            };
+
+            // Add the new Cheep to the DbContext
+            await _dbContext.Cheeps.AddAsync(newCheep);
+            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+        }
+
+        // Update message (to be implemented)
+        public Task UpdateMessage(CheepDTO alteredMessage)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // Data Transfer Object for Cheep
+    public class CheepDTO
+    {
+        public string AuthorName { get; set; } // Author's name
+        public string Text { get; set; } // Message text
+        public string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
+    }
+
+    // Data Transfer Object for Author
+    public class AuthorDTO
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
 }

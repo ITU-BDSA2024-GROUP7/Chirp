@@ -19,8 +19,9 @@ namespace Chirp.Razor.Migrations
 
             modelBuilder.Entity("Chirp.Razor.Author", b =>
                 {
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("AuthorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -41,9 +42,8 @@ namespace Chirp.Razor.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")
                         .IsRequired()

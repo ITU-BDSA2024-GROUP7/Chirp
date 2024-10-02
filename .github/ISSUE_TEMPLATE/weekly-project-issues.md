@@ -1,6 +1,6 @@
 ---
-name: Custom issue template
-about: Describe this issue template's purpose here.
+name: Weekly Project Issues
+about: Template for issues given by course
 title: ''
 labels: ''
 assignees: ''

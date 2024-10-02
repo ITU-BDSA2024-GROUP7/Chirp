@@ -2,8 +2,8 @@
 
 public class Cheep
 {
-    public int MessageId { get; set; }
-    public int UserId { get; set; }
+    public int MessageId { get; set; } // Primary Key
+    public Author AuthorId { get; set; } // Navigation Property
     public string Text { get; set; }
-    publ
+    public DateTime TimeStamp { get; set; } 
 }

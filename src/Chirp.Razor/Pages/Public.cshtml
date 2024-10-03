@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Chirp.Razor
 @model Chirp.Razor.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -11,7 +12,6 @@
 <div xmlns="http://www.w3.org/1999/html">
     
     <CheepList Cheeps="Model.Cheeps"/>
-
     <h2> Public Timeline </h2>
 
     @if (Model.Cheeps.Any())
@@ -22,10 +22,10 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@cheep.Author">@cheep.Author</a>
+                            <a href="/@cheep.AuthorName">@cheep.AuthorName</a>
                         </strong>
-                        <small>&mdash; @cheep.Timestamp</small> <br>
-                        @cheep.Message
+                        <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
+                        @cheep.Text
                         
                     </p>
                 </li>

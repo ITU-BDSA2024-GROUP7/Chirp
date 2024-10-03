@@ -14,8 +14,10 @@ namespace Chirp.Razor
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container
-            builder.Services.AddRazorPages();
-            builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+            builder.Services.AddRazorPages(); 
+            builder.Services.AddScoped<CheepRepository>();
+           // builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+            
 
             // Load database connection via configuration
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

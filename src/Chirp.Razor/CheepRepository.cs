@@ -6,9 +6,11 @@ namespace Chirp.Razor
 {
     public interface ICheepRepository
     {
-        Task CreateMessage(CheepDTO newCheep);
-        Task<List<CheepDTO>> ReadMessages(string userName);
-        Task UpdateMessage(CheepDTO alteredMessage);
+        Task CreateCheep(CheepDTO newCheep);
+        Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page);
+        Task<List<CheepDTO>> ReadAllCheeps(int page);
+
+        Task UpdateCheep(CheepDTO alteredMessage);
     }
 
     public class CheepRepository : ICheepRepository
@@ -21,7 +23,7 @@ namespace Chirp.Razor
         }
 
         // Read messages by a specific user and map to CheepDTO
-        public async Task<List<CheepDTO>> ReadMessages(string userName)
+        public async Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page)
         {
             var query = from cheep in _dbContext.Cheeps
                         where cheep.Author.Name == userName
@@ -36,8 +38,25 @@ namespace Chirp.Razor
             return await query.ToListAsync();
         }
 
+        public async Task<List<CheepDTO>> ReadAllCheeps(int page)
+        {
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip(page * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    AuthorName = cheep.Author.Name,
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                });
+            // Execute the query and return the list of messages
+            return await query.ToListAsync();
+        }
+
         // Create a new message
-        public async Task CreateMessage(CheepDTO cheepDTO)
+        public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
             var author = await (from a in _dbContext.Authors
@@ -63,7 +82,7 @@ namespace Chirp.Razor
         }
 
         // Update message (to be implemented)
-        public Task UpdateMessage(CheepDTO alteredMessage)
+        public Task UpdateCheep(CheepDTO alteredMessage)
         {
             throw new NotImplementedException();
         }

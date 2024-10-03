@@ -1,4 +1,4 @@
-
+/*
 using Chirp.Razor;
 public record CheepViewModel(string Author, string Message, string Timestamp); //7 fix record
 
@@ -30,3 +30,4 @@ public class CheepService : ICheepService
     }
 
 }
+*/

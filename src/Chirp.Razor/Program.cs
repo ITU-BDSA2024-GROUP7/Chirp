@@ -28,7 +28,11 @@ namespace Chirp.Razor
             }
 
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
-            
+
+            var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+            logger.LogInformation($"Using connection string: {connectionString}");
+
+
             // Build the application
             var app = builder.Build();
 

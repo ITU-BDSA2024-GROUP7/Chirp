@@ -66,4 +66,4 @@ jobs:
       - name: Check migration files
         run: |
           echo "Checking for migration files..."
-          ls /path/to/migrations/directory
+          ls src/Chirp.Razor/Migrations

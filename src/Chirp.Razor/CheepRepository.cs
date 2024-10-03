@@ -10,7 +10,7 @@ namespace Chirp.Razor
         Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page);
         Task<List<CheepDTO>> ReadAllCheeps(int page);
 
-        Task UpdateCheep(CheepDTO alteredMessage);
+        Task UpdateCheep(CheepDTO alteredCheep);
     }
 
     public class CheepRepository : ICheepRepository
@@ -82,7 +82,7 @@ namespace Chirp.Razor
         }
 
         // Update message (to be implemented)
-        public Task UpdateCheep(CheepDTO alteredMessage)
+        public Task UpdateCheep(CheepDTO alteredCheep)
         {
             throw new NotImplementedException();
         }

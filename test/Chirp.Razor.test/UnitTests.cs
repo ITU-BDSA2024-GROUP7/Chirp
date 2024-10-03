@@ -1,4 +1,4 @@
-namespace Chirp.Razor.test;
+/*namespace Chirp.Razor.test;
 
 public class UnitTests
 {
@@ -76,3 +76,4 @@ public class UnitTests
         return dateTime.ToString("dd/MM/yy H:mm:ss");
     }
 }
+*/

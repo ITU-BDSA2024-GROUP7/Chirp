@@ -54,10 +54,7 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_371096C17F9F4B78A4EC67F9D4388C6C }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_95BEDB95DA164A03AC4825C139F10D1E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A6D3EA295F164068BE4CFAC3BE273D3E }}
-          
-      - name: Apply database migrations
-        run: dotnet ef database update
-        
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3

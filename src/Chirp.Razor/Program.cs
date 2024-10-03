@@ -21,7 +21,7 @@ namespace Chirp.Razor
 
             // Load database connection via configuration
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString).EnableSensitiveDataLogging());
+            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString).EnableSensitiveDataLogging()); // Disable sensitive data logging when issue is fixed
 
             var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
             if (string.IsNullOrWhiteSpace(connectionString))

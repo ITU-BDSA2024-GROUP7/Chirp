@@ -29,8 +29,17 @@ namespace Chirp.Razor
             // Seed the database after the application is built
             using (var scope = app.Services.CreateScope())
             {
-                using var migrationContext = scope.ServiceProvider.GetService<CheepDBContext>();
-                migrationContext.Database.Migrate();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                var migrationContext = scope.ServiceProvider.GetService<CheepDBContext>();
+                try
+                {
+                    migrationContext.Database.Migrate(); // Apply pending migrations
+                    logger.LogInformation("Migrations applied successfully.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"An error occurred while applying migrations: {ex.Message}");
+                }
                 
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<CheepDBContext>();

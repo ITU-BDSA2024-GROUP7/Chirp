@@ -63,3 +63,7 @@ jobs:
           slot-name: 'Production'
           package: .
           
+      - name: Check migration files
+        run: |
+          echo "Checking for migration files..."
+          ls /path/to/migrations/directory

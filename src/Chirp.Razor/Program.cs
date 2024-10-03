@@ -32,6 +32,7 @@ namespace Chirp.Razor
             {
                 logger.LogInformation($"Using connection string: {connectionString}");
             }
+            logger.LogInformation($"Connection string from environment: '{Environment.GetEnvironmentVariable("DefaultConnection")}'");
 
             // Build the application
             var app = builder.Build();

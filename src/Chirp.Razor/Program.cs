@@ -21,17 +21,17 @@ namespace Chirp.Razor
 
             // Load database connection via configuration
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new ArgumentException("The database connection string is missing or invalid.");
-            }
-
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
             var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
-            logger.LogInformation($"Using connection string: {connectionString}");
-
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                logger.LogError("Connection string is null or empty.");
+            }
+            else
+            {
+                logger.LogInformation($"Using connection string: {connectionString}");
+            }
 
             // Build the application
             var app = builder.Build();

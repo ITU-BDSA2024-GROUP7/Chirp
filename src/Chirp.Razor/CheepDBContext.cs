@@ -8,5 +8,4 @@ public class CheepDBContext : DbContext
     public DbSet<Author> Authors { get; set; }
     
     public CheepDBContext(DbContextOptions<CheepDBContext> options) : base(options) { }
-    
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Chirp.Razor; // Ensure this is the correct namespace for your project
-using SQLitePCL;
+using Chirp.Razor;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor
 {
@@ -10,30 +10,31 @@ namespace Chirp.Razor
     {
         public static void Main(string[] args)
         {
-            // Initialize SQLite provider
-            Batteries.Init(); // Ensure this method is available and correctly referenced
-
             // Create the WebApplicationBuilder
             var builder = WebApplication.CreateBuilder(args);
 
-            // Get CHIRPDB Environment Variable
-            string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-
-            // Check if CHIRPDBPATH is set
-            if (string.IsNullOrEmpty(chirpDbPath))
-            {
-                chirpDbPath = Path.Combine(Path.GetTempPath(), "mychirp.db");
-            }
-
             // Add services to the container
-            builder.Services.AddRazorPages();
-            builder.Services.AddSingleton<ICheepService, CheepService>();
+            builder.Services.AddRazorPages(); 
+            builder.Services.AddScoped<CheepRepository>();
+           // builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+            
 
-            // Register DBFacade with the specified database path
-            builder.Services.AddSingleton(sp => new DBFacade(chirpDbPath));
+            // Load database connection via configuration
+            string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
             // Build the application
             var app = builder.Build();
+
+            // Seed the database after the application is built
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<CheepDBContext>();
+                
+                // Call the SeedDatabase method
+                DbInitializer.SeedDatabase(context);
+            }
 
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())

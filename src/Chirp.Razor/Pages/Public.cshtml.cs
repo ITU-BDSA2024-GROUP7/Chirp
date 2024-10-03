@@ -5,11 +5,11 @@ namespace Chirp.Razor.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly ICheepService _service;
+    private readonly CheepRepository _service;
     public int pageNumber { get; set; }
-    public List<CheepViewModel> Cheeps { get; set; }
+    public List<CheepDTO> Cheeps { get; set; }
 
-    public PublicModel(ICheepService service)
+    public PublicModel(CheepRepository service)
     {
         _service = service;
     }
@@ -17,7 +17,7 @@ public class PublicModel : PageModel
     /// Gets cheeps and stores them in a list, when the page is loaded
     /// </summary>
     /// <returns></returns>
-    public ActionResult OnGet([FromQuery] int page)
+    public async Task<IActionResult> OnGet([FromQuery] int page)
     {
         if (!(page is int) || page <= 0)
         {
@@ -25,7 +25,7 @@ public class PublicModel : PageModel
         }
         
         pageNumber = page;
-        Cheeps = _service.GetCheeps(page);
+        Cheeps = await _service.ReadAllCheeps(page);
         return Page();
     }
 }

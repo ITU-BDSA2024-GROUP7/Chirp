@@ -39,14 +39,26 @@ namespace Chirp.Razor
             // Seed the database after the application is built
             using (var scope = app.Services.CreateScope())
             {
+                // old code, outcommented for testing
+                /*
                 using var migrationContext = scope.ServiceProvider.GetService<CheepDBContext>();
                 migrationContext.Database.Migrate();
-
+                */
+                
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<CheepDBContext>();
-
-                // Call the SeedDatabase method
-                DbInitializer.SeedDatabase(context);
+                
+                
+                try
+                {
+                    context.Database.Migrate();
+                    DbInitializer.SeedDatabase(context);
+                    logger.LogInformation("Database seeded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
             }
 
             // Configure the HTTP request pipeline

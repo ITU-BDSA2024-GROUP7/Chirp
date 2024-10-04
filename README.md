@@ -22,7 +22,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd Chirp/Chirp.Razor
+  cd src/Chirp.Razor
 ```
 
 Run the web application

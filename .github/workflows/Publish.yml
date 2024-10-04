@@ -55,14 +55,13 @@ jobs:
         run: |
           # Variables
           tag=$(git describe --tags --abbrev=0)
-          release_name="Chirp-$tag-${{ matrix.target }}"
+          release_name="Chirp-$tag-${{ matrix.kind }}"
           
           # Build
-          dotnet publish src/Chirp.Razor/Chirp.Razor.csproj -r ${{ matrix.target }} -c Release -o "$release_name"
+          dotnet publish src/Chirp.Razor/Chirp.Razor.csproj -r ${{ matrix.kind }} -c Release -o "$release_name"
           
           # Zip files
           zip -r "${release_name}.zip" "$release_name"
-          
           
           # Delete output directory
           rm -r "$release_name"

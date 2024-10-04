@@ -23,12 +23,6 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-#      - name: Restore dependencies
-#        run: dotnet restore src/Chirp.Razor/Chirp.Razor.csproj
-#
-#      - name: Restore dependencies unix
-#        run: dotnet restore test/Chirp.Razor.test/Chirp.Razor.test.csproj
-
       - name: Test
         run: dotnet test test/Chirp.Razor.test/Chirp.Razor.test.csproj --verbosity normal
 
@@ -51,7 +45,6 @@ jobs:
           dotnet-version: 8.x.x
 
       - name: Build
-        #run: dotnet publish src/Chirp.Razor/Chirp.Razor.csproj -c Release -r ${{ matrix.target }} -f net8.0 --no-self-contained  -p:PublishSingleFile=true -o publish/${{ matrix.target }}
         run: |
           # Variables
           tag=$(git describe --tags --abbrev=0)
@@ -66,7 +59,6 @@ jobs:
           # Delete output directory
           rm -r "$release_name"
         
-# Should create a source code dump
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

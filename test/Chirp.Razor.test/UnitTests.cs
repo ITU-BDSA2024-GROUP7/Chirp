@@ -5,7 +5,6 @@ namespace Chirp.Razor.test;
 
 public class UnitTests
 {
-    
     [Theory]
     [InlineData("Helge", "Hello, BDSA students!", 1690892208)]
     //[InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
@@ -115,7 +114,6 @@ public class UnitTests
         
          // Assert
          Assert.True(cheepList.Count() == 4);
-         
      }
     
     
@@ -127,7 +125,6 @@ public class UnitTests
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         dateTime = dateTime.AddSeconds(unixTimeStamp);
-        return dateTime.ToString("yyyy-MM-dd H:mm:ss");;
+        return dateTime.ToString("yyyy-MM-dd H:mm:ss");
     }
-    
 }

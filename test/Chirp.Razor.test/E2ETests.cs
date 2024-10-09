@@ -1,7 +1,9 @@
-﻿/*using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Chirp.Razor;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor.test;
 
@@ -17,6 +19,15 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetIndexPageAndCorrectContent()
     {
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+        
+        using var context = new CheepDBContext(builder.Options);
+        await context.Database.EnsureCreatedAsync();
+        
+        ICheepRepository repository = new CheepRepository(context);
+        
         var client = _factory.CreateClient();
         
         var response = await client.GetAsync("/");
@@ -41,7 +52,7 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     }
     
     [Fact]
-    public async Task DoesPublicTimelineContainHelgeTest()
+    public async Task DoesPublicTimelineContainJacqualineTest()
     {
         var client = _factory.CreateClient();
     
@@ -51,8 +62,8 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         var content = await response.Content.ReadAsStringAsync();
     
         // Check for the actual content on the page
-        content.Should().Contain("Helge");
-        content.Should().Contain("Hello, BDSA students!");
+        content.Should().Contain("Jacqualine Gilcoine");
+        content.Should().Contain("In the morning of the wind, some few splintered planks, of what present avail to him.");
     }
     
     [Fact]
@@ -69,5 +80,4 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         content.Should().Contain("Adrian");
         content.Should().Contain("Hej, velkommen til kurset");
     }
-
-}*/
+}

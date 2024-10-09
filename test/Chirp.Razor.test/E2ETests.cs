@@ -52,7 +52,7 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     }
     
     [Fact]
-    public async Task DoesPublicTimelineContainHelgeTest()
+    public async Task DoesPublicTimelineContainJacqualineTest()
     {
         var client = _factory.CreateClient();
     

@@ -62,8 +62,8 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         var content = await response.Content.ReadAsStringAsync();
     
         // Check for the actual content on the page
-        content.Should().Contain("Helge");
-        content.Should().Contain("Hello, BDSA students!");
+        content.Should().Contain("Jacqualine Gilcoine");
+        content.Should().Contain("In the morning of the wind, some few splintered planks, of what present avail to him.");
     }
     
     [Fact]

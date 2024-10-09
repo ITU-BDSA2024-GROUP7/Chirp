@@ -10,6 +10,7 @@ namespace Chirp.Razor
         Task<List<CheepDTO>> ReadAllCheeps(int page);
         Task CreateCheep(CheepDTO newCheep);
         Task UpdateCheep(CheepDTO alteredCheep);
+        Task<int> GetTotalPages();
     }
     
     public class CheepRepository : ICheepRepository
@@ -53,7 +54,12 @@ namespace Chirp.Razor
             // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
-
+        // get total count of pages 
+        public async Task<int> GetTotalPages()
+        {
+            var totalCheeps = await _dbContext.Cheeps.CountAsync();
+            return totalCheeps / 32;
+        }
         // Create a new message
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
@@ -63,7 +69,6 @@ namespace Chirp.Razor
             if (author == null)
             {
                 await CreateAuthor();
-                
                 author = FindAuthorByName(cheepDTO.AuthorName);
             }
 
@@ -71,7 +76,7 @@ namespace Chirp.Razor
             Cheep newCheep = new Cheep
             {
                 Text = cheepDTO.Text,
-                Author = author,
+                Author =  author,
                 TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
             };
 

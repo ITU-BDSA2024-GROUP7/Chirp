@@ -6,10 +6,16 @@
     var authorName = HttpContext.GetRouteValue("author");
     
     int pageNumber = Model.PageNumber;
+    int totalPages = Model.TotalPageNumber;
 }
 
 <div>
-    <h2> @authorName's Timeline </h2>
+    <div class="timeline-header">
+        <a class="timeline-button" href="/">
+            <button >Back</button>
+        </a>
+        <h2> @authorName's Timeline </h2>
+    </div>
 
     @if (Model.Cheeps.Any())
     {
@@ -37,14 +43,24 @@
         <div style="display: inline-block;">
             @if (@pageNumber != 1)
             {
+                <a href="/@authorName?page=1" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&lt;&lt;</button>
+                </a>
                 <a href="/@authorName?page=@(pageNumber - 1)" style="text-decoration: none; margin-right: 15px;">
                     <button style="display: inline; margin: 0;">&lt;</button>
                 </a>
             }
-            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber</p>
-            <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
-                <button style="display: inline; margin: 0;">&gt;</button>
-            </a>
+            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
+            @if (@pageNumber != @totalPages)
+            {
+                <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&gt;</button>
+                </a>
+                <a href="/@authorName?page=@totalPages" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&gt;&gt;</button>
+                </a>
+            }
+            
         </div>
     </div>
 </div>

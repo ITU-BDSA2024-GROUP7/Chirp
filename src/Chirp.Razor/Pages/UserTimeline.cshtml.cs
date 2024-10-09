@@ -7,6 +7,7 @@ public class UserTimelineModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
+    public int TotalPageNumber { get; set; }
     public required List<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(CheepService service)
@@ -24,6 +25,7 @@ public class UserTimelineModel : PageModel
         
         PageNumber = page;
         Cheeps = await _service.GetCheepsFromAuthor(author, page);
+        TotalPageNumber = await _service.GetTotalPageNumber(author);
         return Page();
     }
 }

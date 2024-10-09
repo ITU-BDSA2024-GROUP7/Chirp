@@ -10,7 +10,7 @@ namespace Chirp.Razor
         Task<List<CheepDTO>> ReadAllCheeps(int page);
         Task CreateCheep(CheepDTO newCheep);
         Task UpdateCheep(CheepDTO alteredCheep);
-        Task<int> GetTotalPages();
+        Task<int> GetTotalPages(string authorName);
     }
     
     public class CheepRepository : ICheepRepository
@@ -61,10 +61,19 @@ namespace Chirp.Razor
             return await query.ToListAsync();
         }
         // get total count of pages 
-        public async Task<int> GetTotalPages()
+        public async Task<int> GetTotalPages(string authorName = null)
         {
-            var totalCheeps = await _dbContext.Cheeps.CountAsync();
-            return totalCheeps / 32;
+            var query = _dbContext.Cheeps.AsQueryable();
+            
+            // Apply the where clause if there is a valid authorName.
+            if (!string.IsNullOrEmpty(authorName))
+            {
+                query = query.Where(cheep => cheep.Author.Name == authorName);
+            }
+
+            var totalCheeps = await query.CountAsync();
+
+            return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
         // Create a new message
         public async Task CreateCheep(CheepDTO cheepDTO)

@@ -6,6 +6,7 @@
     var authorName = HttpContext.GetRouteValue("author");
     
     int pageNumber = Model.PageNumber;
+    int totalPages = Model.TotalPageNumber;
 }
 
 <div>
@@ -41,7 +42,7 @@
                     <button style="display: inline; margin: 0;">&lt;</button>
                 </a>
             }
-            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber</p>
+            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
             <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
                 <button style="display: inline; margin: 0;">&gt;</button>
             </a>

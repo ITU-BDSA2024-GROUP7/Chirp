@@ -87,19 +87,4 @@ namespace Chirp.Razor
             throw new NotImplementedException();
         }
     }
-
-    // Data Transfer Object for Cheep
-    public class CheepDTO
-    {
-        public string AuthorName { get; set; } // Author's name
-        public string Text { get; set; } // Message text
-        public string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
-    }
-
-    // Data Transfer Object for Author
-    public class AuthorDTO
-    {
-        public string Name { get; set; }
-        public string Email { get; set; }
-    }
 }

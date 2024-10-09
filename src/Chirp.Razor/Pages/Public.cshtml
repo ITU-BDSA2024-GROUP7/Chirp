@@ -11,7 +11,9 @@
 }
 
 <div xmlns="http://www.w3.org/1999/html">
-    <h2> Public Timeline </h2>
+    <div class="timeline-header">
+        <h2> Public Timeline </h2>
+    </div>
 
     @if (Model.Cheeps.Any())
     {
@@ -25,7 +27,7 @@
                         </strong>
                         <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
                         @cheep.Text
-                        
+
                     </p>
                 </li>
             }
@@ -36,22 +38,33 @@
         <em>There are no cheeps so far.</em>
     }
 
-    <div style="text-align: center;">
-        <div style="display: inline-block;">
-            @if (@pageNumber != 1)
-            {
-                <a href="/?page=@(pageNumber - 1)" style="text-decoration: none; margin-right: 15px;">
-                    <button style="display: inline; margin: 0;">&lt;</button> <!-- Escaped the "<" character -->
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div style="display: flex; align-items: center; width: 300px; justify-content: space-between;">
+            <div style="width: 80px; display: flex; justify-content: flex-start;">
+                @if (@pageNumber != 1)
+                {
+                <a href="/?page=1" style="text-decoration: none; margin-right: 5px;">
+                    <button style="display: inline-block; margin: 0;">&lt;&lt;</button>
                 </a>
+                <a href="/?page=@(pageNumber - 1)" style="text-decoration: none;">
+                    <button style="display: inline-block; margin: 0;">&lt;</button>
+                </a>
+                }
+            </div>
 
-            }
-            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
-            @if (@pageNumber != @totalPages)
-            {
-                <a href="/?page=@(pageNumber + 1)" style="text-decoration: none;">
-                    <button style="display: inline; margin: 0;">&gt;</button> <!-- Escaped the ">" character -->
+            <p style="margin: 0;">Page @pageNumber / @totalPages</p>
+
+            <div style="width: 80px; display: flex; justify-content: flex-end;">
+                @if (@pageNumber != @totalPages)
+                {
+                <a href="/?page=@(pageNumber + 1)" style="text-decoration: none; margin-right: 5px;">
+                    <button style="display: inline-block; margin: 0;">&gt;</button>
                 </a>
-            }
+                <a href="/?page=@totalPages" style="text-decoration: none;">
+                    <button style="display: inline-block; margin: 0;">&gt;&gt;</button>
+                </a>
+                }
+            </div>
         </div>
     </div>
 

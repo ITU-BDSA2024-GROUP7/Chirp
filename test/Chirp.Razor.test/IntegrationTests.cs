@@ -26,6 +26,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         {
             builder.ConfigureServices(services =>
             {
+                // Used to remove if a context of the database exist (but only for these tests specifically in memory)
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
 
@@ -42,12 +43,11 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         });
 
         _client = _factory.CreateClient();
-
+        // Ensures the database was created
         using (var scope = _factory.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
             dbContext.Database.EnsureCreated();
-            //DbInitializer.SeedDatabase(dbContext);
         }
     }
 
@@ -73,7 +73,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
                 Author = author,
                 AuthorId = author.AuthorId,
                 Text = "Hello! I hope this goes through",
-                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1728497189).UtcDateTime // Ensure this matches the format in your model
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1728497189).UtcDateTime
             };
 
             dbContext.Authors.Add(author);
@@ -89,4 +89,44 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         cheeps.Should().NotBeNull();
         cheeps.Should().ContainSingle(c => c.Text == "Hello! I hope this goes through");
     }
+    
+    [Fact]
+    public async Task GetCheepsReturnsCheepsForSpecificAuthorId()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
+            dbContext.Database.EnsureDeleted(); // Clear previous data
+            dbContext.Database.EnsureCreated(); // Recreate the database
+
+            var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson" };
+    
+            var cheep = new Cheep
+            {
+                CheepId = 1,
+                Author = author,
+                AuthorId = author.AuthorId,
+                Text = "Test Message",
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1728497189).UtcDateTime
+            };
+
+            dbContext.Authors.Add(author);
+            await dbContext.SaveChangesAsync();
+
+            dbContext.Cheeps.Add(cheep);
+            await dbContext.SaveChangesAsync();
+        }
+
+        // Fetch all cheeps and see if authorid 1 is amongst them
+        
+        var response = await _client.GetAsync("/cheeps");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    
+        var cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+        cheeps.Should().NotBeNull();
+    
+        // Check whether a cheep with authorid was returned
+        cheeps.Should().ContainSingle(c =>  c.AuthorId == 1);
+    }
+
 }

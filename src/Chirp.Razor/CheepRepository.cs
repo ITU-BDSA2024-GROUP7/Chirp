@@ -6,12 +6,23 @@ namespace Chirp.Razor
 {
     public interface ICheepRepository
     {
-        Task CreateCheep(CheepDTO newCheep);
         Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page);
         Task<List<CheepDTO>> ReadAllCheeps(int page);
-
+        Task CreateCheep(CheepDTO newCheep);
         Task UpdateCheep(CheepDTO alteredCheep);
+        
     }
+    
+    /*To do
+    Create cheep
+    Create cheep from author
+    Find author by name
+    Find author by email 
+
+    */
+    
+    
+    
 
     public class CheepRepository : ICheepRepository
     {
@@ -59,16 +70,15 @@ namespace Chirp.Razor
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = await (from a in _dbContext.Authors
-                                where a.Name == cheepDTO.AuthorName
-                                select a).FirstOrDefaultAsync();
-
+            var author = FindAuthorByName(cheepDTO.AuthorName);
+            
             if (author == null)
             {
-                throw new Exception($"Author {cheepDTO.AuthorName} not found");
+                CreateAuthor();
+                //throw new Exception($"Author {cheepDTO.AuthorName} not found");
             }
 
-            // Create a new Cheep
+            // Create a new Cheep 
             Cheep newCheep = new Cheep
             {
                 Text = cheepDTO.Text,
@@ -86,5 +96,42 @@ namespace Chirp.Razor
         {
             throw new NotImplementedException();
         }
+        // Find The author by name
+        public Author FindAuthorByName(String name)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Name == name
+                select a).FirstOrDefault();
+            return author;
+        }
+        
+        // Find a user by their email
+        public Author FindAuthorByEmail(string email)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Email == email
+                select a).FirstOrDefault();
+            return author;
+        }
+        
+        
+        // Used for creating a new author when the author is not existing
+        public async Task CreateAuthor()
+        {
+            var author = new Author()
+            {
+                Name = Environment.UserName,
+                Email = Environment.UserName + "@example.com",
+            };
+            await _dbContext.Authors.AddAsync(author);
+            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+        }
+        
+        
+        
+        
+        
+        
+        
     }
 }

@@ -43,7 +43,7 @@ namespace Chirp.Razor
             var query = _dbContext.Cheeps
                 .Include(c => c.Author) 
                 .OrderByDescending(cheep => cheep.TimeStamp)
-                .Skip(page * 32)
+                .Skip((page - 1) * 32)
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {

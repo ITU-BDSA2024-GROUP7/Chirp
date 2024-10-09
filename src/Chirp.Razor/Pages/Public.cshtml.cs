@@ -5,11 +5,11 @@ namespace Chirp.Razor.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly CheepRepository _service;
+    private readonly CheepService _service;
     public int pageNumber { get; set; }
     public List<CheepDTO> Cheeps { get; set; }
 
-    public PublicModel(CheepRepository service)
+    public PublicModel(CheepService service)
     {
         _service = service;
     }
@@ -25,7 +25,7 @@ public class PublicModel : PageModel
         }
         
         pageNumber = page;
-        Cheeps = await _service.ReadAllCheeps(page);
+        Cheeps = await _service.GetCheeps(page);
         return Page();
     }
 }

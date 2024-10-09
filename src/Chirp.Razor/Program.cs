@@ -16,6 +16,7 @@ namespace Chirp.Razor
             // Add services to the container
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<CheepRepository>();
+            builder.Services.AddScoped<CheepService>();
             // builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 

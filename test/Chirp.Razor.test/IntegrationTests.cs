@@ -128,5 +128,4 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
         // Check whether a cheep with authorid was returned
         cheeps.Should().ContainSingle(c =>  c.AuthorId == 1);
     }
-
 }

@@ -42,6 +42,9 @@
         <div style="display: inline-block;">
             @if (@pageNumber != 1)
             {
+                <a href="/?page=1" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&lt;&lt;</button> <!-- Escaped the "<" character -->
+                </a>
                 <a href="/?page=@(pageNumber - 1)" style="text-decoration: none; margin-right: 15px;">
                     <button style="display: inline; margin: 0;">&lt;</button> <!-- Escaped the "<" character -->
                 </a>
@@ -52,6 +55,9 @@
             {
                 <a href="/?page=@(pageNumber + 1)" style="text-decoration: none;">
                     <button style="display: inline; margin: 0;">&gt;</button> <!-- Escaped the ">" character -->
+                </a>
+                <a href="/?page=@totalPages" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&gt;&gt;</button> <!-- Escaped the ">" character -->
                 </a>
             }
         </div>

@@ -25,14 +25,20 @@ namespace Chirp.Razor
         // Read messages by a specific user and map to CheepDTO
         public async Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page)
         {
-            var query = from cheep in _dbContext.Cheeps
-                        where cheep.Author.Name == userName
-                        select new CheepDTO
-                        {
-                            AuthorName = cheep.Author.Name,
-                            Text = cheep.Text,
-                            FormattedTimeStamp = cheep.TimeStamp.ToString() // You might want to format this better
-                        };
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .Where(cheep => cheep.Author.Name == userName)
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip((page - 1) * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    AuthorName = cheep.Author.Name,
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                });
+
+
 
             // Execute the query and return the list of messages
             return await query.ToListAsync();

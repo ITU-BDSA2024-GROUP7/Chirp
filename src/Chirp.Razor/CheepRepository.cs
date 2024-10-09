@@ -62,8 +62,9 @@ namespace Chirp.Razor
             
             if (author == null)
             {
-                CreateAuthor();
-                //throw new Exception($"Author {cheepDTO.AuthorName} not found");
+                await CreateAuthor();
+                
+                author = FindAuthorByName(cheepDTO.AuthorName);
             }
 
             // Create a new Cheep 
@@ -85,7 +86,7 @@ namespace Chirp.Razor
             throw new NotImplementedException();
         }
         // Find The author by name
-        public Author FindAuthorByName(String name)
+        public Author? FindAuthorByName(String name)
         {
             var author = (from a in _dbContext.Authors
                 where a.Name == name
@@ -94,7 +95,7 @@ namespace Chirp.Razor
         }
         
         // Find a user by their email
-        public Author FindAuthorByEmail(string email)
+        public Author? FindAuthorByEmail(string email)
         {
             var author = (from a in _dbContext.Authors
                 where a.Email == email
@@ -109,6 +110,7 @@ namespace Chirp.Razor
             {
                 Name = Environment.UserName,
                 Email = Environment.UserName + "@example.com",
+                Cheeps = new List<Cheep>(),
             };
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database

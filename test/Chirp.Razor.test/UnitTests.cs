@@ -1,4 +1,7 @@
-/*namespace Chirp.Razor.test;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+
+namespace Chirp.Razor.test;
 
 public class UnitTests
 {
@@ -6,74 +9,125 @@ public class UnitTests
     [Theory]
     [InlineData("Helge", "Hello, BDSA students!", 1690892208)]
     //[InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
-    public void TestReadForAuthor (string authorData, string messageData, long timestampData) 
+    public async void TestReadForAuthor (string authorName, string messageData, long unixTimestamp) 
     {
         // Arrange
-        // Get CHIRPDB Environment Variable
-        string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-
-        // Check if CHIRPDBPATH is set.
-        if (string.IsNullOrEmpty(chirpDbPath))
-        {
-            // string tempDir = Path.GetTempPath();
-            chirpDbPath = Path.Combine(Path.GetTempPath(), "mychirp.db");
-        }
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();               
         
-        var dbFacade = new DBFacade(chirpDbPath);
-        var cheepService = new CheepService(dbFacade);
+        // Seed the database with a test entry
+        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName };
+        
+        var cheep = new Cheep
+        {
+            CheepId = 1,
+            Author = author,
+            AuthorId = author.AuthorId,
+            Text = messageData,
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).UtcDateTime // Ensure this matches the format in your model
+        };
+
+        context.Authors.Add(author);
+        context.Cheeps.Add(cheep);
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+
+        
+        ICheepRepository repository = new CheepRepository(context);
         
         // Act
-        var cheepList = cheepService.GetCheepsFromAuthor(authorData, 1);
-        var cheep = cheepList.First();
+        var cheepList = await repository.ReadCheepsFromAuthor(authorName, 1);
+        var firstCheep = cheepList.First();
      
         
         // Assert
-        Assert.Equal(cheep.Author, authorData);
-        Assert.Equal(cheep.Message, messageData);
-        Assert.Equal(cheep.Timestamp, UnixTimeStampToDateTimeString(timestampData));
+        Assert.Equal(firstCheep.AuthorName, authorName);
+        Assert.Equal(firstCheep.Text, messageData);
+        Assert.Equal(firstCheep.FormattedTimeStamp, UnixTimeStampToDateTimeString(unixTimestamp));
     }
     
      [Fact]
-     public void TestReadallcheeps() 
+     public async void TestReadallcheeps()
      {
          // Arrange
-         CheepViewModel cheep = new CheepViewModel(@"Helge", 
-                                                  "Hello, BDSA students!", 
-                                                 "1690892208");
-         // Get CHIRPDB Environment Variable
-         string chirpDbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH");
-    
-         // Check if CHIRPDBPATH is set.
-         if (string.IsNullOrEmpty(chirpDbPath))
+         using var connection = new SqliteConnection("Filename=:memory:");
+         await connection.OpenAsync();                              
+         var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+         using var context = new CheepDBContext(builder.Options);   
+         await context.Database.EnsureCreatedAsync();               
+        
+         // Seed the database with a test entry
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+        
+         var cheep1 = new Cheep
          {
-             // string tempDir = Path.GetTempPath();
-             chirpDbPath = Path.Combine(Path.GetTempPath(), "mychirp.db");
-         }
+             CheepId = 1,
+             Author = author1,
+             AuthorId = author1.AuthorId,
+             Text = "Sådan!",
+             TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+         };
+         var cheep2 = new Cheep
+         {
+             CheepId = 2,
+             Author = author2,
+             AuthorId = author2.AuthorId,
+             Text = "Dependency Injections are very important.",
+             TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690992208).UtcDateTime // Ensure this matches the format in your model
+         };
+         var cheep3 = new Cheep
+         {
+             CheepId = 3,
+             Author = author1,
+             AuthorId = author1.AuthorId,
+             Text = "I like my cold brewed tee very much.",
+             TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1691992208).UtcDateTime // Ensure this matches the format in your model
+         };
+         var cheep4 = new Cheep
+         {
+             CheepId = 4,
+             Author = author2,
+             AuthorId = author2.AuthorId,
+             Text = "EF Core is goated!!.",
+             TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1692992208).UtcDateTime // Ensure this matches the format in your model
+         };
          
-         var dbFacade = new DBFacade(chirpDbPath);
-         var cheepService = new CheepService(dbFacade);
-         
+         context.Authors.Add(author1);
+         context.Authors.Add(author2);
+         context.Cheeps.Add(cheep1);
+         context.Cheeps.Add(cheep2);
+         context.Cheeps.Add(cheep3);
+         context.Cheeps.Add(cheep4);
+         await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+
+        
+         ICheepRepository repository = new CheepRepository(context);
+        
          // Act
-         var cheepList = cheepService.GetCheeps(1);
-         var First_cheep = cheepList.First();
-      
+         var cheepList = await repository.ReadAllCheeps(0);
          
+     
+        
          // Assert
-         Assert.Equal(First_cheep.Author, cheep.Author);
-         Assert.Equal(First_cheep.Message, cheep.Message);
-         Assert.Equal(First_cheep.Timestamp, UnixTimeStampToDateTimeString(Double.Parse(cheep.Timestamp)));
+         Assert.True(cheepList.Count() == 4);
+         
      }
     
     
     
     
     
-    private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
+    private static String UnixTimeStampToDateTimeString(double unixTimeStamp)
     {
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         dateTime = dateTime.AddSeconds(unixTimeStamp);
-        return dateTime.ToString("dd/MM/yy H:mm:ss");
+        return dateTime.ToString("yyyy-MM-dd H:mm:ss");;
     }
+    
 }
-*/

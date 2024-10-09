@@ -1,7 +1,9 @@
-﻿/*using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Chirp.Razor;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Razor.test;
 
@@ -17,6 +19,15 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetIndexPageAndCorrectContent()
     {
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+        
+        using var context = new CheepDBContext(builder.Options);
+        await context.Database.EnsureCreatedAsync();
+        
+        ICheepRepository repository = new CheepRepository(context);
+        
         var client = _factory.CreateClient();
         
         var response = await client.GetAsync("/");
@@ -70,4 +81,4 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         content.Should().Contain("Hej, velkommen til kurset");
     }
 
-}*/
+}

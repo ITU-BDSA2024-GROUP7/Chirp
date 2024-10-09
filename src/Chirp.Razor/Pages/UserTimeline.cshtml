@@ -10,7 +10,12 @@
 }
 
 <div>
-    <h2> @authorName's Timeline </h2>
+    <div class="timeline-header">
+        <a class="timeline-button" href="/">
+            <button >Back</button>
+        </a>
+        <h2> @authorName's Timeline </h2>
+    </div>
 
     @if (Model.Cheeps.Any())
     {

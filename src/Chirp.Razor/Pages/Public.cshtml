@@ -11,7 +11,9 @@
 }
 
 <div xmlns="http://www.w3.org/1999/html">
-    <h2> Public Timeline </h2>
+    <div class="timeline-header">
+        <h2> Public Timeline </h2>
+    </div>
 
     @if (Model.Cheeps.Any())
     {
@@ -25,7 +27,7 @@
                         </strong>
                         <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
                         @cheep.Text
-                        
+
                     </p>
                 </li>
             }

@@ -95,9 +95,21 @@ div.page div.navigation form button {
 }
 
 div.page h2 {
-  margin: 0 0 15px;
+  margin: 0 0 5px;
   color: #571010;
   text-shadow: 0 1px 2px #ccc;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: center; /* Center the content */
+    align-items: center;
+    position: relative; /* Ensures the button can be placed to the left */
+}
+
+.timeline-button {
+    position: absolute;
+    left: 0; /* Position the button to the left of the container */
 }
 
 div.page div.body {

@@ -6,7 +6,7 @@ public interface ICheepService
     public Task<List<CheepDTO>> GetCheeps(int page);
     public Task<List<CheepDTO>> GetCheepsFromAuthor(string author, int page);
     
-    public Task<int> GetTotalPageNumber();
+    public Task<int> GetTotalPageNumber(string authorName);
 }
 public class CheepService : ICheepService
 {
@@ -16,9 +16,9 @@ public class CheepService : ICheepService
         _cheepRepository = cheepRepository;
     }
     
-    public async Task<int> GetTotalPageNumber()
+    public async Task<int> GetTotalPageNumber(string authorName = null)
     {
-        return await _cheepRepository.GetTotalPages();
+        return await _cheepRepository.GetTotalPages(authorName);
     }
     public async Task<List<CheepDTO>> GetCheeps(int page)
     {

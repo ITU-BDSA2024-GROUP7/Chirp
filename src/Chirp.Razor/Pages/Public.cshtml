@@ -5,13 +5,12 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
     
-    int pageNumber = Model.pageNumber;
+    int pageNumber = Model.PageNumber;
+    int totalPages = Model.TotalPageNumber;
 
 }
 
 <div xmlns="http://www.w3.org/1999/html">
-    
-    <CheepList Cheeps="Model.Cheeps"/>
     <h2> Public Timeline </h2>
 
     @if (Model.Cheeps.Any())
@@ -46,7 +45,7 @@
                 </a>
 
             }
-            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber</p>
+            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
             <a href="/?page=@(pageNumber + 1)" style="text-decoration: none;">
                 <button style="display: inline; margin: 0;">&gt;</button> <!-- Escaped the ">" character -->
             </a>

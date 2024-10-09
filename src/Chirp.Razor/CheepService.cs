@@ -1,9 +1,12 @@
 using Chirp.Razor;
 
+namespace Chirp.Razor;
 public interface ICheepService
 {
     public Task<List<CheepDTO>> GetCheeps(int page);
     public Task<List<CheepDTO>> GetCheepsFromAuthor(string author, int page);
+    
+    public Task<int> GetTotalPageNumber();
 }
 public class CheepService : ICheepService
 {
@@ -12,9 +15,11 @@ public class CheepService : ICheepService
     {
         _cheepRepository = cheepRepository;
     }
- 
     
-    
+    public async Task<int> GetTotalPageNumber()
+    {
+        return await _cheepRepository.GetTotalPages();
+    }
     public async Task<List<CheepDTO>> GetCheeps(int page)
     {
         return await _cheepRepository.ReadAllCheeps(page);
@@ -29,14 +34,14 @@ public class CheepService : ICheepService
 // Data Transfer Object for Cheep
 public class CheepDTO
 {
-    public string AuthorName { get; set; } // Author's name
-    public string Text { get; set; } // Message text
-    public string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
+    public required string AuthorName { get; set; } // Author's name
+    public required string Text { get; set; } // Message text
+    public required string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
 }
 
 // Data Transfer Object for Author
 public class AuthorDTO
 {
-    public string Name { get; set; }
-    public string Email { get; set; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
 }

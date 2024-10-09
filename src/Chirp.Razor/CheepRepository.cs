@@ -120,6 +120,5 @@ namespace Chirp.Razor
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
-        
     }
 }

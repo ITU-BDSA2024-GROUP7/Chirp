@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Chirp.Razor;
@@ -80,5 +80,4 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         content.Should().Contain("Adrian");
         content.Should().Contain("Hej, velkommen til kurset");
     }
-
 }

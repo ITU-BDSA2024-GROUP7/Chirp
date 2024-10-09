@@ -10,20 +10,8 @@ namespace Chirp.Razor
         Task<List<CheepDTO>> ReadAllCheeps(int page);
         Task CreateCheep(CheepDTO newCheep);
         Task UpdateCheep(CheepDTO alteredCheep);
-        
     }
     
-    /*To do
-    Create cheep
-    Create cheep from author
-    Find author by name
-    Find author by email 
-
-    */
-    
-    
-    
-
     public class CheepRepository : ICheepRepository
     {
         private readonly CheepDBContext _dbContext;
@@ -114,7 +102,6 @@ namespace Chirp.Razor
             return author;
         }
         
-        
         // Used for creating a new author when the author is not existing
         public async Task CreateAuthor()
         {
@@ -126,12 +113,6 @@ namespace Chirp.Razor
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
-        
-        
-        
-        
-        
-        
         
     }
 }

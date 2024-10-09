@@ -43,9 +43,13 @@
                 </a>
             }
             <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
-            <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
-                <button style="display: inline; margin: 0;">&gt;</button>
-            </a>
+            @if (@pageNumber != @totalPages)
+            {
+                <a href="/@authorName?page=@(pageNumber + 1)" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&gt;</button>
+                </a>
+            }
+            
         </div>
     </div>
 </div>

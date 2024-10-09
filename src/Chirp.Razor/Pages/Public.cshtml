@@ -46,9 +46,12 @@
 
             }
             <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
-            <a href="/?page=@(pageNumber + 1)" style="text-decoration: none;">
-                <button style="display: inline; margin: 0;">&gt;</button> <!-- Escaped the ">" character -->
-            </a>
+            @if (@pageNumber != @totalPages)
+            {
+                <a href="/?page=@(pageNumber + 1)" style="text-decoration: none;">
+                    <button style="display: inline; margin: 0;">&gt;</button> <!-- Escaped the ">" character -->
+                </a>
+            }
         </div>
     </div>
 

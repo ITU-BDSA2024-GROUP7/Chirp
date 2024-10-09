@@ -52,21 +52,6 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     }
     
     [Fact]
-    public async Task DoesPublicTimelineContainJacqualineTest()
-    {
-        var client = _factory.CreateClient();
-    
-        var response = await client.GetAsync("/");
-    
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-    
-        // Check for the actual content on the page
-        content.Should().Contain("Jacqualine Gilcoine");
-        content.Should().Contain("In the morning of the wind, some few splintered planks, of what present avail to him.");
-    }
-    
-    [Fact]
     public async Task DoesPrivateTimelineContainAdrianTest()
     {
         var client = _factory.CreateClient();

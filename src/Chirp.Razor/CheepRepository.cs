@@ -6,13 +6,13 @@ namespace Chirp.Razor
 {
     public interface ICheepRepository
     {
-        Task CreateCheep(CheepDTO newCheep);
         Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page);
         Task<List<CheepDTO>> ReadAllCheeps(int page);
-
+        Task CreateCheep(CheepDTO newCheep);
         Task UpdateCheep(CheepDTO alteredCheep);
+        Task<int> GetTotalPages();
     }
-
+    
     public class CheepRepository : ICheepRepository
     {
         private readonly CheepDBContext _dbContext;
@@ -54,25 +54,29 @@ namespace Chirp.Razor
             // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
-
+        // get total count of pages 
+        public async Task<int> GetTotalPages()
+        {
+            var totalCheeps = await _dbContext.Cheeps.CountAsync();
+            return totalCheeps / 32;
+        }
         // Create a new message
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = await (from a in _dbContext.Authors
-                                where a.Name == cheepDTO.AuthorName
-                                select a).FirstOrDefaultAsync();
-
+            var author = FindAuthorByName(cheepDTO.AuthorName);
+            
             if (author == null)
             {
-                throw new Exception($"Author {cheepDTO.AuthorName} not found");
+                await CreateAuthor();
+                author = FindAuthorByName(cheepDTO.AuthorName);
             }
 
-            // Create a new Cheep
+            // Create a new Cheep 
             Cheep newCheep = new Cheep
             {
                 Text = cheepDTO.Text,
-                Author = author,
+                Author =  author,
                 TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
             };
 
@@ -85,6 +89,36 @@ namespace Chirp.Razor
         public Task UpdateCheep(CheepDTO alteredCheep)
         {
             throw new NotImplementedException();
+        }
+        // Find The author by name
+        public Author? FindAuthorByName(String name)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Name == name
+                select a).FirstOrDefault();
+            return author;
+        }
+        
+        // Find a user by their email
+        public Author? FindAuthorByEmail(string email)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Email == email
+                select a).FirstOrDefault();
+            return author;
+        }
+        
+        // Used for creating a new author when the author is not existing
+        public async Task CreateAuthor()
+        {
+            var author = new Author()
+            {
+                Name = Environment.UserName,
+                Email = Environment.UserName + "@example.com",
+                Cheeps = new List<Cheep>(),
+            };
+            await _dbContext.Authors.AddAsync(author);
+            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
     }
 }

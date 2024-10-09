@@ -6,8 +6,10 @@ namespace Chirp.Razor.Pages;
 public class PublicModel : PageModel
 {
     private readonly CheepService _service;
-    public int pageNumber { get; set; }
-    public List<CheepDTO> Cheeps { get; set; }
+    public int PageNumber { get; set; }
+    public int TotalPageNumber { get; set; }
+
+    public required List<CheepDTO> Cheeps { get; set; }
 
     public PublicModel(CheepService service)
     {
@@ -24,8 +26,10 @@ public class PublicModel : PageModel
             page = 1;
         }
         
-        pageNumber = page;
+        PageNumber = page;
         Cheeps = await _service.GetCheeps(page);
+        TotalPageNumber = await _service.GetTotalPageNumber();
+        
         return Page();
     }
 }

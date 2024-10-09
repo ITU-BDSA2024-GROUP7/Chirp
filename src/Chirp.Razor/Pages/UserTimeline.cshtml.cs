@@ -6,8 +6,8 @@ namespace Chirp.Razor.Pages;
 public class UserTimelineModel : PageModel
 {
     private readonly CheepService _service;
-    public int pageNumber { get; set; }
-    public List<CheepDTO> Cheeps { get; set; }
+    public int PageNumber { get; set; }
+    public required List<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(CheepService service)
     {
@@ -22,7 +22,7 @@ public class UserTimelineModel : PageModel
             page = 1;
         }
         
-        pageNumber = page;
+        PageNumber = page;
         Cheeps = await _service.GetCheepsFromAuthor(author, page);
         return Page();
     }

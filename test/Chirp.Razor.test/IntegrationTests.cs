@@ -11,7 +11,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Chirp.Razor.test;
 
-public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
 {
     private readonly HttpClient _client;
     private readonly WebApplicationFactory<Program> _factory;
@@ -49,11 +49,6 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
             var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
             dbContext.Database.EnsureCreated();
         }
-    }
-
-    public void Dispose()
-    {
-        _connection.Close();
     }
 
     [Fact]
@@ -127,5 +122,12 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     
         // Check whether a cheep with authorid was returned
         cheeps.Should().ContainSingle(c =>  c.AuthorId == 1);
+    }
+    
+    // Is called after all tests finish
+    public void Dispose()
+    {
+        _connection?.Close();   // Closes the connection.
+        _connection?.Dispose(); // Disposes the connection object.
     }
 }

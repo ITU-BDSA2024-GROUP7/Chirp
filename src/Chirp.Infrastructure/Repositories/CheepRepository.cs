@@ -1,18 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Chirp.Core;
+using Chirp.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
-namespace Chirp.Razor
+namespace Chirp.Infrastructure.Repositories
 {
-    public interface ICheepRepository
-    {
-        Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page);
-        Task<List<CheepDTO>> ReadAllCheeps(int page);
-        Task CreateCheep(CheepDTO newCheep);
-        Task UpdateCheep(CheepDTO alteredCheep);
-        Task<int> GetTotalPages(string authorName);
-    }
-    
     public class CheepRepository : ICheepRepository
     {
         private readonly CheepDBContext _dbContext;

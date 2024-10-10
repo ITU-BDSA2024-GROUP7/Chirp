@@ -4,6 +4,7 @@
     <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Chirp.Web</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-rc.1.24451.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-rc.2.24474.1" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
     <EmbeddedResource Include="../../data/**/*" />
   </ItemGroup>
@@ -25,5 +26,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
+    </ItemGroup>
 
 </Project>

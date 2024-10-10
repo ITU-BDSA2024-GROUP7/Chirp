@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Chirp.Razor;
+namespace Chirp.Core;
 
 public class Cheep
 {

@@ -24,7 +24,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test test/Chirp.Razor.test/Chirp.Razor.test.csproj --verbosity normal
+        run: dotnet test test/Chirp.Test/Chirp.Test.csproj --verbosity normal
 
   release:
     timeout-minutes: 60
@@ -51,7 +51,7 @@ jobs:
           release_name="Chirp-$tag-${{ matrix.kind }}"
           
           # Build
-          dotnet publish src/Chirp.Razor/Chirp.Razor.csproj -r ${{ matrix.kind }} -c Release -o "$release_name"
+          dotnet publish src/Chirp.Web/Chirp.Web.csproj -r ${{ matrix.kind }} -c Release -o "$release_name"
           
           # Zip files
           zip -r "${release_name}.zip" "$release_name"

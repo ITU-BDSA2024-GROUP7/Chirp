@@ -1,7 +1,10 @@
+using Chirp.Core;
+using Chirp.Core.Interfaces;
+using Chirp.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace Chirp.Razor.test;
+namespace Chirp.Test;
 
 public class UnitTests
 {

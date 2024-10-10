@@ -1,7 +1,5 @@
 ﻿using Chirp.Core;
 using Chirp.Core.Interfaces;
-using Chirp.Infrastructure.Services;
-using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 

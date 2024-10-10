@@ -20,7 +20,7 @@ namespace Chirp.Razor.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0-rc.1.24451.1");
 
-            modelBuilder.Entity("Chirp.Razor.Author", b =>
+            modelBuilder.Entity("Chirp.Web.Author", b =>
                 {
                     b.Property<string>("AuthorId")
                         .HasColumnType("TEXT");
@@ -38,7 +38,7 @@ namespace Chirp.Razor.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Chirp.Razor.Cheep", b =>
+            modelBuilder.Entity("Chirp.Web.Cheep", b =>
                 {
                     b.Property<int>("CheepId")
                         .ValueGeneratedOnAdd()
@@ -62,9 +62,9 @@ namespace Chirp.Razor.Migrations
                     b.ToTable("Cheeps");
                 });
 
-            modelBuilder.Entity("Chirp.Razor.Cheep", b =>
+            modelBuilder.Entity("Chirp.Web.Cheep", b =>
                 {
-                    b.HasOne("Chirp.Razor.Author", "Author")
+                    b.HasOne("Chirp.Web.Author", "Author")
                         .WithMany("Cheeps")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -73,7 +73,7 @@ namespace Chirp.Razor.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Chirp.Razor.Author", b =>
+            modelBuilder.Entity("Chirp.Web.Author", b =>
                 {
                     b.Navigation("Cheeps");
                 });

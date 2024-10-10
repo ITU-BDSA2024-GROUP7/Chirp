@@ -6,9 +6,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{430C3F51-F7D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7420877A-8C4F-48A4-87A6-9F70A959BF75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Razor", "src\Chirp.Razor\Chirp.Razor.csproj", "{C63F1052-B74B-4150-A97B-1035225E1015}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Web", "src\Chirp.Web\Chirp.Web.csproj", "{C63F1052-B74B-4150-A97B-1035225E1015}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Razor.test", "test\Chirp.Razor.test\Chirp.Razor.test.csproj", "{67FF4EBF-E1A6-4288-A00C-79FF15CBD22C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Test", "test\Chirp.Test\Chirp.Test.csproj", "{67FF4EBF-E1A6-4288-A00C-79FF15CBD22C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

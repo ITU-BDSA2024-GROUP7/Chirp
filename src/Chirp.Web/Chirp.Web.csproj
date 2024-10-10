@@ -4,6 +4,7 @@
     <TargetFramework>net$(NETCoreAppMaximumVersion)</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Chirp.Razor</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

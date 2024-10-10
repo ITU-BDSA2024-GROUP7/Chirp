@@ -1,4 +1,4 @@
-﻿using Chirp.Core;
+using Chirp.Core;
 using Chirp.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -143,6 +143,4 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
     }
-    
-    
 }

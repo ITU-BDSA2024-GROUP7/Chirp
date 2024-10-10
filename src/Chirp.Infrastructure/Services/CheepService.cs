@@ -29,4 +29,9 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.ReadCheepsFromAuthor(author, page);
     }
+    
+    public async Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps()
+    {
+        return await _cheepRepository.RetrieveAllCheepsForEndPoint();
+    }
 }

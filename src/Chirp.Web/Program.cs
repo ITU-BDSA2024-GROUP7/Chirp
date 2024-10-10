@@ -53,9 +53,9 @@ namespace Chirp.Web
             // Map Razor Pages
             app.MapRazorPages();
             
-            app.MapGet("/cheeps", async (CheepDBContext context) =>
+            app.MapGet("/cheeps", async (CheepService cheepService) =>
             {
-                var cheeps = await context.Cheeps.ToListAsync();
+                var cheeps = await cheepService.RetrieveAllCheeps();
                 return Results.Ok(cheeps);
             });
             

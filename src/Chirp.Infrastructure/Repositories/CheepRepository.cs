@@ -127,5 +127,22 @@ namespace Chirp.Infrastructure.Repositories
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
+        
+        public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()
+        {
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Select(cheep => new CheepDTO
+                {
+                    AuthorName = cheep.Author.Name,
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                });
+            // Execute the query and return the list of messages
+            return await query.ToListAsync();
+        }
     }
+    
+    
 }

@@ -82,13 +82,13 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
 
         var response = await _client.GetAsync("/cheeps");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+        var cheeps = await response.Content.ReadFromJsonAsync<List<Core.DTOs.CheepDTO>>();
         cheeps.Should().NotBeNull();
         cheeps.Should().ContainSingle(c => c.Text == "Hello! I hope this goes through");
     }
     
     [Fact]
-    public async Task GetCheepsReturnsCheepsForSpecificAuthorId()
+    public async Task GetCheepsReturnsCheepsForSpecificAuthor()
     {
         using (var scope = _factory.Services.CreateScope())
         {
@@ -114,16 +114,16 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
             await dbContext.SaveChangesAsync();
         }
 
-        // Fetch all cheeps and see if authorid 1 is amongst them
+        // Fetch all cheeps and see if author is amongst them
         
         var response = await _client.GetAsync("/cheeps");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     
-        var cheeps = await response.Content.ReadFromJsonAsync<List<Cheep>>();
+        var cheeps = await response.Content.ReadFromJsonAsync<List<Core.DTOs.CheepDTO>>();
         cheeps.Should().NotBeNull();
     
-        // Check whether a cheep with authorid was returned
-        cheeps.Should().ContainSingle(c =>  c.AuthorId == 1);
+        // Check whether a cheep with author was returned
+        cheeps.Should().ContainSingle(c =>  c.AuthorName == "testPerson");
     }
     
     // Is called after all tests finish

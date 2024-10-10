@@ -1,33 +1,48 @@
 using System.Net;
+using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
-using Chirp.Razor;
+using Chirp.Web;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Chirp.Razor.test;
+namespace Chirp.Test;
 
 public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
+    private readonly SqliteConnection _connection;
 
     public E2ETests(WebApplicationFactory<Program> factory)
     {
-        _factory = factory;
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+        
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureServices(services =>
+            {
+                // Used to remove if a context of the database exist (but only for these tests specifically in memory)
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
+
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
+                services.AddDbContext<CheepDBContext>(options =>
+                {
+                    options.UseSqlite(_connection);
+                });
+            });
+        });
     }
 
     [Fact]
     public async Task GetIndexPageAndCorrectContent()
     {
-        using var connection = new SqliteConnection("Filename=:memory:");
-        await connection.OpenAsync();
-        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
-        
-        using var context = new CheepDBContext(builder.Options);
-        await context.Database.EnsureCreatedAsync();
-        
-        ICheepRepository repository = new CheepRepository(context);
-        
         var client = _factory.CreateClient();
         
         var response = await client.GetAsync("/");

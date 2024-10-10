@@ -1,10 +1,12 @@
+using Chirp.Infrastructure.Repositories;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 
-namespace Chirp.Razor
+namespace Chirp.Web
 {
     public class Program
     {

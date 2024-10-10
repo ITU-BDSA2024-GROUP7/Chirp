@@ -1,6 +1,6 @@
-using Chirp.Razor;
+using Chirp.Infrastructure.Repositories;
 
-namespace Chirp.Razor;
+namespace Chirp.Infrastructure.Services;
 public interface ICheepService
 {
     public Task<List<CheepDTO>> GetCheeps(int page);

@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Chirp.Core;
+using Chirp.Razor;
+using Microsoft.EntityFrameworkCore;
 
-namespace Chirp.Razor;
+namespace Chirp.Infrastructure.Repositories;
 
 public class CheepDBContext : DbContext
 {

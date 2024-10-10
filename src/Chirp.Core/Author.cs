@@ -1,4 +1,4 @@
-﻿namespace Chirp.Razor;
+﻿namespace Chirp.Core;
 
 public class Author
 {

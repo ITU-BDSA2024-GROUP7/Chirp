@@ -1,6 +1,7 @@
 ﻿using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Razor.Pages;
 

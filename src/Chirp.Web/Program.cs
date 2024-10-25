@@ -1,12 +1,8 @@
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace Chirp.Web
 {
@@ -31,12 +27,12 @@ namespace Chirp.Web
                     options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<CheepDBContext>();
 
-            // Add Github Services
+            // Add GitHub Services
             builder.Services.AddAuthentication()
                 .AddGitHub(options =>
                 {
-                    options.ClientId = builder.Configuration["authentication:github:clientId"];
-                    options.ClientSecret = builder.Configuration["authentication:github:clientSecret"];
+                    options.ClientId = builder.Configuration["authentication_github_clientId"]!;
+                    options.ClientSecret = builder.Configuration["authentication_github_clientSecret"]!;
                     options.CallbackPath = new PathString("/signin-github");
                 });
             

@@ -1,9 +1,11 @@
+using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Chirp.Web
 {
@@ -16,14 +18,21 @@ namespace Chirp.Web
 
             // Add services to the container
             builder.Services.AddRazorPages();
-            builder.Services.AddScoped<CheepRepository>();
-            builder.Services.AddScoped<CheepService>();
-            // builder.Services.AddScoped<ICheepRepository, CheepRepository>();
-
 
             // Load database connection via configuration
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            // Add the DbContext first
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString)); 
+
+            // Then add Identity services
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+                    options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<CheepDBContext>();
+
+            // Register your repositories and services
+            builder.Services.AddScoped<CheepRepository>();
+            builder.Services.AddScoped<CheepService>();
 
             // Build the application
             var app = builder.Build();
@@ -48,6 +57,7 @@ namespace Chirp.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             // Map Razor Pages

@@ -1,0 +1,18 @@
+﻿<div class=navigation>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div>
+            <a href="/@(User.Identity.Name)">my timeline</a> |
+            <a href="/">public timeline</a> |
+            <a href="/Identity/Account/Logout">logout [@(User.Identity.Name)]</a>
+        </div>
+    }
+    else
+    {
+        <div>
+            <a href="/">public timeline</a> |
+            <a href="/Identity/Account/Register">register</a>
+            <a href="/Identity/Account/Login">login</a>
+        </div>
+    }
+</div>

@@ -116,11 +116,56 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task LoginUserTest()
     {
-        // Arange 
-        //var client = _factory.CreateClient();
+        // Arrange
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = true 
+        });
         
-        //var getResponse = await client.GetAsync("/Identity/Account/Login");
-        //var 
+        
+        
+        var getResponse = await client.GetAsync("/Identity/Account/Register");
+        var getContent = await getResponse.Content.ReadAsStringAsync();
+        var testEmail = "testuser@gmail.com";
+        var testPassword = "Test@12345";
+        
+        // Step 2: Parse the anti-forgery token from the page content
+        var tokenValue = ExtractAntiForgeryToken(getContent);
+        
+        // create user
+        var registerData = new Dictionary<string, string>
+        {
+            {"Input.Email", testEmail},
+            {"Input.Password", testPassword}, 
+            {"Input.ConfirmPassword",testPassword},
+            { "__RequestVerificationToken", tokenValue},
+            {"returnUrl","/"}
+        };
+        await client.PostAsync("/Identity/Account/Register", new FormUrlEncodedContent(registerData));
+        
+        var loginPage = await client.GetAsync("/Identity/Account/Login");
+        var loginToken = ExtractAntiForgKeyLogin(await loginPage.Content.ReadAsStringAsync());
+        
+        var loginData = new Dictionary<string, string>()
+        {
+            { "Input.Email", testEmail },
+            { "Input.Password", testPassword },
+            { "__RequestVerificationToken", tokenValue },
+            { "Input.RememberMe", "false"},
+            { "returnUrl", "/" }
+        };
+        var confirmationLink = $"/Identity/Account/RegisterConfirmation?email={testEmail}";
+        var confirmationResponse = await client.GetAsync(confirmationLink);
+        
+        
+        // Act
+        var homePage = await client.GetAsync("/");
+        homePage.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await homePage.Content.ReadAsStringAsync();
+        // Assert
+        
+        
+        content.Should().Contain($"logout [{testEmail}]");
     }
     
     // Helper method to extract anti forgery token
@@ -135,4 +180,9 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         return match.Groups[1].Value;
     }
 
+    private string ExtractAntiForgKeyLogin(string content)
+    {
+        var match = Regex.Match(content, @"\<input\s+name=""__RequestVerificationToken""\s+type=""hidden""\s+value=""([^""]+)""");
+        return match.Success ? match.Groups[1].Value : throw new Exception("Anti-forgery token not found");
+    }
 }

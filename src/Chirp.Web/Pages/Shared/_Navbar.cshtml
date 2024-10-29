@@ -2,9 +2,10 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div>
-            <a href="/@(User.Identity.Name)">my timeline</a> |
-            <a href="/">public timeline</a> |
-            <a href="/Identity/Account/Logout">logout [@(User.Identity.Name)]</a>
+            <a href="/@(User.Identity.Name)">My timeline</a> |
+            <a href="/">Public timeline</a> |
+            <a href="/identity/Account/Manage"> Manage account</a> | 
+            <a href="/Identity/Account/Logout">Logout [@(User.Identity.Name)]</a>
         </div>
     }
     else

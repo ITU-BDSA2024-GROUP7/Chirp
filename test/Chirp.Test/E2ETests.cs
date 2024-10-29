@@ -41,7 +41,7 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
                 });
                 
                 // Mock GitHub OAuth for integration tests
-                services.PostConfigure<OAuthOptions>("GitHubeE2ETest", options =>
+                services.PostConfigure<OAuthOptions>("GitHub", options =>
                 {
                     options.ClientId = "TestClientId"; // Provide a test value
                     options.ClientSecret = "TestClientSecret"; // Provide a test value

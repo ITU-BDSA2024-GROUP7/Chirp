@@ -31,8 +31,8 @@ namespace Chirp.Web
             builder.Services.AddAuthentication()
                 .AddGitHub(options =>
                 {
-                    options.ClientId = builder.Configuration["authentication_github_clientId"]!;
-                    options.ClientSecret = builder.Configuration["authentication_github_clientSecret"]!;
+                    options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
+                    options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
                     options.CallbackPath = new PathString("/signin-github");
                 });
             

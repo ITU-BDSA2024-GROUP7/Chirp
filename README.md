@@ -10,27 +10,32 @@ The program will be updated weekly and will be a journey for us into learning th
 
 The program will function as a home made twitter system. Called Chirp
 
+#### We Currently support
+- External login with github
+- Normal email Signup
+- Reading and viewing cheeps
+- Managing your Account
+- View a public Timeline
 
-## Run Locally
 
-Clone the project
+## The project is hosted in Azure
+
+URL for project
+
+```bash
+  https://bdsagroup07chirprazor.azurewebsites.net/
+```
+
+## For local deployment
 
 ```bash
   git clone https://github.com/ITU-BDSA2024-GROUP7/Chirp.git
 ```
-
-Go to the project directory
-
-```bash
-  cd src/Chirp.Razor
-```
-
-Run the web application
+From this repo you need to navigate to Chirp.Web application then:
 
 ```bash
-  dotnet run
+  dotnet watch
 ```
-
 
 ## Authors
 

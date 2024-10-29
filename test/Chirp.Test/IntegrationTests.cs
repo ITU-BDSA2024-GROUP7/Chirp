@@ -47,15 +47,14 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
                 });
                 
                 // Mock GitHub OAuth for integration tests
-                services.AddAuthentication(options =>
+                services.PostConfigure<OAuthOptions>("GitHubIntegrationTest", options =>
                 {
-                    options.DefaultScheme = "GitHub";
-                }).AddOAuth("GitHub", options =>
-                {
-                    options.ClientId = "TestClientId";
-                    options.ClientSecret = "TestClientSecret";
+                    options.ClientId = "TestClientId"; // Provide a test value
+                    options.ClientSecret = "TestClientSecret"; // Provide a test value
                     options.CallbackPath = new PathString("/signin-github");
                 });
+
+                services.AddAuthentication().AddGitHub();
 
             });
             

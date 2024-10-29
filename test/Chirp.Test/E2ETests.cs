@@ -4,6 +4,8 @@ using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Chirp.Web;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +38,14 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
                 services.AddDbContext<CheepDBContext>(options =>
                 {
                     options.UseSqlite(_connection);
+                });
+                
+                // Mock GitHub OAuth for integration tests
+                services.PostConfigureAll<OAuthOptions>(options =>
+                {
+                    options.ClientId = "TestClientId";
+                    options.ClientSecret = "TestClientSecret";
+                    options.CallbackPath = new PathString("/signin-github");
                 });
             });
         });

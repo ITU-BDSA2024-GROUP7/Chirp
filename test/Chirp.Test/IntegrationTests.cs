@@ -7,6 +7,9 @@ using Chirp.Core;
 using Chirp.Infrastructure.Repositories;
 using FluentAssertions;
 using Chirp.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
@@ -23,6 +26,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
+        
 
         _factory = factory.WithWebHostBuilder(builder =>
         {
@@ -41,7 +45,17 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
                 {
                     options.UseSqlite(_connection);
                 });
+                
+                // Mock GitHub OAuth for integration tests
+                services.PostConfigureAll<OAuthOptions>(options =>
+                {
+                    options.ClientId = "TestClientId";
+                    options.ClientSecret = "TestClientSecret";
+                    options.CallbackPath = new PathString("/signin-github");
+                });
+                
             });
+            
         });
 
         _client = _factory.CreateClient();

@@ -28,23 +28,12 @@ namespace Chirp.Web
                 .AddEntityFrameworkStores<CheepDBContext>();
 
             // Add GitHub Services
-            // builder.Services.AddAuthentication()
-            //     .AddGitHub(options =>
-            //     {
-            //         options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
-            //         options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
-            //         options.CallbackPath = new PathString("/signin-github");
-            //     });
-            
-            builder.Services
-                .AddAuthentication(options =>
-                {
-                    options.RequireAuthenticatedSignIn = true;
-                })
+            builder.Services.AddAuthentication()
                 .AddGitHub(options =>
                 {
                     options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
                     options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
+                    options.CallbackPath = new PathString("/signin-github");
                 });
             
             builder.Services.AddSession();

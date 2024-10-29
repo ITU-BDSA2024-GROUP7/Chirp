@@ -1,19 +1,14 @@
 using System.Net;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Chirp.Web;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Chirp.Test;
 
@@ -26,55 +21,37 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
-
+        
         _factory = factory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
             {
-                // Remove existing DbContext registration for in-memory testing
+                // Used to remove if a context of the database exist (but only for these tests specifically in memory)
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
+
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
-                // Register in-memory database for testing
                 services.AddDbContext<CheepDBContext>(options =>
                 {
                     options.UseSqlite(_connection);
                 });
-
-                // Add mock authentication handler
-                services.AddAuthentication("Test")
-                    .AddScheme<AuthenticationSchemeOptions, MockGitHubAuthHandler>("Test", options => { });
-
-                // Override default authentication scheme to use "Test"
-                services.PostConfigure<AuthenticationOptions>(options =>
+                
+                // Mock GitHub OAuth for integration tests
+                services.AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = "Test";
-                    options.DefaultChallengeScheme = "Test";
+                    options.DefaultScheme = "GitHub";
+                }).AddOAuth("GitHub", options =>
+                {
+                    options.ClientId = "TestClientId";
+                    options.ClientSecret = "TestClientSecret";
+                    options.CallbackPath = new PathString("/signin-github");
                 });
             });
         });
-    }
-
-    // Mock authentication handler that always authenticates with a test user
-    private class MockGitHubAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
-    {
-        public MockGitHubAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
-            ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-            : base(options, logger, encoder, clock) {}
-
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-        {
-            var claims = new[] { new Claim(ClaimTypes.Name, "TestUser"), new Claim(ClaimTypes.NameIdentifier, "TestId") };
-            var identity = new ClaimsIdentity(claims, "Test");
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, "Test");
-
-            return Task.FromResult(AuthenticateResult.Success(ticket));
-        }
     }
 
     [Fact]

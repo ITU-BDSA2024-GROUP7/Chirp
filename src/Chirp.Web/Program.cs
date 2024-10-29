@@ -20,7 +20,7 @@ namespace Chirp.Web
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             // Add the DbContext first
-            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString)); 
+            builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
             // Then add Identity services
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>

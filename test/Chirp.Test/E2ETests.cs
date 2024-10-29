@@ -47,8 +47,6 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
                     options.ClientSecret = "TestClientSecret"; // Provide a test value
                     options.CallbackPath = new PathString("/signin-github");
                 });
-                
-                services.AddAuthentication().AddGitHub();
             });
         });
     }

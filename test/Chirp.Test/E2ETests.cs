@@ -41,14 +41,15 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
                 });
                 
                 // Mock GitHub OAuth for integration tests
-                services.PostConfigure<OAuthOptions>("GitHubeE2ETest", options =>
+                services.AddAuthentication(options =>
                 {
-                    options.ClientId = "TestClientId"; // Provide a test value
-                    options.ClientSecret = "TestClientSecret"; // Provide a test value
+                    options.DefaultScheme = "GitHub";
+                }).AddOAuth("GitHub", options =>
+                {
+                    options.ClientId = "TestClientId";
+                    options.ClientSecret = "TestClientSecret";
                     options.CallbackPath = new PathString("/signin-github");
                 });
-                
-                services.AddAuthentication().AddGitHub();
             });
         });
     }

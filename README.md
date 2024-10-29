@@ -2,7 +2,8 @@
 ![Logo](https://github.com/user-attachments/assets/b6a7a068-c6be-4760-ac28-969adc7b6371)
 
 
-# Chirp project
+
+# Chirp Cli project 
 
 This is a project that follows our course in Analysis, Design and Software Architecture at IT university in Copenhagen.
 
@@ -10,6 +11,7 @@ The program will be updated weekly and will be a journey for us into learning th
 
 The program will function as a home made twitter system. Called Chirp
 
+## This is a LEGACY BRANCH AND WONT BE UPDATED!
 
 ## Run Locally
 

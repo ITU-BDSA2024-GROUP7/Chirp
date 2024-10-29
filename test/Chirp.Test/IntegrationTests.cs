@@ -53,7 +53,9 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
                     options.ClientSecret = "TestClientSecret"; // Provide a test value
                     options.CallbackPath = new PathString("/signin-github");
                 });
-                
+
+                services.AddAuthentication().AddGitHub();
+
             });
             
         });

@@ -124,6 +124,4 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         }
         return match.Groups[1].Value;
     }
-
-    
 }

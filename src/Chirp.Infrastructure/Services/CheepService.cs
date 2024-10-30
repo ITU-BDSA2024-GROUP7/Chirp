@@ -8,6 +8,10 @@ public interface ICheepService
     public Task<List<Core.DTOs.CheepDTO>> GetCheepsFromAuthor(string author, int page);
     
     public Task<int> GetTotalPageNumber(string authorName);
+    
+    public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps();
+    
+    public Task CreateCheep(CheepDTO Cheep, string authorName);
 }
 public class CheepService : ICheepService
 {

@@ -37,4 +37,13 @@ public class PublicModel : PageModel
         
         return Page();
     }
+    public async Task<IActionResult> OnPost(CheepDTO cheepDTO)
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var AuthorName = User.Identity.Name;
+            await _service.CreateCheep(cheepDTO, AuthorName);
+        }
+        return Page();
+    }
 }

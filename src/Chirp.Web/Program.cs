@@ -27,12 +27,29 @@ namespace Chirp.Web
                     options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<CheepDBContext>();
 
+            // Retrieve ClientId and ClientSecret from configuration
+            string? clientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"];
+            string? clientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"];
+
+            if (string.IsNullOrEmpty(clientId) && string.IsNullOrEmpty(clientSecret))
+            {
+                throw new ApplicationException("Failed to retrieve both the Github Client ID and Secret. Make sure that the values are set on the machine.");
+            }
+            if (string.IsNullOrEmpty(clientId))
+            {
+                throw new ApplicationException("Failed to retrieve the Github Client ID. Make sure that the github value is set on the machine.");
+            }
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new ApplicationException("Failed to retrieve the Github Secret. Make sure that the github value is set on the machine.");
+            }
+            
             // Add GitHub Services
             builder.Services.AddAuthentication()
                 .AddGitHub(options =>
                 {
-                    options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
-                    options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
                     options.CallbackPath = new PathString("/signin-github");
                 });
             

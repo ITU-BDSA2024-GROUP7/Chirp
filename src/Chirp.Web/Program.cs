@@ -31,9 +31,17 @@ namespace Chirp.Web
             string? clientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"];
             string? clientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"];
 
-            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+            if (string.IsNullOrEmpty(clientId) && string.IsNullOrEmpty(clientSecret))
             {
-                throw new ApplicationException("GitHub ClientId and ClientSecret must be provided. Ensure that the secrets are set in the configuration.");
+                throw new ApplicationException("Failed to retrieve both the Github Client ID and Secret. Make sure that the values are set on the machine.");
+            }
+            if (string.IsNullOrEmpty(clientId))
+            {
+                throw new ApplicationException("Failed to retrieve the Github Client ID. Make sure that the github value is set on the machine.");
+            }
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new ApplicationException("Failed to retrieve the Github Secret. Make sure that the github value is set on the machine.");
             }
             
             // Add GitHub Services

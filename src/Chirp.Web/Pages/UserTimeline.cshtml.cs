@@ -10,6 +10,9 @@ public class UserTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    
+    [BindProperty]
+    public string Text  { get; set; }
     public required List<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(CheepService service)

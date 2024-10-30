@@ -33,4 +33,17 @@ public class UserTimelineModel : PageModel
         TotalPageNumber = await _service.GetTotalPageNumber(author);
         return Page();
     }
+    public async Task<IActionResult> OnPost(CheepDTO cheepDTO)
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var AuthorName = User.Identity.Name;
+            await _service.CreateCheep(cheepDTO, AuthorName);
+        }
+        return RedirectToAction("Public");
+    }
+    
+    
+    
+    
 }

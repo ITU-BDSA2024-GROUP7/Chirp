@@ -68,14 +68,14 @@ namespace Chirp.Infrastructure.Repositories
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
         // Create a new message
-        public async Task CreateCheep(CheepDTO cheepDTO)
+        public async Task CreateCheep(CheepDTO cheepDTO, String authorName)
         {
             // Find the author by name
             var author = FindAuthorByName(cheepDTO.AuthorName);
             
             if (author == null)
             {
-                await CreateAuthor();
+                await CreateAuthor(authorName);
                 author = FindAuthorByName(cheepDTO.AuthorName);
             }
 
@@ -116,12 +116,13 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor()
+        public async Task CreateAuthor(string authorName)
         {
             var author = new Author()
             {
-                Name = Environment.UserName,
-                Email = Environment.UserName + "@example.com",
+                
+                Name = authorName,
+                Email = authorName,
                 Cheeps = new List<Cheep>(),
             };
             await _dbContext.Authors.AddAsync(author);

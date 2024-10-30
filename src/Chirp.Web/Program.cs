@@ -31,9 +31,17 @@ namespace Chirp.Web
             builder.Services.AddAuthentication()
                 .AddGitHub(options =>
                 {
-                    options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
-                    options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
-                    options.CallbackPath = new PathString("/signin-github");
+                    try
+                    {
+                        options.ClientId = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTID"]!;
+                        options.ClientSecret = builder.Configuration["AUTHENTICATION_GITHUB_CLIENTSECRET"]!;
+                        options.CallbackPath = new PathString("/signin-github");
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ApplicationException("Failed to retrieve the Github client ID and Secret. Make sure that the github secrets is set on the machine.", e);
+                    }
+                    
                 });
             
             builder.Services.AddSession();

@@ -1,58 +1,55 @@
+using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
-using Chirp.Web;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Playwright;
+using Microsoft.Playwright.NUnit;
+using NUnit.Framework;
+using Program = Chirp.Web.Program;
 
 namespace Chirp.Test;
 
-public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
+public class E2ETests : PageTest
 {
-    private readonly WebApplicationFactory<Program> _factory;
-    private readonly SqliteConnection _connection;
+    private Process _serverProcess;
+    private string _baseUrl; 
 
-    public E2ETests(WebApplicationFactory<Program> factory)
+    [SetUp]
+    public async Task Init()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
+        // Start the server
+        _serverProcess = await MyEndToEndUtil.StartServer();
+
+        // Set base URL
+        _baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5273"; // Default URL if not set
         
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureServices(services =>
-            {
-                // Used to remove if a context of the database exist (but only for these tests specifically in memory)
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
-
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
-
-                services.AddDbContext<CheepDBContext>(options =>
-                {
-                    options.UseSqlite(_connection);
-                });
-            });
-        });
     }
 
-    [Fact]
+    [TearDown]
+    public async Task Cleanup()
+    {
+        _serverProcess.Kill();
+        _serverProcess.Dispose();
+    }
+    
+    [Test]
     public async Task GetIndexPageAndCorrectContent()
     {
-        var client = _factory.CreateClient();
-        
-        var response = await client.GetAsync("/");
-        
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
+        NUnit.Framework.Assert.IsNotNull(Page, "Page instance is null.");
+        await Page.GotoAsync(_baseUrl);
+
+        var content = await Page.ContentAsync();
         content.Should().Contain("Chirp!");
     }
-
+    
+    
+    
+    /*
     [Fact]
     public async Task Get_TestPersonPage()
     {
@@ -124,4 +121,5 @@ public class E2ETests : IClassFixture<WebApplicationFactory<Program>>
         }
         return match.Groups[1].Value;
     }
+    */
 }

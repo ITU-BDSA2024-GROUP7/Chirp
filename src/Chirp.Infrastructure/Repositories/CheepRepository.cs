@@ -126,7 +126,6 @@ namespace Chirp.Infrastructure.Repositories
         {
             var author = new Author()
             {   
-                
                 Name = authorName,
                 Email = authorName,
                 Cheeps = new List<Cheep>(),

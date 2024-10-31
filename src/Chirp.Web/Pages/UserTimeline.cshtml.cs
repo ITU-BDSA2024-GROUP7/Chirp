@@ -1,4 +1,5 @@
-﻿using Chirp.Infrastructure.Services;
+﻿using Chirp.Core.DTOs;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -12,7 +13,8 @@ public class UserTimelineModel : PageModel
     public int TotalPageNumber { get; set; }
     
     [BindProperty]
-    public string Text  { get; set; }
+    public string Text { get; set; }
+
     public required List<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(CheepService service)
@@ -20,7 +22,7 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
-    // Runs when site is loaded (Request Method:GET)
+    // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
     {
         if (!(page is int) || page <= 0)
@@ -33,18 +35,29 @@ public class UserTimelineModel : PageModel
         TotalPageNumber = await _service.GetTotalPageNumber(author);
         return Page();
     }
-    public async Task<IActionResult> OnPost(CheepDTO cheepDTO)
+
+    public async Task<IActionResult> OnPost()
     {
         if (User.Identity.IsAuthenticated)
         {
-            var AuthorName = User.Identity.Name;
-            await _service.CreateCheep(cheepDTO, AuthorName);
+            var authorName = User.Identity.Name;
+            var authorEmail = $"{authorName}@example.com"; // Adjust this as needed
+
+            // Create the new CheepDTO
+            var cheepDTO = new CheepDTO
+            {
+                Author = new AuthorDTO
+                {
+                    Name = authorName,
+                    Email = authorEmail // This might need to come from your user store or authentication provider
+                },
+                Text = Text,
+                FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
+            };
+
+            await _service.CreateCheep(cheepDTO, authorName);
         }
 
         return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
-    
-    
-    
-    
 }

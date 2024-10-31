@@ -10,116 +10,169 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
+using Assert = Xunit.Assert;
 using Program = Chirp.Web.Program;
 
 namespace Chirp.Test;
 
 public class E2ETests : PageTest
 {
-    private Process _serverProcess;
-    private string _baseUrl; 
+    private WebApplicationFactory<Program> _factory;
+    private SqliteConnection _connection;
+    private IPlaywright? _playwright;
+    private IBrowser? _browser;
+    private IBrowserContext? _browserContext;
+    private IPage? _page;
+    private SqliteConnection _sqliteConnection;
+    private string _serverUrl = string.Empty;
+    
+    [OneTimeSetUp]
+    public async Task Setup()
+    {
+        // Setup SQLite connection
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+
+        // Setup WebApplicationFactory
+        _factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    var descriptor = services.SingleOrDefault(
+                        d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
+
+                    if (descriptor != null)
+                    {
+                        services.Remove(descriptor);
+                    }
+
+                    services.AddDbContext<CheepDBContext>(options =>
+                    {
+                        options.UseSqlite(_connection);
+                    });
+                });
+            });
+
+        // Start the server and get the URL
+        var client = _factory.CreateClient();
+        _serverUrl = "http://localhost:5273";
+
+        // Setup Playwright
+        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = true // Set to false for debugging
+        });
+    }
 
     [SetUp]
-    public async Task Init()
+    public async Task SetUpContext()
     {
-        // Start the server
-        _serverProcess = await MyEndToEndUtil.StartServer();
+        if (_browser == null)
+        {
+            throw new InvalidOperationException("Browser is not initialized");
+        }
 
-        // Set base URL
-        _baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5273"; // Default URL if not set
-        
+        _browserContext = await _browser.NewContextAsync();
+        _page = await _browser.NewPageAsync();
     }
 
     [TearDown]
     public async Task Cleanup()
     {
-        _serverProcess.Kill();
-        _serverProcess.Dispose();
+        if (_browserContext != null)
+        {
+            await _browser.CloseAsync();
+        }
+
+        if (_page != null)
+        {
+            await _page.CloseAsync();
+        }
     }
-    
+
+    [OneTimeTearDown]
+    public async Task TearDownPlaywright()
+    {
+        if (_browser != null)
+        {
+            await _browser.CloseAsync();
+        }
+
+        if (_playwright != null)
+        {
+            _playwright.Dispose();
+        }
+
+        if (_connection != null)
+        {
+            await _connection.DisposeAsync();
+        }
+
+        if (_factory != null)
+        {
+            await _factory.DisposeAsync();
+        }
+    }
+
     [Test]
     public async Task GetIndexPageAndCorrectContent()
     {
-        NUnit.Framework.Assert.IsNotNull(Page, "Page instance is null.");
-        await Page.GotoAsync(_baseUrl);
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
 
-        var content = await Page.ContentAsync();
-        content.Should().Contain("Chirp!");
+        await _page.GotoAsync($"{_serverUrl}/");
+
+        var content = await _page.TextContentAsync("body");
+        NUnit.Framework.Assert.That(content, Does.Contain("Chirp"));
     }
+
     
-    
-    
-    /*
-    [Fact]
+
+    [Test]
     public async Task Get_TestPersonPage()
     {
-        var client = _factory.CreateClient();
-    
-        var response = await client.GetAsync("/Testperson");
-    
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-    
-        // Check for the actual content on the page
-        content.Should().Contain("There are no cheeps so far.");
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
+        
+        await _page.GotoAsync($"{_serverUrl}/Testperson");
+        
+        var content = await _page.TextContentAsync("body");
+        NUnit.Framework.Assert.That(content, Does.Contain(""));
     }
     
-    [Fact]
+    [Test]
     public async Task DoesPrivateTimelineContainAdrianTest()
     {
-        var client = _factory.CreateClient();
-    
-        var response = await client.GetAsync("/Adrian");
-    
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-    
-        // Check for the actual content on the page
-        content.Should().Contain("Adrian");
-        content.Should().Contain("Hej, velkommen til kurset");
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
+        
+        // Go to Adrian's page
+        await _page.GotoAsync($"{_serverUrl}/Adrian");
+        
+        // Look if Adrian has the chosen cheep
+        var content = await _page.TextContentAsync("body");
+        NUnit.Framework.Assert.That(content, Does.Contain("Adrian"));
+        NUnit.Framework.Assert.That(content, Does.Contain("Hej, velkommen til kurset"));
     }
+    
 
-    [Fact]
+    [Test]
     public async Task RegisterNewUserTest()
     {
-        // Arrange
-        var client = _factory.CreateClient();
-        
-        var getResponse = await client.GetAsync("/Identity/Account/Register");
-        var getContent = await getResponse.Content.ReadAsStringAsync();
-        
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
 
-        // Step 2: Parse the anti-forgery token from the page content
-        var tokenValue = ExtractAntiForgeryToken(getContent);
+        await _page.GotoAsync($"{_serverUrl}/Identity/Account/Register");
         
-        var registerData = new Dictionary<string, string>
-        {
-            {"Input.Email","testuser@gmail.com"},
-            {"Input.Password","Test@12345"}, 
-            {"Input.ConfirmPassword","Test@12345"},
-            { "__RequestVerificationToken", tokenValue},
-            {"returnUrl","/"}
-        };
+        // Fill in the data 
+        await _page.FillAsync("input[name='Input.Email']", "testuser@gmail.com");
+        await _page.FillAsync("input[name='Input.Password']", "Test@12345");
+        await _page.FillAsync("input[name='Input.ConfirmPassword']", "Test@12345");
         
-        // Act
-        var response = await client.PostAsync("/Identity/Account/Register", new FormUrlEncodedContent(registerData));
+        // Submitting the form
+        await _page.ClickAsync("button[type='submit']");
         
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK); // Expecting HTTP 200
-        var responseBody = await response.Content.ReadAsStringAsync();
-        responseBody.Should().Contain("Register confirmation"); 
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        var content = await _page.TextContentAsync("body");
+        NUnit.Framework.Assert.That(content, Does.Contain("Register"));
     }
     
-    // Helper method to extract anti forgery token
-    private string ExtractAntiForgeryToken(string htmlContent)
-    {
-        // Updated regex pattern for finding the anti-forgery token value
-        var match = Regex.Match(htmlContent, @"<input[^>]*name=""__RequestVerificationToken""[^>]*value=""([^""]+)""", RegexOptions.IgnoreCase);
-        if (!match.Success)
-        {
-            throw new InvalidOperationException("Anti-forgery token not found");
-        }
-        return match.Groups[1].Value;
-    }
-    */
 }

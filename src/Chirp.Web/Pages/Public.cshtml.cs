@@ -52,14 +52,14 @@ public class PublicModel : PageModel
             {
                 Author = new AuthorDTO
                 {
-                    Name = authorName,
-                    Email = authorEmail // This might need to come from your user store or authentication provider
+                    Name = authorName, // this needs to be changed to user names going forward
+                    Email = authorEmail 
                 },
                 Text = Text,
                 FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
             };
 
-            await _service.CreateCheep(cheepDTO, authorName);
+            await _service.CreateCheep(cheepDTO);
         }
 
         return RedirectToPage("Public", new { page = 1 });

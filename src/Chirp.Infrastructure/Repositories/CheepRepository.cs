@@ -53,7 +53,7 @@ namespace Chirp.Infrastructure.Repositories
                         Email = cheep.Author.Email
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
                 });
 
             return await query.ToListAsync();
@@ -74,15 +74,15 @@ namespace Chirp.Infrastructure.Repositories
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
         // Create a new message
-        public async Task CreateCheep(CheepDTO cheepDTO, String authorName)
+        public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = FindAuthorByName(authorName);
+            var author = FindAuthorByName(cheepDTO.Author.Name);
             
             if (author == null)
             {
-                await CreateAuthor(authorName);
-                author = FindAuthorByName(authorName);
+                await CreateAuthor(cheepDTO.Author.Name);
+                author = FindAuthorByName(cheepDTO.Author.Name);
             }
 
             // Create a new Cheep 
@@ -90,7 +90,7 @@ namespace Chirp.Infrastructure.Repositories
             {
                 Text = cheepDTO.Text,
                 Author =  author,
-                TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
+                TimeStamp = DateTime.Now // 
             };
 
             // Add the new Cheep to the DbContext

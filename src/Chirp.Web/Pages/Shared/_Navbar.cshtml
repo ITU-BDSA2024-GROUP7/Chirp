@@ -1,5 +1,5 @@
 ﻿<div class=navigation>
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div>
             <a href="/@(User.Identity.Name)">My timeline</a> |

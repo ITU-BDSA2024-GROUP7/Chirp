@@ -53,7 +53,7 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
         // get total count of pages 
-        public async Task<int> GetTotalPages(string authorName = null)
+        public async Task<int> GetTotalPages(string authorName = "")
         {
             var query = _dbContext.Cheeps.AsQueryable();
             
@@ -80,15 +80,19 @@ namespace Chirp.Infrastructure.Repositories
             }
 
             // Create a new Cheep 
-            Cheep newCheep = new Cheep
+            if (author != null)
             {
-                Text = cheepDTO.Text,
-                Author =  author,
-                TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
-            };
+                Cheep newCheep = new Cheep
+                {
+                    Text = cheepDTO.Text,
+                    Author =  author,
+                    TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
+                };
 
-            // Add the new Cheep to the DbContext
-            await _dbContext.Cheeps.AddAsync(newCheep);
+                // Add the new Cheep to the DbContext
+                await _dbContext.Cheeps.AddAsync(newCheep);
+            }
+
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
 

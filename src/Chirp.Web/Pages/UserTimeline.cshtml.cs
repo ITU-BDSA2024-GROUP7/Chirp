@@ -41,7 +41,7 @@ public class UserTimelineModel : PageModel
         if (User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
-            var authorEmail = $"{authorName}@example.com"; // Adjust this as needed
+            var authorEmail = User.Identity.Name;
 
             // Create the new CheepDTO
             var cheepDTO = new CheepDTO

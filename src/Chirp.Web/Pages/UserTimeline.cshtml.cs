@@ -40,7 +40,8 @@ public class UserTimelineModel : PageModel
             var AuthorName = User.Identity.Name;
             await _service.CreateCheep(cheepDTO, AuthorName);
         }
-        return Page();
+
+        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
     
     

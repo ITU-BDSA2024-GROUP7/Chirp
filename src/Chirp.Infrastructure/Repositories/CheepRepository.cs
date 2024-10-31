@@ -71,12 +71,12 @@ namespace Chirp.Infrastructure.Repositories
         public async Task CreateCheep(CheepDTO cheepDTO, String authorName)
         {
             // Find the author by name
-            var author = FindAuthorByName(cheepDTO.AuthorName);
+            var author = FindAuthorByName(authorName);
             
             if (author == null)
             {
                 await CreateAuthor(authorName);
-                author = FindAuthorByName(cheepDTO.AuthorName);
+                author = FindAuthorByName(authorName);
             }
 
             // Create a new Cheep 
@@ -119,7 +119,7 @@ namespace Chirp.Infrastructure.Repositories
         public async Task CreateAuthor(string authorName)
         {
             var author = new Author()
-            {
+            {   
                 
                 Name = authorName,
                 Email = authorName,

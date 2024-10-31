@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Chirp.Core;
 
 public class Author
 {
   [Key]
-  [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
   public int AuthorId { get; set; } // Primary key
   
   public required string Name { get; set; } // Name of the author

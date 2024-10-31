@@ -6,7 +6,6 @@ namespace Chirp.Core;
 public class Cheep
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CheepId { get; set; } // Primary Key
     public required Author Author { get; set; } // Navigation Property
     public int AuthorId { get; set; }

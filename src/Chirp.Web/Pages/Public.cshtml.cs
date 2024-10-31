@@ -44,6 +44,7 @@ public class PublicModel : PageModel
             var AuthorName = User.Identity.Name;
             await _service.CreateCheep(cheepDTO, AuthorName);
         }
-        return Page();
+
+        return RedirectToPage("Public", new { page = 1 });
     }
 }

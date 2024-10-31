@@ -25,7 +25,7 @@ public class UserTimelineModel : PageModel
     // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
     {
-        if (!(page is int) || page <= 0)
+        if (page <= 0)
         {
             page = 1;
         }

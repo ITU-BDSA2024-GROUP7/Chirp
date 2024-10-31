@@ -21,7 +21,7 @@ public class CheepService : ICheepService
         _cheepRepository = cheepRepository;
     }
     
-    public async Task<int> GetTotalPageNumber(string authorName = null)
+    public async Task<int> GetTotalPageNumber(string authorName = "")
     {
         return await _cheepRepository.GetTotalPages(authorName);
     }

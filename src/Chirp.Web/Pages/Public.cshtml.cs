@@ -28,7 +28,7 @@ public class PublicModel : PageModel
     /// <returns></returns>
     public async Task<IActionResult> OnGet([FromQuery] int page)
     {
-        if (!(page is int) || page <= 0)
+        if (page <= 0)
         {
             page = 1;
         }

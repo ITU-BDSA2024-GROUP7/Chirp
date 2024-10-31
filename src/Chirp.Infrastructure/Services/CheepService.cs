@@ -1,3 +1,4 @@
+using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Repositories;
 
 namespace Chirp.Infrastructure.Services;
@@ -7,6 +8,10 @@ public interface ICheepService
     public Task<List<Core.DTOs.CheepDTO>> GetCheepsFromAuthor(string author, int page);
     
     public Task<int> GetTotalPageNumber(string authorName);
+    
+    public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps();
+    
+    public Task CreateCheep(CheepDTO Cheep);
 }
 public class CheepService : ICheepService
 {
@@ -33,5 +38,10 @@ public class CheepService : ICheepService
     public async Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps()
     {
         return await _cheepRepository.RetrieveAllCheepsForEndPoint();
+    }
+    
+    public async Task CreateCheep(CheepDTO Cheep)
+    {
+        await _cheepRepository.CreateCheep(Cheep);
     }
 }

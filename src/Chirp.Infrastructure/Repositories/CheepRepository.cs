@@ -1,4 +1,5 @@
 using Chirp.Core;
+using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -25,14 +26,15 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorName = cheep.Author.Name,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email
+                    },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
                 });
 
-
-
-            // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
 
@@ -45,15 +47,19 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorName = cheep.Author.Name,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email
+                    },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
                 });
-            // Execute the query and return the list of messages
+
             return await query.ToListAsync();
         }
         // get total count of pages 
-        public async Task<int> GetTotalPages(string authorName = "")
+        public async Task<int> GetTotalPages(string authorName = null)
         {
             var query = _dbContext.Cheeps.AsQueryable();
             
@@ -71,28 +77,24 @@ namespace Chirp.Infrastructure.Repositories
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = FindAuthorByName(cheepDTO.AuthorName);
+            var author = FindAuthorByName(cheepDTO.Author.Name);
             
             if (author == null)
             {
-                await CreateAuthor();
-                author = FindAuthorByName(cheepDTO.AuthorName);
+                await CreateAuthor(cheepDTO.Author.Name);
+                author = FindAuthorByName(cheepDTO.Author.Name);
             }
 
             // Create a new Cheep 
-            if (author != null)
+            Cheep newCheep = new Cheep
             {
-                Cheep newCheep = new Cheep
-                {
-                    Text = cheepDTO.Text,
-                    Author =  author,
-                    TimeStamp = DateTimeOffset.UtcNow.UtcDateTime // Use current timestamp in UNIX format
-                };
+                Text = cheepDTO.Text,
+                Author =  author,
+                TimeStamp = DateTime.Now // 
+            };
 
-                // Add the new Cheep to the DbContext
-                await _dbContext.Cheeps.AddAsync(newCheep);
-            }
-
+            // Add the new Cheep to the DbContext
+            await _dbContext.Cheeps.AddAsync(newCheep);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
 
@@ -120,12 +122,12 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor()
+        public async Task CreateAuthor(string authorName)
         {
             var author = new Author()
-            {
-                Name = Environment.UserName,
-                Email = Environment.UserName + "@example.com",
+            {   
+                Name = authorName,
+                Email = authorName,
                 Cheeps = new List<Cheep>(),
             };
             await _dbContext.Authors.AddAsync(author);
@@ -139,7 +141,11 @@ namespace Chirp.Infrastructure.Repositories
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorName = cheep.Author.Name,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email
+                    },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
                 });

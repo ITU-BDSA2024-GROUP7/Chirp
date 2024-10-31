@@ -46,7 +46,7 @@ public class UnitTests
      
         
         // Assert
-        Assert.Equal(firstCheep.AuthorName, authorName);
+        Assert.Equal(firstCheep.Author.Name, authorName);
         Assert.Equal(firstCheep.Text, messageData);
         Assert.Equal(firstCheep.FormattedTimeStamp, UnixTimeStampToDateTimeString(unixTimestamp));
     }

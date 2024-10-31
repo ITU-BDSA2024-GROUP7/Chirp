@@ -8,28 +8,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="Migrations\20241002120734_InitialDBSchema.cs" />
-      <Content Include="Migrations\20241002120734_InitialDBSchema.Designer.cs" />
-      <Content Include="Migrations\CheepDBContextModelSnapshot.cs" />
+        <Content Include="Migrations\20241002120734_InitialDBSchema.cs"/>
+        <Content Include="Migrations\20241002120734_InitialDBSchema.Designer.cs"/>
+        <Content Include="Migrations\CheepDBContextModelSnapshot.cs"/>
+        <Content Include="Migrations\20241023180724_AddIdentitySupport.cs"/>
+        <Content Include="Migrations\20241031080055_UpdateAuthors.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-rc.2.24474.1" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-rc.2.24474.1">
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+        <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-rc.2.24474.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-rc.2.24474.1">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj" />
+        <ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj"/>
     </ItemGroup>
 
 </Project>

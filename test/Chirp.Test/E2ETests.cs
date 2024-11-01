@@ -87,51 +87,47 @@ public class E2ETests : PageTest
 
         await page.GotoAsync("http://localhost:5273/");
 
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+
+        await page.WaitForURLAsync("http://localhost:5273/", new PageWaitForURLOptions() { Timeout = 0 });
+
+        await context.StorageStateAsync(new()
+        {
+            Path = "state.json"
+        });
+
         isSetup = true;
     }
 
-    // [Test]
-    // [Category("End2End")]
-    // public async Task AuthenticatedUserCanCreateCheepFromPublicAndPrivateTimeline()
-    // {
-    //     await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
-    //
-    //     var context = await browser.NewContextAsync(browserNewContextOptions);
-    //
-    //     var page = await context.NewPageAsync();
-    //
-    //     await page.GotoAsync("http://localhost:5273/");
-    //
-    //     await page.Locator("#CheepMessage").ClickAsync();
-    //
-    //     await page.Locator("#CheepMessage").FillAsync("Testing public timeline");
-    //
-    //     await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-    //
-    //     await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing public timeline");
-    //
-    //     await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-    //
-    //     await page.Locator("#CheepMessage").ClickAsync();
-    //
-    //     await page.Locator("#CheepMessage").FillAsync("Testing private timeline");
-    //
-    //     await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-    //
-    //     await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing private timeline");
-    // }
-
     [Test]
     [Category("End2End")]
-    public async Task publictimeline()
+    public async Task AuthenticatedUserCanCreateCheepFromPublicAndPrivateTimeline()
     {
         await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
-        
-        var context = await browser.NewContextAsync();
+
+        var context = await browser.NewContextAsync(browserNewContextOptions);
 
         var page = await context.NewPageAsync();
-        await page.GotoAsync("http://localhost:5273/");
-        await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
 
+        await page.GotoAsync("http://localhost:5273/");
+
+        await page.Locator("#CheepMessage").ClickAsync();
+
+        await page.Locator("#CheepMessage").FillAsync("Testing public timeline");
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing public timeline");
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+
+        await page.Locator("#CheepMessage").ClickAsync();
+
+        await page.Locator("#CheepMessage").FillAsync("Testing private timeline");
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing private timeline");
     }
+    
 }

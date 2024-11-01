@@ -15,164 +15,119 @@ using Program = Chirp.Web.Program;
 
 namespace Chirp.Test;
 
+
+[Parallelizable(ParallelScope.Self)]
+[TestFixture]
 public class E2ETests : PageTest
 {
-    private WebApplicationFactory<Program> _factory;
-    private SqliteConnection _connection;
-    private IPlaywright? _playwright;
-    private IBrowser? _browser;
-    private IBrowserContext? _browserContext;
-    private IPage? _page;
-    private SqliteConnection _sqliteConnection;
-    private string _serverUrl = string.Empty;
+    private const string AppUrl = "http://localhost:5273/";
+    private const string StartupProjectPath = "F:/Udvikling/CSharp/Chirp/src/Chirp.Web/Chirp.Web.csproj"; // Update this path
+    private Process? _appProcess;
+    
+    bool isSetup = false;
+
+    BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
+    {
+        Headless = false,
+    };
+
+    BrowserNewContextOptions browserNewContextOptions = new BrowserNewContextOptions
+    {
+        IgnoreHTTPSErrors = true,
+        StorageStatePath = "state.json"
+    };
     
     [OneTimeSetUp]
-    public async Task Setup()
+    public async Task OneTimeSetUp()
     {
-        // Setup SQLite connection
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
-        // Setup WebApplicationFactory
-        _factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
+        // Start the ASP.NET application
+        _appProcess = new Process
+        {
+            StartInfo = new ProcessStartInfo
             {
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<CheepDBContext>));
+                FileName = "dotnet",
+                Arguments = $"run --project \"{StartupProjectPath}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+            }
+        };
 
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
+        _appProcess.Start();
 
-                    services.AddDbContext<CheepDBContext>(options =>
-                    {
-                        options.UseSqlite(_connection);
-                    });
-                });
-            });
-
-        // Start the server and get the URL
-        var client = _factory.CreateClient();
-        _serverUrl = "http://localhost:5273";
-
-        // Setup Playwright
-        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-        {
-            Headless = true // Set to false for debugging
-        });
+        // Wait for the application to start
+        await Task.Delay(5000); // Adjust the delay if needed, or implement a better wait mechanism
     }
-
-    [SetUp]
-    public async Task SetUpContext()
-    {
-        if (_browser == null)
-        {
-            throw new InvalidOperationException("Browser is not initialized");
-        }
-
-        _browserContext = await _browser.NewContextAsync();
-        _page = await _browser.NewPageAsync();
-    }
-
-    [TearDown]
-    public async Task Cleanup()
-    {
-        if (_browserContext != null)
-        {
-            await _browser.CloseAsync();
-        }
-
-        if (_page != null)
-        {
-            await _page.CloseAsync();
-        }
-    }
-
+    
     [OneTimeTearDown]
-    public async Task TearDownPlaywright()
+    public void OneTimeTearDown()
     {
-        if (_browser != null)
+        // Stop the ASP.NET application
+        if (_appProcess != null && !_appProcess.HasExited)
         {
-            await _browser.CloseAsync();
+            _appProcess.Kill();
+            _appProcess.Dispose();
         }
-
-        if (_playwright != null)
-        {
-            _playwright.Dispose();
-        }
-
-        if (_connection != null)
-        {
-            await _connection.DisposeAsync();
-        }
-
-        if (_factory != null)
-        {
-            await _factory.DisposeAsync();
-        }
-    }
-
-    [Test]
-    public async Task GetIndexPageAndCorrectContent()
-    {
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
-
-        await _page.GotoAsync($"{_serverUrl}/");
-
-        var content = await _page.TextContentAsync("body");
-        NUnit.Framework.Assert.That(content, Does.Contain("Chirp"));
-    }
-
-    
-
-    [Test]
-    public async Task Get_TestPersonPage()
-    {
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
-        await _page.GotoAsync($"{_serverUrl}/Testperson");
-        
-        var content = await _page.TextContentAsync("body");
-        NUnit.Framework.Assert.That(content, Does.Contain(""));
     }
     
-    [Test]
-    public async Task DoesPrivateTimelineContainAdrianTest()
+    [SetUp]
+    public async Task SetUp()
     {
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
-        // Go to Adrian's page
-        await _page.GotoAsync($"{_serverUrl}/Adrian");
-        
-        // Look if Adrian has the chosen cheep
-        var content = await _page.TextContentAsync("body");
-        NUnit.Framework.Assert.That(content, Does.Contain("Adrian"));
-        NUnit.Framework.Assert.That(content, Does.Contain("Hej, velkommen til kurset"));
+        if (isSetup) return;
+
+        await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
+
+        var context = await browser.NewContextAsync(new BrowserNewContextOptions
+        {
+            IgnoreHTTPSErrors = true,
+        });
+
+        var page = await context.NewPageAsync();
+
+        await page.GotoAsync("http://localhost:5273/");
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+
+        await page.WaitForURLAsync("http://localhost:5273/", new PageWaitForURLOptions() { Timeout = 0 });
+
+        await context.StorageStateAsync(new()
+        {
+            Path = "state.json"
+        });
+
+        isSetup = true;
     }
-    
 
     [Test]
-    public async Task RegisterNewUserTest()
+    [Category("End2End")]
+    public async Task AuthenticatedUserCanCreateCheepFromPublicAndPrivateTimeline()
     {
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
+        await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
 
-        await _page.GotoAsync($"{_serverUrl}/Identity/Account/Register");
-        
-        // Fill in the data 
-        await _page.FillAsync("input[name='Input.Email']", "testuser@gmail.com");
-        await _page.FillAsync("input[name='Input.Password']", "Test@12345");
-        await _page.FillAsync("input[name='Input.ConfirmPassword']", "Test@12345");
-        
-        // Submitting the form
-        await _page.ClickAsync("button[type='submit']");
-        
-        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        var content = await _page.TextContentAsync("body");
-        NUnit.Framework.Assert.That(content, Does.Contain("Register"));
+        var context = await browser.NewContextAsync(browserNewContextOptions);
+
+        var page = await context.NewPageAsync();
+
+        await page.GotoAsync("http://localhost:5273/");
+
+        await page.Locator("#CheepMessage").ClickAsync();
+
+        await page.Locator("#CheepMessage").FillAsync("Testing public timeline");
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing public timeline");
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+
+        await page.Locator("#CheepMessage").ClickAsync();
+
+        await page.Locator("#CheepMessage").FillAsync("Testing private timeline");
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing private timeline");
     }
     
 }

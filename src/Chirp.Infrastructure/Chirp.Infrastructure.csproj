@@ -8,11 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="Migrations\20241002120734_InitialDBSchema.cs"/>
-        <Content Include="Migrations\20241002120734_InitialDBSchema.Designer.cs"/>
-        <Content Include="Migrations\CheepDBContextModelSnapshot.cs"/>
-        <Content Include="Migrations\20241023180724_AddIdentitySupport.cs"/>
-        <Content Include="Migrations\20241031080055_UpdateAuthors.cs"/>
+        <Content Include="Migrations\**\*.*" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <ItemGroup>

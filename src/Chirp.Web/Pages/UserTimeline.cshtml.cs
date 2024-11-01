@@ -1,4 +1,5 @@
-﻿using Chirp.Infrastructure.Services;
+﻿using Chirp.Core.DTOs;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -10,6 +11,10 @@ public class UserTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    
+    [BindProperty]
+    public string Text { get; set; }
+
     public required List<CheepDTO> Cheeps { get; set; }
 
     public UserTimelineModel(CheepService service)
@@ -17,10 +22,10 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
-    // Runs when site is loaded (Request Method:GET)
+    // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
     {
-        if (!(page is int) || page <= 0)
+        if (page <= 0)
         {
             page = 1;
         }
@@ -29,5 +34,30 @@ public class UserTimelineModel : PageModel
         Cheeps = await _service.GetCheepsFromAuthor(author, page);
         TotalPageNumber = await _service.GetTotalPageNumber(author);
         return Page();
+    }
+
+    public async Task<IActionResult> OnPost()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var authorName = User.Identity.Name;
+            var authorEmail = User.Identity.Name;
+
+            // Create the new CheepDTO
+            var cheepDTO = new CheepDTO
+            {
+                Author = new AuthorDTO
+                {
+                    Name = authorName, // this needs to be changed to user names going forward
+                    Email = authorEmail 
+                },
+                Text = Text,
+                FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
+            };
+
+            await _service.CreateCheep(cheepDTO);
+        }
+
+        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
 }

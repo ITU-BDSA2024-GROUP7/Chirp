@@ -21,7 +21,7 @@ namespace Chirp.Web
 
             // Add the DbContext first
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
-
+            
             // Then add Identity services
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
                     options.SignIn.RequireConfirmedAccount = true)

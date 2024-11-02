@@ -21,25 +21,40 @@ namespace Chirp.Test;
 public class E2ETests : PageTest
 {
     private const string AppUrl = "http://localhost:5273/";
-    private const string StartupProjectPath = "F:/Udvikling/CSharp/Chirp/src/Chirp.Web/Chirp.Web.csproj"; // Update this path
+    private const string StartupProjectPath = "C:/Users/nik/OneDrive/Documents/GitHub/Chirp/src/Chirp.Web/Chirp.Web.csproj"; // Update this path
     private Process? _appProcess;
-    
-    bool isSetup = false;
+    private IBrowser? browser;
+    private IBrowserContext? context;
+    private IPage? page;
 
     BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
         Headless = false,
     };
-
+    
+    // Can be used in a test to save the cookies (so that a user doesn't have to login in a test for example)
     BrowserNewContextOptions browserNewContextOptions = new BrowserNewContextOptions
     {
         IgnoreHTTPSErrors = true,
         StorageStatePath = "state.json"
     };
+
+    [SetUp]
+    public async Task Setup()
+    {
+        browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
+
+        context = await browser.NewContextAsync();
+
+        page = await context.NewPageAsync();
+        
+        await page.GotoAsync(AppUrl);
+    }
     
     [OneTimeSetUp]
     public async Task OneTimeSetUp()
     {
+        
         // Start the ASP.NET application
         _appProcess = new Process
         {
@@ -57,7 +72,7 @@ public class E2ETests : PageTest
         _appProcess.Start();
 
         // Wait for the application to start
-        await Task.Delay(5000); // Adjust the delay if needed, or implement a better wait mechanism
+        await Task.Delay(5000); // Adjust delay if needed
     }
     
     [OneTimeTearDown]
@@ -75,13 +90,7 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task AuthenticatedUserCanCreateCheepFromPublicAndPrivateTimeline()
     {
-        await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
-
-        var context = await browser.NewContextAsync(browserNewContextOptions);
-
-        var page = await context.NewPageAsync();
-
-        await page.GotoAsync("http://localhost:5273/");
+        await page.GotoAsync(AppUrl);
 
         await page.Locator("#CheepMessage").ClickAsync();
 
@@ -102,4 +111,17 @@ public class E2ETests : PageTest
         await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing private timeline");
     }
     
+    [Test]
+    [Category("End2End")]
+    public async Task GetIndexPageAndCorrectContent()
+    {
+        if (Page == null) throw new InvalidOperationException("Page is not initialized");
+
+        await Page.GotoAsync($"{AppUrl}/");
+        
+        var publicTimelineHeader = page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" });
+        var headerText = await publicTimelineHeader.InnerTextAsync();
+        headerText.Should().Be("Public Timeline");
+        await Expect(publicTimelineHeader).ToBeVisibleAsync();
+    }
 }

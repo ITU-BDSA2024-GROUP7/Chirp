@@ -21,7 +21,7 @@ namespace Chirp.Test;
 public class E2ETests : PageTest
 {
     private const string AppUrl = "http://localhost:5273/";
-    private const string StartupProjectPath = "C:/Users/nik/OneDrive/Documents/GitHub/Chirp/src/Chirp.Web/Chirp.Web.csproj"; // Update this path
+    private string StartupProjectPath;
     private Process? _appProcess;
     private IBrowser? browser;
     private IBrowserContext? context;
@@ -38,12 +38,13 @@ public class E2ETests : PageTest
         IgnoreHTTPSErrors = true,
         StorageStatePath = "state.json"
     };
-
+    
     [SetUp]
     public async Task Setup()
     {
+        Console.WriteLine(StartupProjectPath);
         browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
-
+        
         context = await browser.NewContextAsync();
 
         page = await context.NewPageAsync();
@@ -54,6 +55,10 @@ public class E2ETests : PageTest
     [OneTimeSetUp]
     public async Task OneTimeSetUp()
     {
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+
+        // Construct the path to your project
+        StartupProjectPath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "Chirp.Web.csproj");
         
         // Start the ASP.NET application
         _appProcess = new Process
@@ -90,8 +95,9 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task GetIndexPageAndCorrectContent()
     {
+        
         if (page == null) throw new InvalidOperationException("Page is not initialized");
-
+        
         await Page.GotoAsync($"{AppUrl}/");
         
         var publicTimelineHeader = page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" });

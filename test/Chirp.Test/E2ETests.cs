@@ -70,34 +70,6 @@ public class E2ETests : PageTest
             _appProcess.Dispose();
         }
     }
-    
-    [SetUp]
-    public async Task SetUp()
-    {
-        if (isSetup) return;
-
-        await using var browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
-
-        var context = await browser.NewContextAsync(new BrowserNewContextOptions
-        {
-            IgnoreHTTPSErrors = true,
-        });
-
-        var page = await context.NewPageAsync();
-
-        await page.GotoAsync("http://localhost:5273/");
-
-        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
-
-        await page.WaitForURLAsync("http://localhost:5273/", new PageWaitForURLOptions() { Timeout = 0 });
-
-        await context.StorageStateAsync(new()
-        {
-            Path = "state.json"
-        });
-
-        isSetup = true;
-    }
 
     [Test]
     [Category("End2End")]

@@ -21,35 +21,28 @@ namespace Chirp.Test;
 public class E2ETests : PageTest
 {
     private const string AppUrl = "http://localhost:5273/";
-    private string StartupProjectPath;
+    private string _startupProjectPath;
     private Process? _appProcess;
-    private IBrowser? browser;
-    private IBrowserContext? context;
-    private IPage? page;
+    private IBrowser? _browser;
+    private IBrowserContext? _context;
+    private IPage? _page;
 
-    BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
+    readonly BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = false,
-    };
-    
-    // Can be used in a test to save the cookies (so that a user doesn't have to login in a test for example)
-    BrowserNewContextOptions browserNewContextOptions = new BrowserNewContextOptions
-    {
-        IgnoreHTTPSErrors = true,
-        StorageStatePath = "state.json"
+        Headless = true,
     };
     
     [SetUp]
     public async Task Setup()
     {
-        Console.WriteLine(StartupProjectPath);
-        browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
+        Console.WriteLine(_startupProjectPath);
+        _browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
         
-        context = await browser.NewContextAsync();
+        _context = await _browser.NewContextAsync();
 
-        page = await context.NewPageAsync();
+        _page = await _context.NewPageAsync();
         
-        await page.GotoAsync(AppUrl);
+        await _page.GotoAsync(AppUrl);
     }
     
     [OneTimeSetUp]
@@ -58,7 +51,7 @@ public class E2ETests : PageTest
         var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
 
         // Construct the path to your project
-        StartupProjectPath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "Chirp.Web.csproj");
+        _startupProjectPath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "Chirp.Web.csproj");
         
         // Start the ASP.NET application
         _appProcess = new Process
@@ -66,7 +59,7 @@ public class E2ETests : PageTest
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"run --project \"{StartupProjectPath}\"",
+                Arguments = $"run --project \"{_startupProjectPath}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -96,11 +89,11 @@ public class E2ETests : PageTest
     public async Task GetIndexPageAndCorrectContent()
     {
         
-        if (page == null) throw new InvalidOperationException("Page is not initialized");
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
         
         await Page.GotoAsync($"{AppUrl}/");
         
-        var publicTimelineHeader = page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" });
+        var publicTimelineHeader = _page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" });
         var headerText = await publicTimelineHeader.InnerTextAsync();
         headerText.Should().Be("Public Timeline");
         await Expect(publicTimelineHeader).ToBeVisibleAsync();
@@ -110,12 +103,12 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task DoesPrivateTimelineContainAdrianTest()
     {
-        if (page == null) throw new InvalidOperationException("Page is not initialized");
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
         
         // Go to Adrian's page
-        await page.GotoAsync("http://localhost:5273/Adrian");
+        await _page.GotoAsync("http://localhost:5273/Adrian");
         
-        var timelineHeader = page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" });
+        var timelineHeader = _page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" });
         var headerText = await timelineHeader.InnerTextAsync();
         headerText.Should().Be("Adrian's Timeline");
         await Expect(timelineHeader).ToBeVisibleAsync();
@@ -125,45 +118,53 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task RegisterAndLoginTest()
     {
-        if (page == null) throw new InvalidOperationException("Page is not initialized");
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
         
-        await page.GotoAsync("http://localhost:5273/");
+        await _page.GotoAsync("http://localhost:5273/");
         
         // Clicks on register button
-        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
         
         // Arrived at register page, and put in email and password
-        await page.GetByPlaceholder("name@example.com").ClickAsync();
-        await page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
-        await page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
-        await page.GetByLabel("Password", new() { Exact = true }).FillAsync("Test@12345");
-        await page.GetByLabel("Confirm Password").ClickAsync();
-        await page.GetByLabel("Confirm Password").FillAsync("Test@12345");
+        await _page.GetByPlaceholder("name@example.com").ClickAsync();
+        await _page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
+        await _page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("Test@12345");
+        await _page.GetByLabel("Confirm Password").ClickAsync();
+        await _page.GetByLabel("Confirm Password").FillAsync("Test@12345");
         
         // Clicks on the register button to register the account
-        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         
         // Confirms the registration by clicking on the confirm button
-        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
         
         // Goes to login page
-        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         
         // Fills in information
-        await page.GetByPlaceholder("name@example.com").ClickAsync();
-        await page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
-        await page.GetByPlaceholder("password").ClickAsync();
-        await page.GetByPlaceholder("password").FillAsync("Test@12345");
+        await _page.GetByPlaceholder("name@example.com").ClickAsync();
+        await _page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
+        await _page.GetByPlaceholder("password").ClickAsync();
+            await _page.GetByPlaceholder("password").FillAsync("Test@12345");
         
         // Clicks on log in button
-        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         
         // User arrived at the homepage and should now see a logout button with their email attached
-        var logoutButton = page.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com]" });
+        var logoutButton = _page.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com]" });
 
         // Verify that the button contains the correct text
         var logoutButtonText = await logoutButton.InnerTextAsync();
         logoutButtonText.Should().Be("Logout [testuser@gmail.com]");
+        
+        // Removing the test user
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Manage account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
+        await _page.GetByPlaceholder("Please enter your password.").ClickAsync();
+        await _page.GetByPlaceholder("Please enter your password.").FillAsync("Test@12345");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
 
     }
 }

@@ -42,7 +42,7 @@ public class E2ETests : PageTest
 
         _page = await _context.NewPageAsync();
         
-        await _page.GotoAsync(AppUrl);
+        if (_page == null) throw new InvalidOperationException("Page is not initialized");
     }
     
     [OneTimeSetUp]
@@ -84,21 +84,65 @@ public class E2ETests : PageTest
         }
     }
     
+    //---------------------------------- HELPER METHODS ----------------------------------
+    // Register
+    // Login
+    // Logout
+    
+    //---------------------------------- PUBLIC TIMELINE TESTS ----------------------------------
     [Test]
     [Category("End2End")]
-    public async Task GetIndexPageAndCorrectContent()
+    [Category("PublicTimeline")]
+    public async Task LoadPublicTimeline()
     {
-        
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
-        await Page.GotoAsync($"{AppUrl}/");
-        
-        var publicTimelineHeader = _page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" });
-        var headerText = await publicTimelineHeader.InnerTextAsync();
-        headerText.Should().Be("Public Timeline");
-        await Expect(publicTimelineHeader).ToBeVisibleAsync();
+        await _page!.GotoAsync("http://localhost:5273/");
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
+    }
+
+    [Test]
+    [Category("End2End")]
+    [Category("PublicTimeline")]
+    public async Task PublicTimelineLoadingCheeps()
+    {
+        await _page!.GotoAsync("http://localhost:5273/");
+        await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
     }
     
+    [Test]
+    [Category("End2End")]
+    [Category("PublicTimeline")]
+    public async Task PublicTimelineNextAndPreviousPage()
+    {
+        await _page!.GotoAsync("http://localhost:5273/");
+        
+        // If there is a next page button
+        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "<", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+        }
+    }
+
+    [Test]
+    [Category("End2End")]
+    [Category("PublicTimeline")]
+    public async Task PublicTimelineFirstAndLastPage()
+    {
+        await _page!.GotoAsync("http://localhost:5273/");
+        
+        // If there is a next page button
+        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "<<", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+        }
+    }
+    
+    //---------------------------------- USER TIMELINE TESTS ----------------------------------
     [Test]
     [Category("End2End")]
     public async Task DoesPrivateTimelineContainAdrianTest()
@@ -113,10 +157,38 @@ public class E2ETests : PageTest
         headerText.Should().Be("Adrian's Timeline");
         await Expect(timelineHeader).ToBeVisibleAsync();
     }
+    
+    // Verify that clicking on a user goes to their timeline
+    
+    // Check for presence of cheeps for some author
+    
+    // Check for no cheeps on user timeline with no cheeps
+    
+    // Check back button goes to public timeline 
 
+    // Next and previous page 
+    
+    // First and last page
+    
+    //---------------------------------- REGISTER PAGE TESTS ----------------------------------
+    
+    // Registration page loads successfully (Expect the registration form)
+    
+    // Successfully registration with valid inputs
+    
+    // Registration without @ in email
+    
+    // Registration with password not living up to constraint (min 8 characters)
+    
+    // Registration with password not living up to constraints (a symbol)
+    
+    // Registration with password not living up to constraints (one big letter? cant remember if constraint exists)
+    
+    
+    // This test should be reworked to only test register
     [Test]
     [Category("End2End")]
-    public async Task RegisterAndLoginTest()
+    public async Task RegisterTest()
     {
         if (_page == null) throw new InvalidOperationException("Page is not initialized");
         
@@ -139,6 +211,9 @@ public class E2ETests : PageTest
         // Confirms the registration by clicking on the confirm button
         await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
         
+        // Person has correctly registered if email is confirmed
+        await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
+        
         // Goes to login page
         await _page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         
@@ -146,17 +221,13 @@ public class E2ETests : PageTest
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
         await _page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
         await _page.GetByPlaceholder("password").ClickAsync();
-            await _page.GetByPlaceholder("password").FillAsync("Test@12345");
+        await _page.GetByPlaceholder("password").FillAsync("Test@12345");
         
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         
         // User arrived at the homepage and should now see a logout button with their email attached
-        var logoutButton = _page.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com]" });
-
-        // Verify that the button contains the correct text
-        var logoutButtonText = await logoutButton.InnerTextAsync();
-        logoutButtonText.Should().Be("Logout [testuser@gmail.com]");
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com" })).ToBeVisibleAsync();
         
         // Removing the test user
         await _page.GetByRole(AriaRole.Link, new() { Name = "Manage account" }).ClickAsync();
@@ -167,4 +238,24 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
 
     }
+    
+    //---------------------------------- LOGIN PAGE TESTS ----------------------------------
+    
+    // Login page loads successfully (check for login form)
+    
+    // Test successfully login
+    
+    // Login with invalid credentials 
+    
+    // Check 'register as a new user' redirects to registration page.
+    
+    //---------------------------------- LOGOUT PAGE TESTS ----------------------------------
+    
+    // Logout page load successfully (check for logout button)
+    
+    // The logout button logs user out (check for no authentication and redirect)
+    
+    //---------------------------------- MANAGE ACCOUNT TESTS ----------------------------------
+    
+    // Manage page loads successfully
 }

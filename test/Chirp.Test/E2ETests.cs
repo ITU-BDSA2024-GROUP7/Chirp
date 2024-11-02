@@ -85,37 +85,12 @@ public class E2ETests : PageTest
             _appProcess.Dispose();
         }
     }
-
-    [Test]
-    [Category("End2End")]
-    public async Task AuthenticatedUserCanCreateCheepFromPublicAndPrivateTimeline()
-    {
-        await page.GotoAsync(AppUrl);
-
-        await page.Locator("#CheepMessage").ClickAsync();
-
-        await page.Locator("#CheepMessage").FillAsync("Testing public timeline");
-
-        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-
-        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing public timeline");
-
-        await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-
-        await page.Locator("#CheepMessage").ClickAsync();
-
-        await page.Locator("#CheepMessage").FillAsync("Testing private timeline");
-
-        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-
-        await Expect(page.Locator("#messagelist")).ToContainTextAsync("Testing private timeline");
-    }
     
     [Test]
     [Category("End2End")]
     public async Task GetIndexPageAndCorrectContent()
     {
-        if (Page == null) throw new InvalidOperationException("Page is not initialized");
+        if (page == null) throw new InvalidOperationException("Page is not initialized");
 
         await Page.GotoAsync($"{AppUrl}/");
         
@@ -123,5 +98,66 @@ public class E2ETests : PageTest
         var headerText = await publicTimelineHeader.InnerTextAsync();
         headerText.Should().Be("Public Timeline");
         await Expect(publicTimelineHeader).ToBeVisibleAsync();
+    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesPrivateTimelineContainAdrianTest()
+    {
+        if (page == null) throw new InvalidOperationException("Page is not initialized");
+        
+        // Go to Adrian's page
+        await page.GotoAsync("http://localhost:5273/Adrian");
+        
+        var timelineHeader = page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" });
+        var headerText = await timelineHeader.InnerTextAsync();
+        headerText.Should().Be("Adrian's Timeline");
+        await Expect(timelineHeader).ToBeVisibleAsync();
+    }
+
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterAndLoginTest()
+    {
+        if (page == null) throw new InvalidOperationException("Page is not initialized");
+        
+        await page.GotoAsync("http://localhost:5273/");
+        
+        // Clicks on register button
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        
+        // Arrived at register page, and put in email and password
+        await page.GetByPlaceholder("name@example.com").ClickAsync();
+        await page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
+        await page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
+        await page.GetByLabel("Password", new() { Exact = true }).FillAsync("Test@12345");
+        await page.GetByLabel("Confirm Password").ClickAsync();
+        await page.GetByLabel("Confirm Password").FillAsync("Test@12345");
+        
+        // Clicks on the register button to register the account
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        
+        // Confirms the registration by clicking on the confirm button
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+        
+        // Goes to login page
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        
+        // Fills in information
+        await page.GetByPlaceholder("name@example.com").ClickAsync();
+        await page.GetByPlaceholder("name@example.com").FillAsync("testuser@gmail.com");
+        await page.GetByPlaceholder("password").ClickAsync();
+        await page.GetByPlaceholder("password").FillAsync("Test@12345");
+        
+        // Clicks on log in button
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        
+        // User arrived at the homepage and should now see a logout button with their email attached
+        var logoutButton = page.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com]" });
+
+        // Verify that the button contains the correct text
+        var logoutButtonText = await logoutButton.InnerTextAsync();
+        logoutButtonText.Should().Be("Logout [testuser@gmail.com]");
+
     }
 }

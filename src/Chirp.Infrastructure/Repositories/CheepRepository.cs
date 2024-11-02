@@ -90,7 +90,7 @@ namespace Chirp.Infrastructure.Repositories
             {
                 Text = cheepDTO.Text,
                 Author =  author,
-                TimeStamp = DateTime.Now // 
+                TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
             // Add the new Cheep to the DbContext

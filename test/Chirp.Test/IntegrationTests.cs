@@ -7,6 +7,7 @@ using Chirp.Core;
 using Chirp.Infrastructure.Repositories;
 using FluentAssertions;
 using Chirp.Web;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
@@ -26,6 +27,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
 
         _factory = factory.WithWebHostBuilder(builder =>
         {
+            builder.UseUrls("http://localhost:5273");
             builder.ConfigureServices(services =>
             {
                 // Used to remove if a context of the database exist (but only for these tests specifically in memory)
@@ -44,7 +46,10 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
             });
         });
 
-        _client = _factory.CreateClient();
+        _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("http://localhost:5273")
+        });
         // Ensures the database was created
         using (var scope = _factory.Services.CreateScope())
         {

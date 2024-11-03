@@ -1,47 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Chirp.Core.DTOs;
-using Chirp.Infrastructure.Services;
-using Chirp.Web.Pages.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Chirp.Core.DTOs;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
+using Chirp.Infrastructure.Services;
 
-namespace Chirp.Web.Pages;
 
-public class PublicModel : PageModel
+namespace Chirp.Web.Pages.Shared;
+
+public class ShareCheepViewModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    
-    [BindProperty]
-    public string Text { get; set; }
-
-    public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public ShareCheepViewModel ShareCheepView { get; set; } = new ShareCheepViewModel();
-
-    public PublicModel(CheepService service)
-    {
-        _service = service;
-    }
-
-    /// <summary>
-    /// Gets cheeps and stores them in a list when the page is loaded.
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> OnGet([FromQuery] int page)
-    {
-        if (page <= 0)
-        {
-            page = 1;
-        }
-        
-        PageNumber = page;
-        Cheeps = await _service.GetCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumber();
-        
-        return Page();
-    }
     
     public async Task<IActionResult> OnPost()
     {
@@ -49,14 +20,9 @@ public class PublicModel : PageModel
         if (string.IsNullOrWhiteSpace(CheepText))
         {
             // Add a custom model error if CheepText is empty
-            ModelState.AddModelError(nameof(CheepText), "Minimum length is 1");
+            ModelState.AddModelError(nameof(CheepText), "At least write something before you click me....MO");
             return Page(); // Return the page with the new error message
         }
-        
-        // if (!ModelState.IsValid) // Check if the model state is invalid
-        // {
-        //     return Page(); // Return the page with validation messages
-        // }
         
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
@@ -82,9 +48,5 @@ public class PublicModel : PageModel
     }
     
     [BindProperty]
-    [Required(ErrorMessage = "At least write something before you click me.... ")]
-    [StringLength(160, ErrorMessage = "Maximum length is {1}")]
-    [Display(Name = "Message Text")]
     public string CheepText { get; set; }
-
 }

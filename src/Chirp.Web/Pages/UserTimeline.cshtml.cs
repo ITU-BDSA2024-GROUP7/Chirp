@@ -1,5 +1,6 @@
 ﻿using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
+using Chirp.Web.Pages.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -16,6 +17,7 @@ public class UserTimelineModel : PageModel
     public string Text { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; }
+    public ShareCheepViewModel ShareCheepView { get; set; } = new ShareCheepViewModel();
 
     public UserTimelineModel(CheepService service)
     {

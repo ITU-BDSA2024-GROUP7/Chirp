@@ -15,7 +15,7 @@
     </div>
     @if(User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
-        @await Html.PartialAsync("_ShareBar", Model)
+        @await Html.PartialAsync("_ShareBar", Model.ShareCheepView)
         @* @await Component.InvokeAsync("SubmitCheepComponent", new { model = Model }) *@
     }
     

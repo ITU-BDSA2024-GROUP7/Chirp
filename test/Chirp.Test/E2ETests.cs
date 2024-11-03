@@ -20,7 +20,7 @@ namespace Chirp.Test;
 [TestFixture]
 public class E2ETests : PageTest
 {
-    private const string AppUrl = "http://localhost:5273/";
+    private const string AppUrl = "http://localhost:5273";
     private string _startupProjectPath;
     private Process? _appProcess;
     private IBrowser? _browser;
@@ -29,7 +29,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true,
+        Headless = false,
     };
     
     [SetUp]
@@ -95,7 +95,7 @@ public class E2ETests : PageTest
     [Category("PublicTimeline")]
     public async Task LoadPublicTimeline()
     {
-        await _page!.GotoAsync("http://localhost:5273/");
+        await _page!.GotoAsync($"{AppUrl}");
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
     }
 
@@ -104,7 +104,7 @@ public class E2ETests : PageTest
     [Category("PublicTimeline")]
     public async Task PublicTimelineLoadingCheeps()
     {
-        await _page!.GotoAsync("http://localhost:5273/");
+        await _page!.GotoAsync($"{AppUrl}");
         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
     }
     
@@ -113,7 +113,7 @@ public class E2ETests : PageTest
     [Category("PublicTimeline")]
     public async Task PublicTimelineNextAndPreviousPage()
     {
-        await _page!.GotoAsync("http://localhost:5273/");
+        await _page!.GotoAsync($"{AppUrl}");
         
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
@@ -130,7 +130,7 @@ public class E2ETests : PageTest
     [Category("PublicTimeline")]
     public async Task PublicTimelineFirstAndLastPage()
     {
-        await _page!.GotoAsync("http://localhost:5273/");
+        await _page!.GotoAsync($"{AppUrl}");
         
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
@@ -145,45 +145,173 @@ public class E2ETests : PageTest
     //---------------------------------- USER TIMELINE TESTS ----------------------------------
     [Test]
     [Category("End2End")]
-    public async Task DoesPrivateTimelineContainAdrianTest()
+    public async Task DoesUserTimelinePageSuccessfullyLoad()
     {
-        if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
         // Go to Adrian's page
-        await _page.GotoAsync("http://localhost:5273/Adrian");
-        
-        var timelineHeader = _page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" });
-        var headerText = await timelineHeader.InnerTextAsync();
-        headerText.Should().Be("Adrian's Timeline");
-        await Expect(timelineHeader).ToBeVisibleAsync();
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
     }
     
     // Verify that clicking on a user goes to their timeline
+    [Test]
+    [Category("End2End")]
+    public async Task GoToUserTimelineFromUsername()
+    {
+        await _page!.GotoAsync($"{AppUrl}");
+        
+        var firstMessageLink = _page.Locator("#messagelist > li:first-child a");
+
+        var name = await firstMessageLink.InnerTextAsync();
+        
+        await firstMessageLink.ClickAsync();
+        
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = $"{name}'s Timeline" })).ToBeVisibleAsync();
+        
+    }
     
     // Check for presence of cheeps for some author
-    
-    // Check for no cheeps on user timeline with no cheeps
-    
-    // Check back button goes to public timeline 
+    [Test]
+    [Category("End2End")]
+    public async Task PresenceOfCheeps()
+    {
+        // Go to Adrian's page
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+    }
 
-    // Next and previous page 
+    // Check for no cheeps on user timeline with no cheeps
+    [Test]
+    [Category("End2End")]
+    public async Task NoCheepsOnUserTimeline()
+    {
+        // Go to a user page with no cheeps
+        await _page!.GotoAsync($"{AppUrl}/UserWithNoCheeps");
+        await Expect(_page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+    }
     
-    // First and last page
+    // Check back button goes to public timeline
+    [Test]
+    [Category("End2End")]
+    public async Task BackButtonGoesToPublicTimeline()
+    {
+        // Go to Adrian's page
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        
+        // Click on the back button
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Back" }).ClickAsync();
+        
+        // Check if the public timeline is visible
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
+    }
+    
+    // Check next and previous buttons on user timeline
+    [Test]
+    [Category("End2End")]
+    [Category("PublicTimeline")]
+    public async Task UserTimelineNextAndPreviousPage()
+    {
+        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        
+        // If there is a next page button
+        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "<", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+        }
+    }
+    
+    // Check first and last page buttons on user timeline
+    [Test]
+    [Category("End2End")]
+    [Category("PublicTimeline")]
+    public async Task UserTimelineFirstAndLastPage()
+    {
+        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        
+        // If there is a next page button
+        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "<<", Exact = true }).ClickAsync();
+            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+        }
+    }
     
     //---------------------------------- REGISTER PAGE TESTS ----------------------------------
     
     // Registration page loads successfully (Expect the registration form)
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterPageLoads()
+    {
+        await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
+        
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Create a new account." })).ToBeVisibleAsync();
+        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Email" })).ToBeVisibleAsync();
+        await Expect(_page.Locator("#registerForm div").Nth(1)).ToBeVisibleAsync();
+        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Confirm Password" })).ToBeVisibleAsync();
+    }
     
     // Successfully registration with valid inputs
     
     // Registration without @ in email
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterWithoutAtInEmail()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("name@example.com").FillAsync("emailwithoutat");
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("MyBadAccount");
+        await _page.GetByLabel("Confirm Password").FillAsync("MyBadAccount");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+
+        // Check for validation message
+        var emailInput = _page.GetByPlaceholder("name@example.com");
+        var validationMessage = await emailInput.EvaluateAsync<string>("el => el.validationMessage");
+        validationMessage.Should().Be("Mailadressen skal indeholde et \"@\". \"emailwithoutat\" mangler et \"@\".");
+    }
+
+    // Registration with password not living up to constraint (at least one non alphanumeric character)
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterWithNoAlphanumericCharacter()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword1234");
+        await _page.GetByLabel("Confirm Password").FillAsync("BadPassword1234");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await Expect(_page.GetByText("Passwords must have at least one non alphanumeric character.")).ToBeVisibleAsync();
+    }
+
+    // Registration with password not living up to constraints (at least one digit ('0'-'9'))
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterWithNoDigit()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword!");
+        await _page.GetByLabel("Confirm Password").FillAsync("BadPassword!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await Expect(_page.GetByText("Passwords must have at least one digit ('0'-'9').")).ToBeVisibleAsync();
+    }
     
-    // Registration with password not living up to constraint (min 8 characters)
-    
-    // Registration with password not living up to constraints (a symbol)
-    
-    // Registration with password not living up to constraints (one big letter? cant remember if constraint exists)
-    
+    // Registration with password not living up to constraints (at least one uppercase ('A'-'Z'))
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterWithNoUppercase()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("badpassword1234!");
+        await _page.GetByLabel("Confirm Password").FillAsync("badpassword1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await Expect(_page.GetByText("Passwords must have at least one uppercase ('A'-'Z').")).ToBeVisibleAsync();
+    }
     
     // This test should be reworked to only test register
     [Test]
@@ -192,7 +320,7 @@ public class E2ETests : PageTest
     {
         if (_page == null) throw new InvalidOperationException("Page is not initialized");
         
-        await _page.GotoAsync("http://localhost:5273/");
+        await _page.GotoAsync($"{AppUrl}");
         
         // Clicks on register button
         await _page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
@@ -244,6 +372,8 @@ public class E2ETests : PageTest
     // Login page loads successfully (check for login form)
     
     // Test successfully login
+    
+    // Test link to own user timeline
     
     // Login with invalid credentials 
     

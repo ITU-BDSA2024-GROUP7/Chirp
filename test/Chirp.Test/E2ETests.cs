@@ -106,7 +106,6 @@ public class E2ETests : PageTest
 
         // Confirms the registration by clicking on the confirm button
         await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
-
     }
 
     // Login
@@ -221,7 +220,6 @@ public class E2ETests : PageTest
         await firstMessageLink.ClickAsync();
 
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = $"{name}'s Timeline" })).ToBeVisibleAsync();
-
     }
 
     // Check for presence of cheeps for some author
@@ -434,7 +432,6 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task LoginSuccessfully()
     {
-
         await RegisterUser();
 
         // Goes to login page
@@ -473,7 +470,6 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
         await Expect(_page.GetByText("Invalid login attempt.")).ToBeVisibleAsync();
-
     }
 
     // Login with no email entered

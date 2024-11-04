@@ -3,6 +3,11 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Ignore SQLite database files
+Cheep.db
+Cheep.db-shm
+Cheep.db-wal
+
 # dotenv files
 .env
 

@@ -27,4 +27,7 @@ jobs:
       run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
     - name: Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
       run: dotnet test test/Chirp.Test/Chirp.Test.csproj --verbosity normal

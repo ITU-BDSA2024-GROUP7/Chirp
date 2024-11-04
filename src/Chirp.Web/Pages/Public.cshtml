@@ -13,6 +13,15 @@
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
+    @if(User.Identity.IsAuthenticated){
+    <div class="cheepbox">
+        <h3>What's on your mind @(User.Identity.Name)?</h3>
+        <form method="post">
+            <input style="float: left" type="text" asp-for="Text">
+            <input type="submit" value="Share">
+        </form>
+    </div>
+    }
 
     @if (Model.Cheeps.Any())
     {
@@ -22,7 +31,7 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@cheep.AuthorName">@cheep.AuthorName</a>
+                            <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
                         <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
                         @cheep.Text

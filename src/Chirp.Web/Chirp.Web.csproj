@@ -30,7 +30,7 @@
     <Content Include="**\Migrations\**\*.*" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

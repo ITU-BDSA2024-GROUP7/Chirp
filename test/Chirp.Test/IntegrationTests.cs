@@ -123,7 +123,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
         cheeps.Should().NotBeNull();
     
         // Check whether a cheep with author was returned
-        cheeps.Should().ContainSingle(c =>  c.AuthorName == "testPerson");
+        cheeps.Should().ContainSingle(c =>  c.Author.Name == "testPerson");
     }
     
     // Is called after all tests finish

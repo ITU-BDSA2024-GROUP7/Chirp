@@ -688,12 +688,12 @@ public class GitHubCredentials
     public static string GetGitHubTestEmail()
     {
         var config = GetConfiguration();
-        return config["githubtestusername"];
+        return config["GITHUBTESTACCOUNTUSERNAME"];
     }
 
     public static string GetGitHubTestPassword()
     {
         var config = GetConfiguration();
-        return config["githubtestpassword"];
+        return config["GITHUBTESTACCOUNTPASSWORD"];
     }
 }

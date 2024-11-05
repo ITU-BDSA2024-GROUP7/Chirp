@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using NUnit.Framework;
 using Assert = Xunit.Assert;
 using Program = Chirp.Web.Program;
+using Microsoft.Extensions.Configuration;
 
 namespace Chirp.Test;
 
@@ -142,7 +143,7 @@ public class E2ETests : PageTest
         await _page.GetByPlaceholder("Please enter your password.").FillAsync(testUserPassword);
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
     }
-
+    
     //---------------------------------- PUBLIC TIMELINE TESTS ----------------------------------
     [Test]
     [Category("End2End")]
@@ -588,7 +589,7 @@ public class E2ETests : PageTest
     // Testing Successful cheep line after login
     [Test]
     [Category("End2End")]
-    public async Task Test_Share_Cheeps_visibility()
+    public async Task TestShareCheepsVisibilityPublicTimeline()
     {
         await RegisterUser();
         await LoginUser();
@@ -601,7 +602,7 @@ public class E2ETests : PageTest
     }
     [Test]
     [Category("End2End")]
-    public async Task Test_Share_Cheeps_visibility_PrivateTimeline()
+    public async Task TestShareCheepsVisibilityPrivateTimeline()
     {
         await RegisterUser();
         await LoginUser();
@@ -613,22 +614,4 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();   
     }
-    
-    /*[Test]
-    [Category("End2End")]
-    public async Task Test_Share_Cheeps_visibility()
-    {
-        await RegisterUser();
-        await LoginUser();
-        
-        await _page.Locator("#Text").ClickAsync();
-        await _page.Locator("#Text").FillAsync("Hello World!");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-        await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" })).ToBeVisibleAsync();
-
-        
-        
-        // Clean up
-        await DeleteUser();   
-    }*/
 }

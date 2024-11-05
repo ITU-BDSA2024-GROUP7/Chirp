@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
@@ -140,6 +141,54 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
         await _page.GetByPlaceholder("Please enter your password.").ClickAsync();
         await _page.GetByPlaceholder("Please enter your password.").FillAsync(testUserPassword);
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
+    }
+
+    public async Task GithubRegisterUser()
+    {
+        await _page.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
+        await _page.GetByLabel("Username or email address").FillAsync(GitHubCredentials.GetGitHubTestEmail());
+        await _page.GetByLabel("Password").FillAsync(GitHubCredentials.GetGitHubTestPassword());
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact = true }).ClickAsync();
+
+        // If reauthorization is required
+        if (await _page.GetByRole(AriaRole.Heading, new() { Name = "Reauthorization required", Exact = true })
+                .CountAsync() > 0)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Authorize ITU-BDSA2024-GROUP7" }).ClickAsync();
+        }
+
+        await _page.GetByPlaceholder("Please enter your email.").FillAsync("mygithubaccount@gmail.com");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+    }
+    
+    // If github login is saved in cache
+    // Use this when you have already authorized with github in the test
+    public async Task GithubCacheLoginUser()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
+    }
+    
+    // If github login is not saved in cache
+    // Use this if its the first time authorizing with github in the test
+    public async Task GithubNoCacheLoginUser()
+    {
+        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
+        await _page.GetByLabel("Username or email address").FillAsync("CODE-TEMP-TESTER");
+        await _page.GetByLabel("Password").FillAsync("Telos@54321!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact = true }).ClickAsync();
+    }
+    
+    public async Task GithubDeleteUser()
+    {
+        // Removing the test user
+        await _page!.GotoAsync($"{AppUrl}/Identity/Account/Manage");
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
     }
 
@@ -411,6 +460,18 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(_page.GetByText("Passwords must have at least one uppercase ('A'-'Z').")).ToBeVisibleAsync();
     }
+    
+    // Register with Github
+    [Test]
+    [Category("End2End")]
+    public async Task RegisterWithGithub()
+    {
+        await GithubRegisterUser();
+        await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
+        
+        await GithubCacheLoginUser();
+        await GithubDeleteUser();
+    }
 
     //---------------------------------- LOGIN PAGE TESTS ----------------------------------
 
@@ -427,7 +488,7 @@ public class E2ETests : PageTest
         await Expect(_page.GetByPlaceholder("password")).ToBeVisibleAsync();
     }
 
-// Test successfully login
+    // Test successfully login
     [Test]
     [Category("End2End")]
     public async Task LoginSuccessfully()
@@ -514,6 +575,33 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Link, new() { Name = "Register as a new user" }).ClickAsync();
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Create a new account." })).ToBeVisibleAsync();
     }
+    
+    // Login with Github (cached / login saved in cache)
+    [Test]
+    [Category("End2End")]
+    public async Task LoginWithCachedGithub()
+    {
+        await GithubRegisterUser();
+        await GithubCacheLoginUser();
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
+
+        await GithubDeleteUser();
+    }
+    
+    // Login with Github (non cached / login not saved in cache)
+    [Test]
+    [Category("End2End")]
+    public async Task LoginWithNoCachedGithub()
+    {
+        await GithubRegisterUser();
+        await _context!.CloseAsync(); // Close the current context to clear cache
+        _context = await _browser.NewContextAsync(); // Create a new context
+        _page = await _context.NewPageAsync(); // Create a new page in the new context
+        await GithubNoCacheLoginUser();
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
+
+        await GithubDeleteUser();
+    }
 
     //---------------------------------- LOGOUT PAGE TESTS ----------------------------------
 
@@ -583,5 +671,29 @@ public class E2ETests : PageTest
         
         // Clean up
         await DeleteUser();
+    }
+}
+
+// This is used to get the GitHub credentials from the user secrets
+public class GitHubCredentials
+{
+    private static IConfiguration GetConfiguration()
+    {
+        return new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddUserSecrets<GitHubCredentials>()
+            .Build();
+    }
+
+    public static string GetGitHubTestEmail()
+    {
+        var config = GetConfiguration();
+        return config["githubtestusername"];
+    }
+
+    public static string GetGitHubTestPassword()
+    {
+        var config = GetConfiguration();
+        return config["githubtestpassword"];
     }
 }

@@ -7,7 +7,6 @@
 Cheep.db
 Cheep.db-shm
 Cheep.db-wal
-
 # dotenv files
 .env
 

@@ -584,4 +584,54 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
+    
+    // Testing Successful cheep line after login
+    [Test]
+    [Category("End2End")]
+    public async Task Test_Share_Cheeps_visibility()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await Expect(_page.GetByText("What's on your mind testuser@gmail.com? Share")).ToBeVisibleAsync();
+        
+        
+        // Clean up
+        await DeleteUser();   
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task Test_Share_Cheeps_visibility_PrivateTimeline()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+        await Expect(_page.GetByText("What's on your mind testuser@gmail.com? Share")).ToBeVisibleAsync();
+        
+        
+        // Clean up
+        await DeleteUser();   
+    }
+    
+    /*[Test]
+    [Category("End2End")]
+    public async Task Test_Share_Cheeps_visibility()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page.Locator("#Text").ClickAsync();
+        await _page.Locator("#Text").FillAsync("Hello World!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" })).ToBeVisibleAsync();
+
+        
+        
+        // Clean up
+        await DeleteUser();   
+    }*/
+   
+    
+    
 }

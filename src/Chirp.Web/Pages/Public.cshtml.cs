@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
+using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -12,11 +13,12 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    
+
     [BindProperty]
     public string Text { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
+    public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
     public PublicModel(CheepService service)
     {
@@ -51,13 +53,13 @@ public class PublicModel : PageModel
             return Page(); // Return the page with the new error message
         }
         
-        if (!ModelState.IsValid) // Check if the model state is invalid
-        {
-            // Ensure Cheeps and other required properties are populated
-            Cheeps = await _service.GetCheeps(PageNumber);
-            TotalPageNumber = await _service.GetTotalPageNumber();
-            return Page(); // Return the page with validation messages
-        }
+        // if (!ModelState.IsValid) // Check if the model state is invalid
+        // {
+        //     // Ensure Cheeps and other required properties are populated
+        //     Cheeps = await _service.GetCheeps(PageNumber);
+        //     TotalPageNumber = await _service.GetTotalPageNumber();
+        //     return Page(); // Return the page with validation messages
+        // }
         
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {

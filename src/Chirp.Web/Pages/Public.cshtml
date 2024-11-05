@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Chirp.Web.Pages
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -15,8 +16,7 @@
     </div>
     @if(User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
-        @await Html.PartialAsync("_ShareBar", Model)
-        @* @await Component.InvokeAsync("SubmitCheepComponent", new { model = Model }) *@
+        @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
     
     @if (Model.Cheeps.Any())

@@ -1,5 +1,6 @@
 ﻿using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
+using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -11,6 +12,7 @@ public class UserTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     
     [BindProperty]
     public string Text { get; set; }

@@ -8,6 +8,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <RootNamespace>Chirp.Test</RootNamespace>
+        <UserSecretsId>39911b11-4d5e-4c5d-b6d3-128ae6d3d6a5</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

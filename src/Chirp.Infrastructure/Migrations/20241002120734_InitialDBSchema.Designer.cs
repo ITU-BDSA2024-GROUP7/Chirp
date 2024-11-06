@@ -24,7 +24,7 @@ namespace Chirp.Infrastructure.Migrations
             modelBuilder.Entity("Chirp.Web.Author", b =>
                 {
                     b.Property<string>("AuthorId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("Interger");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -47,7 +47,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.Property<string>("AuthorId")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("Integer");
 
                     b.Property<string>("Text")
                         .IsRequired()

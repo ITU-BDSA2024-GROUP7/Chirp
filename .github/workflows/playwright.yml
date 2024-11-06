@@ -11,7 +11,11 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          dotnet restore
+          dotnet restore test/Chirp.TestE2E
+
+      - name: Build tests
+        run: |
+          dotnet build test/Chirp.TestE2E
 
       - name: Run tests
         run: |

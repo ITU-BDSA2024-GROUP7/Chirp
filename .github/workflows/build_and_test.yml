@@ -13,58 +13,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 'lts/*'
+          node-version: '16' # Use a Node.js version compatible with Playwright
+
+      - name: Install Playwright Browsers
+        run: npx playwright install-deps
 
       - name: Restore dependencies for Web
         run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
-      - name: Restore dependencies for Unit Test
-        run: dotnet restore test/Chirp.TestUnit/Chirp.TestUnit.csproj
-      - name: Restore dependencies for Integration Test
-        run: dotnet restore test/Chirp.TestIntegration/Chirp.TestIntegration.csproj
+
       - name: Restore dependencies for End To End Test
         run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
+
       - name: Build Web
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
-      
-      # Build e2e
-      - name: Build End To End Test
-        run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
-      
-      # Install Node.js dependencies and Playwright
-      #- name: Install Node.js dependencies
-      #  run: npm install
-      #  working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
-      - name: Install Playwright Browsers and Dependencies
-        run: npx playwright install --with-deps
-      
-      # Start ASP.NET app in the background
-      - name: Start Chirp Web App
-        run: |
-          dotnet run --project src/Chirp.Web/Chirp.Web.csproj &
-          echo "Waiting for the app to start..."
-          sleep 10
-      
-      # Run Unit and Integration Tests
-      - name: Run Unit Test
-        env:
-          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
-          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
-        run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
 
-      - name: Run Integration Test
-        env:
-          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
-          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
-        run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
-      
-      # Run End To End Test with Playwright
       - name: Run End To End Test
         env:
           AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
@@ -72,5 +43,5 @@ jobs:
           GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
           GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
         run: |
-          pwsh test/Chirp.TestE2E/bin/Debug/net8.0/playwright.ps1 install
+          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
           dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

@@ -29,7 +29,7 @@ jobs:
           npx playwright install --with-deps
       - name: Run Playwright tests
         run: |
-          cd test/Chirp.TestE2E
+          cd test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
           npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

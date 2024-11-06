@@ -36,6 +36,9 @@ jobs:
       - name: Build Web
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
+      - name: Build E2E
+        run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
+
       - name: Run End To End Test
         env:
           AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}

@@ -15,7 +15,10 @@ namespace Chirp.Web
 
             // Add services to the container
             builder.Services.AddRazorPages();
-
+            
+            // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
+            builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromDays(700));
+            
             // Load database connection via configuration
             string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

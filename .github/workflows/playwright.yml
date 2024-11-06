@@ -13,6 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Build e2e test project
+        run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj
       - name: Install dependencies
         run: |
           cd test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package

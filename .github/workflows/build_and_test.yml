@@ -25,9 +25,9 @@ jobs:
       # Install Node.js dependencies and Playwright
       - name: Install Node.js dependencies
         run: npm install
-        working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
       - name: Install Playwright Browsers and Dependencies
         run: npx playwright install --with-deps
+        working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
 
       - name: Restore dependencies for Web
         run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
@@ -39,6 +39,17 @@ jobs:
         run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
       - name: Build Web
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+      
+      # Build e2e
+      - name: Build End To End Test
+        run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
+      
+      # Install Node.js dependencies and Playwright
+      - name: Install Node.js dependencies
+        run: npm install
+        working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
+      - name: Install Playwright Browsers and Dependencies
+        run: npx playwright install --with-deps
       
       # Start ASP.NET app in the background
       - name: Start Chirp Web App
@@ -68,6 +79,5 @@ jobs:
           GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
           GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
         run: |
-          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
           pwsh test/Chirp.TestE2E/bin/Debug/net8.0/playwright.ps1 install
           dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

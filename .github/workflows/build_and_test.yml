@@ -60,5 +60,5 @@ jobs:
         GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
         GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
       run: |
-        pwsh test/Chirp.Test/bin/Debug/net8.0/playwright.ps1 install
+        pwsh ./test/Chirp.TestE2E/bin/Debug/net8.0/playwright.ps1 install
         dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

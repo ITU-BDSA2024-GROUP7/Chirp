@@ -21,13 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      
-      # Install Node.js dependencies and Playwright
-      - name: Install Node.js dependencies
-        run: npm install
-      - name: Install Playwright Browsers and Dependencies
-        run: npx playwright install --with-deps
-        working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
 
       - name: Restore dependencies for Web
         run: dotnet restore src/Chirp.Web/Chirp.Web.csproj

@@ -29,7 +29,7 @@ jobs:
         run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
       
       - name: Install Playwright
-        run: pwsh test/Chirp.TestE2E/bin/Debug/netX/playwright.ps1 install
+        run: pwsh test/Chirp.TestE2E/bin/Debug/net8.0/playwright.ps1 install
 
       - name: End To End Test
         env:

@@ -25,6 +25,12 @@ jobs:
       - name: Build Web
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
+      - name: Build Tests
+        run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
+      
+      - name: Install Playwright
+        run: pwsh test/Chirp.TestE2E/bin/Debug/netX/playwright.ps1 install
+
       - name: End To End Test
         env:
           AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
@@ -32,6 +38,4 @@ jobs:
           GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
           GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
         run: |
-          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
-          pwsh test/Chirp.TestE2E/bin/Debug/netX/playwright.ps1 install
           dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

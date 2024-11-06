@@ -29,8 +29,17 @@ jobs:
     - name: Restore dependencies for End To End Test
       run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
       
-    - name: Build
+    - name: Build Web
       run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+      
+    - name: Build Unit Test
+      run: dotnet build test/Chirp.TestUnit/Chirp.TestUnit.csproj --no-restore
+      
+    - name: Build Integration Test
+      run: dotnet build test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --no-restore
+      
+    - name: Build End To End Test
+      run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
 
     - name: Run Unit Test
       env:

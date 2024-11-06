@@ -11,12 +11,12 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          dotnet restore test/Chirp.TestE2E
+          dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
 
       - name: Build tests
         run: |
-          dotnet build test/Chirp.TestE2E
+          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj
 
       - name: Run tests
         run: |
-          dotnet test test/Chirp.TestE2E
+          dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj

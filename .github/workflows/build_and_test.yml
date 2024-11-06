@@ -17,11 +17,17 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
-    - name: Restore dependencies
+    - name: Restore dependencies for Web
       run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
 
-    - name: Restore dependencies for test
-      run: dotnet restore test/Chirp.Test/Chirp.Test.csproj
+    - name: Restore dependencies for Unit Test
+      run: dotnet restore test/Chirp.TestUnit/Chirp.TestUnit.csproj
+      
+    - name: Restore dependencies for Integration Test
+      run: dotnet restore test/Chirp.TestIntegration/Chirp.TestIntegration.csproj
+      
+    - name: Restore dependencies for End To End Test
+      run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
       
     - name: Build
       run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
@@ -38,7 +44,7 @@ jobs:
         AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
       run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
       
-    - name: E2E Test
+    - name: End To End Test
       env:
         AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
         AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}

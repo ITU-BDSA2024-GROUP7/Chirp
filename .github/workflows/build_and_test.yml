@@ -22,11 +22,12 @@ jobs:
         with:
           node-version: 'lts/*'
       
-      # Install Playwright dependencies
+      # Install Node.js dependencies and Playwright
+      - name: Install Node.js dependencies
+        run: npm install
       - name: Install Playwright Browsers and Dependencies
         run: npx playwright install --with-deps
-      
-      # Restore and build steps remain the same as before
+
       - name: Restore dependencies for Web
         run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
       - name: Restore dependencies for Unit Test
@@ -37,6 +38,13 @@ jobs:
         run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
       - name: Build Web
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+      
+      # Start ASP.NET app in the background
+      - name: Start Chirp Web App
+        run: |
+          dotnet run --project src/Chirp.Web/Chirp.Web.csproj &
+          echo "Waiting for the app to start..."
+          sleep 10
       
       # Run Unit and Integration Tests
       - name: Run Unit Test

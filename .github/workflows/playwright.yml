@@ -5,18 +5,30 @@ on:
   pull_request:
     branches: [ Bug_FixingE2ETestWorkflow ]
 jobs:
-  test:
-    timeout-minutes: 60
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install dependencies
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies for Web
+        run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
+
+      - name: Restore dependencies for Tests
         run: |
           dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
 
-      - name: Build tests
-        run: |
-          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj
+      - name: Build Web
+        run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
-      - name: Run tests
-        run: |
-          dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj
+      - name: End To End Test
+        env:
+          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+          GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
+          GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
+        run: dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

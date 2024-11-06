@@ -1,20 +1,14 @@
-#name: .NET Build and Test
-#
-#on:
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
 name: .NET Build and Test
+
 on:
   push:
-    branches: [ Bug_FixingE2ETestWorkflow ]
+    branches: [ main ]
   pull_request:
-    branches: [ Bug_FixingE2ETestWorkflow ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build_web:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +26,7 @@ jobs:
         run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
       
   unit_test:
-    needs: build
+    needs: build_web
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -52,7 +46,7 @@ jobs:
         run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
         
   integration_test:
-    needs: build
+    needs: build_web
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -72,7 +66,7 @@ jobs:
         run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
         
   e2e_test:
-    needs: build
+    needs: build_web
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -85,9 +79,6 @@ jobs:
       - name: Restore dependencies for End To End Tests
         run: |
           dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
-
-      #- name: Build Web 
-      #  run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
       - name: Build End To End Tests
         run: dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore

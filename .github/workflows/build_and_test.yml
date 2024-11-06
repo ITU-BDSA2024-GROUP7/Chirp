@@ -8,56 +8,57 @@ on:
   workflow_dispatch:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 8.0.x
-      - name: Restore dependencies
-        run: |
-          dotnet restore src/Chirp.Web/Chirp.Web.csproj
-          dotnet restore test/Chirp.TestUnit/Chirp.TestUnit.csproj
-          dotnet restore test/Chirp.TestIntegration/Chirp.TestIntegration.csproj
-          dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
-      - name: Build
-        run: |
-          dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
-          dotnet build test/Chirp.TestUnit/Chirp.TestUnit.csproj --no-restore
-          dotnet build test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --no-restore
-          dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
-      - name: Run Unit Tests
-        env:
-          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
-          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
-        run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
-      - name: Run Integration Tests
-        env:
-          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
-          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
-        run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
 
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - name: Install dependencies
-        run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies for Web
+      run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
+
+    - name: Restore dependencies for Unit Test
+      run: dotnet restore test/Chirp.TestUnit/Chirp.TestUnit.csproj
+      
+    - name: Restore dependencies for Integration Test
+      run: dotnet restore test/Chirp.TestIntegration/Chirp.TestIntegration.csproj
+      
+    - name: Restore dependencies for End To End Test
+      run: dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
+      
+    - name: Build Web
+      run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+      
+    - name: Build Unit Test
+      run: dotnet build test/Chirp.TestUnit/Chirp.TestUnit.csproj --no-restore
+      
+    - name: Build Integration Test
+      run: dotnet build test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --no-restore
+      
+    - name: Build End To End Test
+      run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+
+    - name: Run Unit Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+      run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
+      
+    - name: Run Integration Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+      run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
+      
+    - name: Run End To End Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+        GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
+        GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
+      run: |
+        pwsh test/Chirp.Test/bin/Debug/net8.0/playwright.ps1 install
+        dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

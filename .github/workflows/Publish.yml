@@ -8,23 +8,41 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+      
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-
       - name: Restore dependencies
-        run: dotnet restore
-        
-      - name: Build
-        run: dotnet build --no-restore
+        run: dotnet restore src/Chirp.Web/Chirp.Web.csproj
 
-      - name: Test
-        run: dotnet test test/Chirp.Test/Chirp.Test.csproj --verbosity normal
+      - name: Restore dependencies for test
+        run: dotnet restore test/Chirp.Test/Chirp.Test.csproj
+
+      - name: Build
+        run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
+
+      - name: Unit Test
+        env:
+          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+        run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
+
+      - name: Integration Test
+        env:
+          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+        run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
+
+      - name: E2E Test
+        env:
+          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+          GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
+          GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
+        run: dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal
 
   release:
     timeout-minutes: 60

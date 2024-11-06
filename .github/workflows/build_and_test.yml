@@ -26,10 +26,22 @@ jobs:
     - name: Build
       run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
-    - name: Test
+    - name: Unit Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+      run: dotnet test test/Chirp.TestUnit/Chirp.TestUnit.csproj --verbosity normal
+      
+    - name: Integration Test
+      env:
+        AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+        AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
+      run: dotnet test test/Chirp.TestIntegration/Chirp.TestIntegration.csproj --verbosity normal
+      
+    - name: E2E Test
       env:
         AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
         AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
         GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
         GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
-      run: dotnet test test/Chirp.Test/Chirp.Test.csproj --verbosity normal
+      run: dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

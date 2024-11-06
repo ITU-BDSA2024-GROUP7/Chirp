@@ -1,9 +1,9 @@
 ﻿name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ Bug_FixingE2ETestWorkflow ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ Bug_FixingE2ETestWorkflow ]
 jobs:
   test:
     timeout-minutes: 60

@@ -25,6 +25,7 @@ jobs:
       # Install Node.js dependencies and Playwright
       - name: Install Node.js dependencies
         run: npm install
+        working-directory: test/Chirp.TestE2E/bin/Debug/net8.0/.playwright/package
       - name: Install Playwright Browsers and Dependencies
         run: npx playwright install --with-deps
 

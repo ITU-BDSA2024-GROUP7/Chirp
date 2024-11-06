@@ -1,16 +1,3 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using Chirp.Core;
-using Chirp.Infrastructure.Repositories;
-using FluentAssertions;
-using Chirp.Web;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-
 namespace Chirp.Test;
 
 public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable

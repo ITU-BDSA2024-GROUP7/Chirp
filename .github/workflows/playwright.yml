@@ -30,6 +30,9 @@ jobs:
 
       - name: Run Web Application
         run: dotnet run --project src/Chirp.Web/Chirp.Web.csproj --urls "http://localhost:5273" &
+        env:
+          AUTHENTICATION_GITHUB_CLIENTID: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTID }}
+          AUTHENTICATION_GITHUB_CLIENTSECRET: ${{ secrets.AUTHENTICATION_GITHUB_CLIENTSECRET }}
 
       - name: Wait for Web Application to Start
         run: sleep 10

@@ -33,5 +33,5 @@ jobs:
           GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
         run: |
           dotnet build test/Chirp.TestE2E/Chirp.TestE2E.csproj --no-restore
-          pwsh bin/Debug/netX/playwright.ps1 install
+          pwsh test/Chirp.TestE2E/bin/Debug/netX/playwright.ps1 install
           dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal

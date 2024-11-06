@@ -1,0 +1,11 @@
+﻿global using Xunit;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Net;
+global using System.Net.Http.Json;
+global using Chirp.Core;
+global using Chirp.Infrastructure.Repositories;
+global using FluentAssertions;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Data.Sqlite;
+global using Program = Chirp.Web.Program;

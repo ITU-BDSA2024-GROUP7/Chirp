@@ -1,5 +1,7 @@
-﻿using Chirp.Core.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
+using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -11,11 +13,9 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    
-    [BindProperty]
-    public string Text { get; set; }
 
-    public required List<CheepDTO> Cheeps { get; set; }
+    public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
+    public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel { FormAction = "/Public" };
 
     public PublicModel(CheepService service)
     {
@@ -40,9 +40,21 @@ public class PublicModel : PageModel
         return Page();
     }
 
+    [BindProperty]
+    [Required(ErrorMessage = "At least write something before you click me....")]
+    [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
+    public string CheepText { get; set; }
     public async Task<IActionResult> OnPost()
     {
-        if (User.Identity.IsAuthenticated)
+        if (!ModelState.IsValid) // Check if the model state is invalid
+        {
+            // Ensure Cheeps and other required properties are populated
+            Cheeps = await _service.GetCheeps(PageNumber);
+            TotalPageNumber = await _service.GetTotalPageNumber();
+            return Page(); // Return the page with validation messages
+        }
+        
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
             var authorEmail = User.Identity.Name;
@@ -55,13 +67,13 @@ public class PublicModel : PageModel
                     Name = authorName, // this needs to be changed to user names going forward
                     Email = authorEmail 
                 },
-                Text = Text,
+                Text = CheepText,
                 FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
             };
 
             await _service.CreateCheep(cheepDTO);
         }
-
+        
         return RedirectToPage("Public", new { page = 1 });
     }
 }

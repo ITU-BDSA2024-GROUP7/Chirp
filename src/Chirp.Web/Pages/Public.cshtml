@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Chirp.Web.Pages
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -13,16 +14,11 @@
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
-    @if(User.Identity.IsAuthenticated){
-    <div class="cheepbox">
-        <h3>What's on your mind @(User.Identity.Name)?</h3>
-        <form method="post">
-            <input style="float: left" type="text" asp-for="Text">
-            <input type="submit" value="Share">
-        </form>
-    </div>
+    @if(User.Identity.IsAuthenticated){ 
+        @* Render the Share Form Partial View *@
+        @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
-
+    
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">

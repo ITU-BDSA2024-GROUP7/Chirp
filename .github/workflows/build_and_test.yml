@@ -86,7 +86,7 @@ jobs:
         run: |
           dotnet restore test/Chirp.TestE2E/Chirp.TestE2E.csproj
 
-      #- name: Build Web
+      #- name: Build Web 
       #  run: dotnet build src/Chirp.Web/Chirp.Web.csproj --no-restore
 
       - name: Build End To End Tests

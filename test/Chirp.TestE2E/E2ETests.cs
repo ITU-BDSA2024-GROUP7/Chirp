@@ -695,6 +695,94 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();   
     }
+    [Test]
+    [Category("End2End")]
+    public async Task CheepingCheeps()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Hello World!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).ToBeVisibleAsync();
+
+        
+        // Clean up and delete data
+        await DeleteUser();   
+    }
+
+    [Test]
+    [Category("End2End")]
+    public async Task CheepingFromPrivateTimeline()
+    {
+        {
+            await RegisterUser();
+            await LoginUser();
+            
+            await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+            await _page.Locator("#CheepText").ClickAsync();
+            await _page.Locator("#CheepText").FillAsync("Hello World!");
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+            await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).ToBeVisibleAsync();
+
+        
+            // Clean up and delete data
+            await DeleteUser();   
+        }
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task EmptyCheeps()
+    {
+        {
+            await RegisterUser();
+            await LoginUser();
+            
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+            await Expect(_page.GetByText("At least write something")).ToBeVisibleAsync();
+        
+            // Clean up and delete data
+            await DeleteUser();   
+        }
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task LongCheeps()
+    {
+        {
+            await RegisterUser();
+            await LoginUser();
+            
+            await _page.Locator("#CheepText").ClickAsync();
+            await _page.Locator("#CheepText").FillAsync("Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message ");
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+            await Expect(_page.GetByText("Maximum length is 160")).ToBeVisibleAsync();
+        
+            // Clean up and delete data
+            await DeleteUser();   
+        }
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task DeletedCheeps()
+    {
+        {
+            await RegisterUser();
+            await LoginUser();
+            
+            await _page.Locator("#CheepText").ClickAsync();
+            await _page.Locator("#CheepText").FillAsync("Hello World!");
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+            // Clean up and delete data
+            await DeleteUser();   
+            
+            // check that the cheep is deleted
+            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+            await Expect(_page.GetByText("Public Timeline Jacqualine")).ToBeVisibleAsync();
+            
+        }
+    }
 }
 
 // This is used to get the GitHub credentials from the user secrets

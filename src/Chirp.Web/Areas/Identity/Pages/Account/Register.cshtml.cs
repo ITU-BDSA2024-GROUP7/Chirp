@@ -82,9 +82,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             
             
             // For registering usernames
-            //[Required]
-            //[Display(Name = "UserName")]
-            //public string UserName { get; set; }
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "UserName")]
+            public string UserName { get; set; }
             
             
             /// <summary>
@@ -122,7 +123,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 

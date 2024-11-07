@@ -32,7 +32,7 @@ namespace Chirp.Infrastructure.Repositories
                         Email = cheep.Author.Email
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
                 });
 
             return await query.ToListAsync();

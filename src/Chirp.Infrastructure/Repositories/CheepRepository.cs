@@ -144,7 +144,7 @@ namespace Chirp.Infrastructure.Repositories
             }
         }
         
-        public async Task DeleteCheepByAuthor(AuthorDTO Author)
+        public async Task DeleteCheepsByAuthor(AuthorDTO Author)
         {
             var cheeps = await _dbContext.Cheeps
                 .Where(cheep => cheep.Author.Name == Author.Name)

@@ -13,7 +13,7 @@ public interface ICheepService
     
     public Task CreateCheep(CheepDTO Cheep);
     
-    public Task DeleteCheepByAuthor(AuthorDTO Author);
+    public Task DeleteCheepsByAuthor(AuthorDTO Author);
 }
 public class CheepService : ICheepService
 {
@@ -46,9 +46,9 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.CreateCheep(Cheep);
     }
-    public async Task DeleteCheepByAuthor(AuthorDTO Author)
+    public async Task DeleteCheepsByAuthor(AuthorDTO Author)
     {
-        await _cheepRepository.DeleteCheepByAuthor(Author);
+        await _cheepRepository.DeleteCheepsByAuthor(Author);
     }
     public async Task DeleteCheep(int cheepId)
     {

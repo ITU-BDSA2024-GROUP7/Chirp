@@ -674,7 +674,7 @@ public class E2ETests : PageTest
     {
         await RegisterUser();
         await LoginUser();
-        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await Expect(_page.GetByText("What's on your mind testuser@gmail.com? Share")).ToBeVisibleAsync();
         
         
@@ -702,6 +702,7 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
+        await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("Hello World!");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -739,6 +740,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
+            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
             await Expect(_page.GetByText("At least write something")).ToBeVisibleAsync();
         
@@ -754,6 +756,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
+            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message ");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -771,6 +774,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
+            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("Hello World!");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -779,7 +783,7 @@ public class E2ETests : PageTest
             
             // check that the cheep is deleted
             await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-            await Expect(_page.GetByText("Public Timeline Jacqualine")).ToBeVisibleAsync();
+            await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).Not.ToBeVisibleAsync();
         }
     }
 }

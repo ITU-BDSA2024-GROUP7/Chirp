@@ -175,8 +175,8 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
-            await repository.DeleteCheepByAuthor(new AuthorDTO { Name = "Adrian", Email = "" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Adrian", Email = "" });
             
             var cheepList = await repository.ReadAllCheeps(0);
          
@@ -283,7 +283,7 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
             
             
             var cheepList = await repository.ReadAllCheeps(0);

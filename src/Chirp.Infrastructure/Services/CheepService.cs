@@ -50,4 +50,8 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.DeleteCheepByAuthor(Author);
     }
+    public async Task DeleteCheep(int cheepId)
+    {
+        await _cheepRepository.DeleteCheep(cheepId);
+    }
 }

@@ -152,7 +152,16 @@ namespace Chirp.Infrastructure.Repositories
             if (cheeps != null)
             {
                 _dbContext.Cheeps.RemoveRange(cheeps);
-                _dbContext.Authors.Remove(await _dbContext.Authors.FindAsync(Author.Name));
+
+                // Retrieve the author by name and then remove them
+                var author = await _dbContext.Authors
+                    .FirstOrDefaultAsync(a => a.Name == Author.Name);
+
+                if (author != null)
+                {
+                    _dbContext.Authors.Remove(author);
+                }
+
                 await _dbContext.SaveChangesAsync();
             }
         }

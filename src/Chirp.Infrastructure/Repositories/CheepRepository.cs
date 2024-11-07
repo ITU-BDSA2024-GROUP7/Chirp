@@ -134,6 +134,29 @@ namespace Chirp.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
         
+        public async Task DeleteCheep(int cheepId)
+        {
+            var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
+            if (cheep != null)
+            {
+                _dbContext.Cheeps.Remove(cheep);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        
+        public async Task DeleteCheepByAuthor(AuthorDTO Author)
+        {
+            var cheeps = await _dbContext.Cheeps
+                .Where(cheep => cheep.Author.Name == Author.Name)
+                .ToListAsync();
+            if (cheeps != null)
+            {
+                _dbContext.Cheeps.RemoveRange(cheeps);
+                _dbContext.Authors.Remove(await _dbContext.Authors.FindAsync(Author.Name));
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        
         public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()
         {
             var query = _dbContext.Cheeps

@@ -12,6 +12,8 @@ public interface ICheepService
     public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps();
     
     public Task CreateCheep(CheepDTO Cheep);
+    
+    public Task DeleteCheepsByAuthor(AuthorDTO Author);
 }
 public class CheepService : ICheepService
 {
@@ -43,5 +45,13 @@ public class CheepService : ICheepService
     public async Task CreateCheep(CheepDTO Cheep)
     {
         await _cheepRepository.CreateCheep(Cheep);
+    }
+    public async Task DeleteCheepsByAuthor(AuthorDTO Author)
+    {
+        await _cheepRepository.DeleteCheepsByAuthor(Author);
+    }
+    public async Task DeleteCheep(int cheepId)
+    {
+        await _cheepRepository.DeleteCheep(cheepId);
     }
 }

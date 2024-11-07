@@ -12,7 +12,18 @@ namespace Chirp.Web
         {
             // Create the WebApplicationBuilder
             var builder = WebApplication.CreateBuilder(args);
-
+            
+            //CORS 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy  =>
+                    {
+                        policy.WithOrigins("https://bdsagroup07chirprazor.azurewebsites.net/",
+                            "http://localhost:");
+                    });
+            });
+            
             // Add services to the container
             builder.Services.AddRazorPages();
             
@@ -74,6 +85,7 @@ namespace Chirp.Web
                 context.Database.Migrate();
                 DbInitializer.SeedDatabase(context);
             }
+            
 
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())
@@ -81,7 +93,18 @@ namespace Chirp.Web
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            
+            // set the Content-Security-Policy header
+            app.Use(async (context, next) =>
+            {
+                // The Content-Security-Policy header helps to protect the webapp from XSS attacks
+                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
+                await next();
+            });
 
+            //Use CORS
+            app.UseCors();
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();

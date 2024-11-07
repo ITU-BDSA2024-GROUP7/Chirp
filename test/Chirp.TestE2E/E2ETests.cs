@@ -780,7 +780,6 @@ public class E2ETests : PageTest
             // check that the cheep is deleted
             await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await Expect(_page.GetByText("Public Timeline Jacqualine")).ToBeVisibleAsync();
-            
         }
     }
 }

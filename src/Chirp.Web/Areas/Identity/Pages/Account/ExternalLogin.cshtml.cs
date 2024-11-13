@@ -110,58 +110,43 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             }
             else
             {
+                if (ModelState.IsValid)
+                {
+                    var user = CreateUser();
+
+                    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+                    Console.WriteLine("Email: " + email);
+                    Console.WriteLine("Name: " + name);
+                
+                    await _userStore.SetUserNameAsync(user, name, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, email, CancellationToken.None);
+                    user.EmailConfirmed = true;
+
+                    var accountResult = await _userManager.CreateAsync(user);
+                    Console.WriteLine("result: " + accountResult);
+                    if (accountResult.Succeeded)
+                    {
+                        accountResult = await _userManager.AddLoginAsync(user, info);
+                        if (accountResult.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                            Console.WriteLine("Signed in user");
+                            return LocalRedirect(returnUrl);
+                        }
+                    }
+                    foreach (var error in accountResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+
+                ProviderDisplayName = info.ProviderDisplayName;
+                ReturnUrl = returnUrl;
                 return Page();
             }
         }
-
-        public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
-        {
-            Console.WriteLine("onpostconfirmation");
-            returnUrl = returnUrl ?? Url.Content("~/");
-            // Get the information about the user from the external login provider
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            
-            if (info == null)
-            {
-                ErrorMessage = "Error loading external login information during confirmation.";
-                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
-            }
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
-
-                var Email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                var Name = info.Principal.FindFirstValue(ClaimTypes.Name);
-                Console.WriteLine("Email: " + Email);
-                Console.WriteLine("Name: " + Name);
-                
-                await _userStore.SetUserNameAsync(user, Name, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Email, CancellationToken.None);
-                user.EmailConfirmed = true;
-
-                var result = await _userManager.CreateAsync(user);
-                Console.WriteLine("result: " + result);
-                if (result.Succeeded)
-                {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-                        Console.WriteLine("Signed in user");
-                        return LocalRedirect(returnUrl);
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            ProviderDisplayName = info.ProviderDisplayName;
-            ReturnUrl = returnUrl;
-            return Page();
-        }
-
+        
         private ApplicationUser CreateUser()
         {
             try

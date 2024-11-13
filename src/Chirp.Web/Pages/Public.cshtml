@@ -19,6 +19,7 @@
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
     
+    
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
@@ -31,8 +32,11 @@
                         </strong>
                         <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
                         @cheep.Text
-
+                    
                     </p>
+                    <a href="/follow">
+                        <button>Follow</button>
+                    </a>
                 </li>
             }
         </ul>

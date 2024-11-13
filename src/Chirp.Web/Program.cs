@@ -70,7 +70,22 @@ namespace Chirp.Web
                     options.ClientId = clientId;
                     options.ClientSecret = clientSecret;
                     options.CallbackPath = new PathString("/signin-github");
-                });
+                    options.Scope.Add("user:email");
+                    options.Scope.Add("user:email");
+
+                    options.Events.OnCreatingTicket = context =>
+                    {
+                        // Retrieve user details from claims
+                        var userName = context.Identity?.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+                        var email = context.Identity?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+
+                        // You can use these values as needed in your application
+                        Console.WriteLine($"GitHub Username: {userName}");
+                        Console.WriteLine($"GitHub Email: {email}");
+
+                        return Task.CompletedTask;
+                    };
+                }); 
             
             builder.Services.AddSession();
             

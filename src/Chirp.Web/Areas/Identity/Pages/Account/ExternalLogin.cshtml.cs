@@ -116,7 +116,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
-            Console.WriteLine("onpostconfirmation");
             returnUrl = returnUrl ?? Url.Content("~/");
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -132,15 +131,12 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 
                 var Email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var Name = info.Principal.FindFirstValue(ClaimTypes.Name);
-                Console.WriteLine("Email: " + Email);
-                Console.WriteLine("Name: " + Name);
-                
+              
                 await _userStore.SetUserNameAsync(user, Name, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Email, CancellationToken.None);
                 user.EmailConfirmed = true;
 
                 var result = await _userManager.CreateAsync(user);
-                Console.WriteLine("result: " + result);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);

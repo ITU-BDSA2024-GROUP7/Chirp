@@ -90,6 +90,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
+            ProviderDisplayName = info?.ProviderDisplayName;
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";

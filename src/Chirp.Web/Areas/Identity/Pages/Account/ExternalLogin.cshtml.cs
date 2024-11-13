@@ -146,7 +146,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 return Page();
             }
         }
-        
+
         private ApplicationUser CreateUser()
         {
             try

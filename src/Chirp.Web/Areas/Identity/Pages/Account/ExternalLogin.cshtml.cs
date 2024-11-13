@@ -87,13 +87,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
            [Required]
             [EmailAddress]
             public string Email { get; set; }
-           /* [Required]
+            [Required]
            [Display(Name = "Username")]
-            public string Username { get; set; }*/
+            public string Name { get; set; }
 
         }
       
-        public IActionResult OnGet() => RedirectToPage("./Login"); // Login user in return to public
+        public IActionResult OnGet() => RedirectToPage("./Login"); // Redirect user to login page
 
         public IActionResult OnPost(string provider, string returnUrl = null)
         {
@@ -138,9 +138,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 {
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        Name = info.Principal.FindFirstValue(ClaimTypes.Name)
                     };
                 }
+                
                 return Page();
             }
         }
@@ -160,7 +162,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
                 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.Name, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 var result = await _userManager.CreateAsync(user);

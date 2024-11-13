@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Text;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -15,7 +17,7 @@ public class PublicModel : PageModel
     public int TotalPageNumber { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel { FormAction = "/Public" };
+    public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
     public PublicModel(CheepService service)
     {
@@ -32,18 +34,18 @@ public class PublicModel : PageModel
         {
             page = 1;
         }
-        
+
         PageNumber = page;
         Cheeps = await _service.GetCheeps(page);
         TotalPageNumber = await _service.GetTotalPageNumber();
-        
+
         return Page();
     }
 
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
-    public string CheepText { get; set; }
+    public string CheepText { get; set; } = string.Empty;
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid) // Check if the model state is invalid
@@ -53,27 +55,30 @@ public class PublicModel : PageModel
             TotalPageNumber = await _service.GetTotalPageNumber();
             return Page(); // Return the page with validation messages
         }
-        
+
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
             var authorEmail = User.Identity.Name;
 
-            // Create the new CheepDTO
-            var cheepDTO = new CheepDTO
+            if (authorName != null && authorEmail != null)
             {
-                Author = new AuthorDTO
+                // Create the new CheepDTO
+                var cheepDTO = new CheepDTO
                 {
-                    Name = authorName, // this needs to be changed to user names going forward
-                    Email = authorEmail 
-                },
-                Text = CheepText,
-                FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
-            };
+                    Author = new AuthorDTO
+                    {
+                        Name = authorName, // this needs to be changed to user names going forward
+                        Email = authorEmail
+                    },
+                    Text = CheepText,
+                    FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
+                };
 
-            await _service.CreateCheep(cheepDTO);
+                await _service.CreateCheep(cheepDTO);
+            }
         }
-        
+
         return RedirectToPage("Public", new { page = 1 });
     }
 }

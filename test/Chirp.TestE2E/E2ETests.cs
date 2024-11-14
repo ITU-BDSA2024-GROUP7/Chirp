@@ -99,8 +99,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
-        await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("password").ClickAsync();
         await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
@@ -457,31 +457,19 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(_page.GetByText("Passwords must have at least one uppercase ('A'-'Z').")).ToBeVisibleAsync();
     }
-    /*
-    // Register with Github
-    [Test]
-    [Category("End2End")]
-    public async Task RegisterWithGithub()
-    {
-        await GithubRegisterUser();
-        await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
-        
-        await GithubCacheLoginUser();
-        await GithubDeleteUser();
-    }
-    */
+
     //---------------------------------- LOGIN PAGE TESTS ----------------------------------
 
     // Login page loads successfully (check for login form)
     [Test]
     [Category("End2End")]
-    public async Task RegisterWithUppercase()
+    public async Task LoginPageLoads()
     {
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
 
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Use a local account to log in." }))
             .ToBeVisibleAsync();
-        await Expect(_page.GetByPlaceholder("name@example.com")).ToBeVisibleAsync();
+        await Expect(_page.GetByPlaceholder("Username")).ToBeVisibleAsync();
         await Expect(_page.GetByPlaceholder("password")).ToBeVisibleAsync();
     }
 
@@ -496,8 +484,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
-        await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("password").ClickAsync();
         await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
@@ -519,8 +507,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
-        await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("password").ClickAsync();
         await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
@@ -543,7 +531,7 @@ public class E2ETests : PageTest
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
-        await Expect(_page.GetByText("The Email field is required.")).ToBeVisibleAsync();
+        await Expect(_page.GetByText("The Username field is required.")).ToBeVisibleAsync();
     }
 
     // Login with no password entered
@@ -553,8 +541,8 @@ public class E2ETests : PageTest
     {
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
         // Fills in information
-        await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -573,33 +561,7 @@ public class E2ETests : PageTest
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Create a new account." })).ToBeVisibleAsync();
     }
     
-    // // Login with Github (cached / login saved in cache)
-    // [Test]
-    // [Category("End2End")]
-    // public async Task LoginWithCachedGithub()
-    // {
-    //     await GithubRegisterUser();
-    //     await GithubCacheLoginUser();
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
-    //
-    //     await GithubDeleteUser();
-    // }
-    
-    // Login with Github (non cached / login not saved in cache)
-    // [Test]
-    // [Category("End2End")]
-    // public async Task LoginWithNoCachedGithub()
-    // {
-    //     await GithubRegisterUser();
-    //     await _context!.CloseAsync(); // Close the current context to clear cache
-    //     _context = await _browser.NewContextAsync(); // Create a new context
-    //     _page = await _context.NewPageAsync(); // Create a new page in the new context
-    //     await GithubNoCacheLoginUser();
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
-    //
-    //     await GithubDeleteUser();
-    // }
-
+   
     //---------------------------------- LOGOUT PAGE TESTS ----------------------------------
 
     // Logout page load successfully (check for logout button)
@@ -669,6 +631,8 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
+    
+    //---------------------------------- CHEEPS TESTS ----------------------------------
     
     // Testing Successful cheep line after login
     [Test]
@@ -788,8 +752,50 @@ public class E2ETests : PageTest
             await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await Expect(_page.Locator("li").Filter(new() { HasText = "HelloWorld!RasmusMathiasNikolajMarcusErTelos!" }).First).Not.ToBeVisibleAsync();
         }
-    }
+    } 
+    //---------------------------------- GitHub ACCOUNT TESTS ----------------------------------
+    
+    
+    // // Login with Github (cached / login saved in cache)
+    // [Test]
+    // [Category("End2End")]
+    // public async Task LoginWithCachedGithub()
+    // {
+    //     await GithubRegisterUser();
+    //     await GithubCacheLoginUser();
+    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
+    //
+    //     await GithubDeleteUser();
+    // }
+    
+    // Login with Github (non cached / login not saved in cache)
+    // [Test]
+    // [Category("End2End")]
+    // public async Task LoginWithNoCachedGithub()
+    // {
+    //     await GithubRegisterUser();
+    //     await _context!.CloseAsync(); // Close the current context to clear cache
+    //     _context = await _browser.NewContextAsync(); // Create a new context
+    //     _page = await _context.NewPageAsync(); // Create a new page in the new context
+    //     await GithubNoCacheLoginUser();
+    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
+    //
+    //     await GithubDeleteUser();
+    // }
+
+    // // Register with Github
+    // [Test]
+    // [Category("End2End")]
+    // public async Task RegisterWithGithub()
+    // {
+    //     await GithubRegisterUser();
+    //     await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
+    //
+    //     await GithubCacheLoginUser();
+    //     await GithubDeleteUser();
+    // }
 }
+
 
 // This is used to get the GitHub credentials from the user secrets
 // public class GitHubCredentials

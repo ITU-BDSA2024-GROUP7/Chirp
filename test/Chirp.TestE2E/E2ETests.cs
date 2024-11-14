@@ -776,14 +776,14 @@ public class E2ETests : PageTest
             
             await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
-            await _page.Locator("#CheepText").FillAsync("Hello World!");
+            await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
             // Clean up and delete data
             await DeleteUser();   
             
             // check that the cheep is deleted
             await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-            await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).Not.ToBeVisibleAsync();
+            await Expect(_page.Locator("li").Filter(new() { HasText = "HelloWorld!RasmusMathiasNikolajMarcusErTelos!" }).First).Not.ToBeVisibleAsync();
         }
     }
 }

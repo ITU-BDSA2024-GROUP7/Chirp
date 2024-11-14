@@ -78,14 +78,15 @@ public class PublicModel : PageModel
         return RedirectToPage("Public", new { page = 1 });
     }
     
-    public IActionResult OnPostFollowMethod()
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthor)
     {
-        if (User.Identity.)
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            
-        } else 
-        {
-            
+            var userAuthor = User.Identity.Name;
+            await _service.FollowAuthor(userAuthor, followedAuthor);
         }
+
+        return RedirectToPage("Public", new { page = PageNumber });
+
     }
 }

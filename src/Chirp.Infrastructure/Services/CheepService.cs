@@ -54,5 +54,9 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.DeleteCheep(cheepId);
     }
-    
+
+    public async Task FollowAuthor(string userAuthor, string followedAuthor)
+    {
+        await _cheepRepository.FollowAuthor(userAuthor, followedAuthor);
+    }
 }

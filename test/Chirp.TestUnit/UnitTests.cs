@@ -18,7 +18,7 @@ public class UnitTests
         await context.Database.EnsureCreatedAsync();               
         
         // Seed the database with a test entry
-        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName };
+        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName, AuthorsFollowed = null};
         
         var cheep = new Cheep
         {
@@ -59,8 +59,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
         
          var cheep1 = new Cheep
          {
@@ -127,8 +127,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
          
          var cheep1 = new Cheep
          {
@@ -198,8 +198,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();
 
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
 
          var cheep1 = new Cheep
          {
@@ -235,8 +235,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null };
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null };
          
          var cheep1 = new Cheep
          {
@@ -306,8 +306,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null };
          
          var cheep1 = new Cheep
          {
@@ -363,14 +363,56 @@ public class UnitTests
             // Assert
             Assert.True(cheepList.Count() == 3);
      }
-
-
-
+     
      private static String UnixTimeStampToDateTimeString(double unixTimeStamp)
     {
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         dateTime = dateTime.AddSeconds(unixTimeStamp);
         return dateTime.ToString("yyyy-MM-dd H:mm:ss");
+    }
+
+    [Fact]
+    public async void AddFollowersToList()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();   
+        
+        // Seed the database with a test entry
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        ICheepRepository repository = new CheepRepository(context);
+        
+        await repository.FollowAuthor(author2.Name, cheep1.Author.Name);
+        
+        
+        Assert.True(author2.AuthorsFollowed.Count == 1);
+        
+        Assert.True(author2.AuthorsFollowed.Contains(author1.Name));
+
+
+
+
     }
 }

@@ -36,7 +36,8 @@
                     </p>
                     @if (User.Identity.IsAuthenticated) {
                         <form method="post">
-                            <button type="submit" asp-page-handler="FollowMethod">execute method</button>
+                            <input type="hidden" name="followedAuthor" value="@cheep.Author.Name" />
+                            <button type="submit" asp-page-handler="FollowMethod">follow</button>
                         </form>
                     }
                     

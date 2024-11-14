@@ -129,6 +129,7 @@ namespace Chirp.Infrastructure.Repositories
                 Name = authorName,
                 Email = authorName,
                 Cheeps = new List<Cheep>(),
+                AuthorsFollowed = new List<string>()
             };
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
@@ -184,13 +185,17 @@ namespace Chirp.Infrastructure.Repositories
             // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
-
-        public async Task<AuthorDTO> FollowAuthor(AuthorDTO authorDTO)
+        
+        public async Task FollowAuthor(string userAuthor, string followedAuthor)
         {
-            
-            
-            
-            
+
+
+            var author = FindAuthorByName(userAuthor);
+            if (author != null && !author.AuthorsFollowed.Contains(followedAuthor))
+            {
+                author.AuthorsFollowed.Add(followedAuthor);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

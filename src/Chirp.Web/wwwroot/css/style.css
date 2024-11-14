@@ -299,3 +299,36 @@ ul.nav li a {
 ul.nav li a:hover {
     background-color: #8b4949;
 }
+
+.cheep-container {
+    display: flex;
+    align-items: center;
+}
+
+.cheep-container form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.cheep-container>form>button {
+    border: none;
+    color: white;
+    padding: 2px 8px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 0 5px;
+    height: auto;
+    border-radius: 50px;
+}
+
+.cheep-container>form:has(#followButton)>button {
+    background-color: #5690a3;
+}
+
+.cheep-container>form:has(#unfollowButton)>button {
+    background-color: #cc6e6e;
+}

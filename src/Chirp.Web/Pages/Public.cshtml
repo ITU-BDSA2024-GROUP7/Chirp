@@ -31,29 +31,30 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 <li>
-                    <p>
+                    <div class="cheep-container">
                         <strong>
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
-                        <small>&mdash; @cheep.FormattedTimeStamp</small> <br>
-                        @cheep.Text
-                    
-                    </p>
-                    @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
-                        <form method="post">
-                            @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
-                            {
-                                <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                <button type="submit" asp-page-handler="FollowMethod">follow</button>
-                            }
-                            else
-                            {
-                    
-                                <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                <button type="submit" asp-page-handler="UnfollowMethod">unfollow</button>
-                            }
-                        </form>
-                    }
+    
+                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
+                            <form style="display: flex;" method="post">
+                                @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                                {
+                                    <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                }
+                            </form>
+                        }
+    
+                    </div>
+                    <small>@cheep.FormattedTimeStamp</small>
+                    <br><br>
+                    <p>@cheep.Text</p>
                     
                 </li>
             }

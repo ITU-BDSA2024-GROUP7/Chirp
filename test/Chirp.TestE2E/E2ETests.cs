@@ -1,4 +1,4 @@
-namespace Chirp.Test.E2E;
+namespace Chirp.TestE2E;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]
@@ -10,19 +10,20 @@ public class E2ETests : PageTest
     private IBrowser? _browser;
     private IBrowserContext? _context;
     private IPage? _page;
-    public string testUserEmail = "testuser@gmail.com";
-    public string testUserPassword = "Test@12345";
+    private const string TestUsername = "Tester";
+    private const string TestUserEmail = "testuser@gmail.com";
+    private const string TestUserPassword = "Test@12345";
 
-    readonly BrowserTypeLaunchOptions browserTypeLaunchOptions = new BrowserTypeLaunchOptions
+    readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true,
+        Headless = true
     };
 
     [SetUp]
     public async Task Setup()
     {
         Console.WriteLine(_startupProjectPath);
-        _browser = await Playwright.Chromium.LaunchAsync(browserTypeLaunchOptions);
+        _browser = await Playwright.Chromium.LaunchAsync(_browserTypeLaunchOptions);
 
         _context = await _browser.NewContextAsync();
 
@@ -73,62 +74,61 @@ public class E2ETests : PageTest
     
     //---------------------------------- HELPER METHODS ----------------------------------
     // Register
-    public async Task RegisterUser()
+    private async Task RegisterUser()
     {
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         // Arrived at register page, and put in email and password
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
         await _page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(testUserPassword);
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(TestUserPassword);
         await _page.GetByLabel("Confirm Password").ClickAsync();
-        await _page.GetByLabel("Confirm Password").FillAsync(testUserPassword);
+        await _page.GetByLabel("Confirm Password").FillAsync(TestUserPassword);
 
         // Clicks on the register button to register the account
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-
-        // Confirms the registration by clicking on the confirm button
-        await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
     }
 
     // Login
-    public async Task LoginUser()
+    private async Task LoginUser()
     {
         // Goes to login page
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(testUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
     }
 
     // Logout
-    public async Task LogoutUser()
+    /*private async Task LogoutUser()
     {
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Logout");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" }).ClickAsync();
-    }
+    }*/
 
     // Delete 
-    public async Task DeleteUser()
+    private async Task DeleteUser()
     {
         // Removing the test user
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Manage");
         await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
-        await _page.GetByPlaceholder("Please enter your password.").ClickAsync();
-        await _page.GetByPlaceholder("Please enter your password.").FillAsync(testUserPassword);
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
+        await _page.GetByPlaceholder("Please enter your username.").ClickAsync();
+        await _page.GetByPlaceholder("Please enter your username.").FillAsync(TestUsername);
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete all my data and close my account" }).ClickAsync();
     }
     
     /*
-    public async Task GithubRegisterUser()
+    private async Task GithubRegisterUser()
     {
         await _page.GotoAsync("http://localhost:5273/Identity/Account/Register");
         await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
@@ -159,7 +159,7 @@ public class E2ETests : PageTest
     }
     
     // If github login is not saved in cache
-    // Use this if its the first time authorizing with github in the test
+    // Use this if it's the first time authorizing with github in the test
     public async Task GithubNoCacheLoginUser()
     {
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
@@ -338,7 +338,7 @@ public class E2ETests : PageTest
         await LoginUser();
 
         await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
-        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = $"{testUserEmail}'s Timeline" }))
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = $"{TestUsername}'s Timeline" }))
             .ToBeVisibleAsync();
 
         await DeleteUser();
@@ -355,6 +355,7 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Create a new account." })).ToBeVisibleAsync();
+        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Username" })).ToBeVisibleAsync();
         await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Email" })).ToBeVisibleAsync();
         await Expect(_page.Locator("#registerForm div").Nth(1)).ToBeVisibleAsync();
         await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Confirm Password" }))
@@ -369,21 +370,20 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         // Arrived at register page, and put in email and password
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
         await _page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(testUserPassword);
+        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(TestUserPassword);
         await _page.GetByLabel("Confirm Password").ClickAsync();
-        await _page.GetByLabel("Confirm Password").FillAsync(testUserPassword);
+        await _page.GetByLabel("Confirm Password").FillAsync(TestUserPassword);
 
         // Clicks on the register button to register the account
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
 
-        // Confirms the registration by clicking on the confirm button
-        await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
-
-        // Person has correctly registered if email is confirmed
-        await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
+        // Person has correctly registered if logout button is visible
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" })).ToBeVisibleAsync();
 
 
         // Clean up
@@ -415,12 +415,13 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
     }
 
-    // Registration with password not living up to constraint (at least one non alphanumeric character)
+    // Registration with password not living up to constraint (at least one nonalphanumeric character)
     [Test]
     [Category("End2End")]
     public async Task RegisterWithNoAlphanumericCharacter()
     {
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
         await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword1234");
         await _page.GetByLabel("Confirm Password").FillAsync("BadPassword1234");
@@ -435,6 +436,7 @@ public class E2ETests : PageTest
     public async Task RegisterWithNoDigit()
     {
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
         await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword!");
         await _page.GetByLabel("Confirm Password").FillAsync("BadPassword!");
@@ -448,6 +450,7 @@ public class E2ETests : PageTest
     public async Task RegisterWithNoUppercase()
     {
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
+        await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
         await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("badpassword1234!");
         await _page.GetByLabel("Confirm Password").FillAsync("badpassword1234!");
@@ -494,15 +497,15 @@ public class E2ETests : PageTest
 
         // Fills in information
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(testUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
         // User arrived at the homepage and should now see a logout button with their email attached
-        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout [{testUserEmail}]" })).ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" })).ToBeVisibleAsync();
 
         await DeleteUser();
     }
@@ -517,9 +520,9 @@ public class E2ETests : PageTest
 
         // Fills in information
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(testUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -535,7 +538,7 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
         // Fills in information
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(testUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -551,7 +554,7 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
         // Fills in information
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(testUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -607,7 +610,7 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
-        await _page!.GetByRole(AriaRole.Link, new() { Name = "Logout [testuser@gmail.com]" }).ClickAsync();
+        await _page!.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" }).ClickAsync();
         await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" })).ToBeVisibleAsync();
         
         // Clean up
@@ -674,8 +677,8 @@ public class E2ETests : PageTest
     {
         await RegisterUser();
         await LoginUser();
-        await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-        await Expect(_page.GetByText("What's on your mind testuser@gmail.com? Share")).ToBeVisibleAsync();
+        await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await Expect(_page.GetByText($"What's on your mind {TestUsername}? Share")).ToBeVisibleAsync();
         
         
         // Clean up
@@ -688,8 +691,8 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
-        await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
-        await Expect(_page.GetByText("What's on your mind testuser@gmail.com? Share")).ToBeVisibleAsync();
+        await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+        await Expect(_page.GetByText($"What's on your mind {TestUsername}? Share")).ToBeVisibleAsync();
         
         
         // Clean up
@@ -702,7 +705,7 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
-        await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("Hello World!");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -721,7 +724,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
-            await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+            await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("Hello World!");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -740,7 +743,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
-            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+            await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
             await Expect(_page.GetByText("At least write something")).ToBeVisibleAsync();
         
@@ -756,7 +759,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
-            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+            await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message Very Long Message ");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -774,7 +777,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
-            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+            await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("Hello World!");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();

@@ -83,6 +83,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             
             // For registering usernames
             [Required]
+            [StringLength(40, ErrorMessage = "Username must not be longer than 32 characters long")]
             [DataType(DataType.Text)]
             [Display(Name = "UserName")]
             public string UserName { get; set; }

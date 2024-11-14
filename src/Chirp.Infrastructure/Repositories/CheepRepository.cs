@@ -29,7 +29,8 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
@@ -50,7 +51,8 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
@@ -177,7 +179,8 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
@@ -186,14 +189,14 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
         
-        public async Task FollowAuthor(string userAuthor, string followedAuthor)
+        public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
         {
 
 
-            var author = FindAuthorByName(userAuthor);
-            if (author != null && !author.AuthorsFollowed.Contains(followedAuthor))
+            var author = FindAuthorByName(userAuthorName);
+            if (author != null && !author.AuthorsFollowed.Contains(followedAuthorName))
             {
-                author.AuthorsFollowed.Add(followedAuthor);
+                author.AuthorsFollowed.Add(followedAuthorName);
                 await _dbContext.SaveChangesAsync();
             }
         }

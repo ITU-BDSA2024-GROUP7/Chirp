@@ -1,9 +1,17 @@
 using Chirp.Core.DTOs;
+using Xunit.Abstractions;
 
 namespace Chirp.Test;
 
 public class UnitTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public UnitTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Theory]
     [InlineData("Helge", "Hello, BDSA students!", 1690892208)]
     //[InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
@@ -175,8 +183,8 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Adrian", Email = "" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null});
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Adrian", Email = "", AuthorsFollowed = null });
             
             var cheepList = await repository.ReadAllCheeps(0);
          
@@ -283,7 +291,7 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null });
             
             
             var cheepList = await repository.ReadAllCheeps(0);
@@ -406,13 +414,10 @@ public class UnitTests
         
         await repository.FollowAuthor(author2.Name, cheep1.Author.Name);
         
+        _testOutputHelper.WriteLine(author2.AuthorsFollowed.ToString());
         
         Assert.True(author2.AuthorsFollowed.Count == 1);
         
         Assert.True(author2.AuthorsFollowed.Contains(author1.Name));
-
-
-
-
     }
 }

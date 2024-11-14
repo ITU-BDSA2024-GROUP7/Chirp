@@ -26,12 +26,15 @@ public class PublicModel : PageModel
         _service = service;
     }
 
+    public Author userAuthor { get; set; }
+
     /// <summary>
     /// Gets cheeps and stores them in a list when the page is loaded.
     /// </summary>
     /// <returns></returns>
     public async Task<IActionResult> OnGet([FromQuery] int page)
     {
+        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
         if (page <= 0)
         {
             page = 1;
@@ -43,8 +46,13 @@ public class PublicModel : PageModel
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            await RefreshFollow();
+            var currentUserName = User.Identity.Name;
 
+            foreach (var cheep in Cheeps)
+            {
+                bool isFollowed = await _service.IsAuthorAlreadyFollowed(currentUserName, cheep.Author.Name);
+                AuthorFollowStatus[cheep.Author.Name] = isFollowed;
+            }
         }
         
         return Page();
@@ -75,7 +83,7 @@ public class PublicModel : PageModel
                 Author = new AuthorDTO
                 {
                     Name = authorName, // this needs to be changed to user names going forward
-                    Email = authorEmail 
+                    Email = authorEmail
                 },
                 Text = CheepText,
                 FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
@@ -87,13 +95,13 @@ public class PublicModel : PageModel
         return RedirectToPage("Public", new { page = 1 });
     }
     
-    public async Task<IActionResult> OnPostFollowMethod(string followedAuthor)
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var userAuthor = User.Identity.Name;
-            await _service.FollowAuthor(userAuthor, followedAuthor);
-            await RefreshFollow(); // Refresh after following
+            await _service.FollowAuthor(userAuthor, followedAuthorName);
+            
         }
 
         return RedirectToPage("Public", new { page = PageNumber });
@@ -105,25 +113,13 @@ public class PublicModel : PageModel
         {
             var userAuthor = User.Identity.Name;
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
-            await RefreshFollow(); // Refresh after unfollowing
+            
         }
 
         return RedirectToPage("Public", new { page = PageNumber });
     }
 
-    private async Task RefreshFollow()
-    {
-        if (User.Identity?.Name != null)
-        {
-            var currentUserName = User.Identity.Name;
-
-            foreach (var cheep in Cheeps)
-            {
-                bool isFollowed = await _service.IsAuthorAlreadyFollowed(currentUserName, cheep.Author.Name);
-                AuthorFollowStatus[cheep.Author.Name] = isFollowed;
-            }
-        }
-    }
+    
     
     
 }

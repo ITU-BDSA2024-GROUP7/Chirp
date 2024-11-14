@@ -1,5 +1,7 @@
 ﻿@page "/"
+@using Chirp.Core
 @using Chirp.Web.Pages
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.EntityFrameworkCore
 @model Chirp.Web.Pages.PublicModel
 @{
@@ -37,12 +39,14 @@
                     </p>
                     @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
                         <form method="post">
-                            @if (Model.AuthorFollowStatus.TryGetValue(cheep.Author.Name, out bool isFollowed) && !isFollowed) {
+                            @if (Model.userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                            {
                                 <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
                                 <button type="submit" asp-page-handler="FollowMethod">follow</button>
-                            
-                            } else {
-                            
+                            }
+                            else
+                            {
+
                                 <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
                                 <button type="submit" asp-page-handler="UnfollowMethod">unfollow</button>
                             }

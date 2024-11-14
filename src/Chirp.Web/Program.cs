@@ -2,8 +2,6 @@ using System.Security.Claims;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
-using Chirp.Web.Areas.Identity;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,7 +41,7 @@ namespace Chirp.Web
             // Then add Identity services
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
                     options.SignIn.RequireConfirmedAccount = true)
-                .AddSignInManager<MySignInManager>()
+                .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddEntityFrameworkStores<CheepDBContext>();
 
             // Retrieve ClientId and ClientSecret from configuration

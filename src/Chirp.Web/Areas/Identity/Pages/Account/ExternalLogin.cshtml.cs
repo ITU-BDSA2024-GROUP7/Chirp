@@ -80,9 +80,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             if (result.Succeeded) // If the user is successfully signed in.
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity?.Name, info.LoginProvider);
+                returnUrl = Url.Content("/");
                 return LocalRedirect(returnUrl);
             }
-            if (result.IsLockedOut) // If the user is locked out
+            if (result.IsLockedOut) // If the user is locked out i.e. too many login attempts.
             {
                 return RedirectToPage("./Lockout");
             }

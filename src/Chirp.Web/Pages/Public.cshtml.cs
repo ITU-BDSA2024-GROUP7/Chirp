@@ -34,7 +34,6 @@ public class PublicModel : PageModel
     /// <returns></returns>
     public async Task<IActionResult> OnGet([FromQuery] int page)
     {
-        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
         if (page <= 0)
         {
             page = 1;
@@ -47,6 +46,7 @@ public class PublicModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
+            userAuthor = await _service.FindAuthorByName(currentUserName);
 
             foreach (var cheep in Cheeps)
             {

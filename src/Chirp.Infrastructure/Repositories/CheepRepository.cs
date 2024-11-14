@@ -184,5 +184,13 @@ namespace Chirp.Infrastructure.Repositories
             // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
+
+        public async Task<AuthorDTO> FollowAuthor(AuthorDTO authorDTO)
+        {
+            
+            
+            
+            
+        }
     }
 }

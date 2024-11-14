@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -75,5 +76,16 @@ public class PublicModel : PageModel
         }
         
         return RedirectToPage("Public", new { page = 1 });
+    }
+    
+    public IActionResult OnPostFollowMethod()
+    {
+        if (User.Identity.)
+        {
+            
+        } else 
+        {
+            
+        }
     }
 }

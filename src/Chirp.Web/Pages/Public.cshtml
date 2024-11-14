@@ -34,9 +34,12 @@
                         @cheep.Text
                     
                     </p>
-                    <a href="/follow">
-                        <button>Follow</button>
-                    </a>
+                    @if (User.Identity.IsAuthenticated) {
+                        <form method="post">
+                            <button type="submit" asp-page-handler="FollowMethod">execute method</button>
+                        </form>
+                    }
+                    
                 </li>
             }
         </ul>

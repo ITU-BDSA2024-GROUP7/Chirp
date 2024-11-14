@@ -5,6 +5,7 @@ using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Distributed;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
@@ -18,6 +19,8 @@ public class PublicModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel { FormAction = "/Public" };
 
+    public Dictionary<string, bool> AuthorFollowStatus { get; private set; } = new Dictionary<string, bool>();
+    
     public PublicModel(CheepService service)
     {
         _service = service;
@@ -37,6 +40,12 @@ public class PublicModel : PageModel
         PageNumber = page;
         Cheeps = await _service.GetCheeps(page);
         TotalPageNumber = await _service.GetTotalPageNumber();
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            await RefreshFollow();
+
+        }
         
         return Page();
     }
@@ -84,9 +93,37 @@ public class PublicModel : PageModel
         {
             var userAuthor = User.Identity.Name;
             await _service.FollowAuthor(userAuthor, followedAuthor);
+            await RefreshFollow(); // Refresh after following
         }
 
         return RedirectToPage("Public", new { page = PageNumber });
-
     }
+
+    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var userAuthor = User.Identity.Name;
+            await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            await RefreshFollow(); // Refresh after unfollowing
+        }
+
+        return RedirectToPage("Public", new { page = PageNumber });
+    }
+
+    private async Task RefreshFollow()
+    {
+        if (User.Identity?.Name != null)
+        {
+            var currentUserName = User.Identity.Name;
+
+            foreach (var cheep in Cheeps)
+            {
+                bool isFollowed = await _service.IsAuthorAlreadyFollowed(currentUserName, cheep.Author.Name);
+                AuthorFollowStatus[cheep.Author.Name] = isFollowed;
+            }
+        }
+    }
+    
+    
 }

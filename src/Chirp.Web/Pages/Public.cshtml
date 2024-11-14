@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Chirp.Web.Pages
+@using Microsoft.EntityFrameworkCore
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -34,10 +35,17 @@
                         @cheep.Text
                     
                     </p>
-                    @if (User.Identity.IsAuthenticated) {
+                    @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
                         <form method="post">
-                            <input type="hidden" name="followedAuthor" value="@cheep.Author.Name" />
-                            <button type="submit" asp-page-handler="FollowMethod">follow</button>
+                            @if (Model.AuthorFollowStatus.TryGetValue(cheep.Author.Name, out bool isFollowed) && !isFollowed) {
+                                <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                <button type="submit" asp-page-handler="FollowMethod">follow</button>
+                            
+                            } else {
+                            
+                                <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                <button type="submit" asp-page-handler="UnfollowMethod">unfollow</button>
+                            }
                         </form>
                     }
                     

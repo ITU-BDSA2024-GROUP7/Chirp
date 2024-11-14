@@ -197,5 +197,30 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
+        {
+            var author = FindAuthorByName(userAuthor);
+
+            if (author != null && !author.AuthorsFollowed.Contains(authorToBeRemoved))
+            {
+                author.AuthorsFollowed.Remove(authorToBeRemoved);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        
+        public async Task<bool> IsAuthorAlreadyFollowed(string userAuthor, string cheepAuthor)
+        {
+            var author = FindAuthorByName(userAuthor);
+
+            if (author != null)
+            {
+                return author.AuthorsFollowed.Contains(cheepAuthor);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

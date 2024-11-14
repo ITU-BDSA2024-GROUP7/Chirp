@@ -41,10 +41,9 @@
                     </p>
                     @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
                         <form method="post">
-                            @if (!userAuthor.AuthorsFollowed.IsNullOrEmpty())
+                            @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                             {
-                                <p>@userAuthor.AuthorsFollowed.Contains(cheep.Author.Name)</p>
-                                <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
                                 <button type="submit" asp-page-handler="FollowMethod">follow</button>
                             }
                             else

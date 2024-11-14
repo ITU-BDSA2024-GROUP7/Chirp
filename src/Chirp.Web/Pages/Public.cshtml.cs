@@ -18,8 +18,6 @@ public class PublicModel : PageModel
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel { FormAction = "/Public" };
-
-    public Dictionary<string, bool> AuthorFollowStatus { get; private set; } = new Dictionary<string, bool>();
     
     public PublicModel(CheepService service)
     {
@@ -47,12 +45,6 @@ public class PublicModel : PageModel
         {
             var currentUserName = User.Identity.Name;
             userAuthor = await _service.FindAuthorByName(currentUserName);
-
-            foreach (var cheep in Cheeps)
-            {
-                bool isFollowed = await _service.IsAuthorAlreadyFollowed(currentUserName, cheep.Author.Name);
-                AuthorFollowStatus[cheep.Author.Name] = isFollowed;
-            }
         }
         
         return Page();
@@ -95,23 +87,33 @@ public class PublicModel : PageModel
         return RedirectToPage("Public", new { page = 1 });
     }
     
+    /// <summary>
+    /// Follows an author
+    /// </summary>
+    /// <param name="followedAuthorName"></param>
+    /// <returns></returns>
     public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
     {
-        if (User.Identity != null && User.Identity.IsAuthenticated)
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
-            var userAuthor = User.Identity.Name;
+            var userAuthor = User.Identity.Name; // Get the user's name
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-
+        
         return RedirectToPage("Public", new { page = PageNumber });
     }
 
+    /// <summary>
+    /// Unfollows an author
+    /// </summary>
+    /// <param name="followedAuthor"></param>
+    /// <returns></returns>
     public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
     {
-        if (User.Identity != null && User.Identity.IsAuthenticated)
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
-            var userAuthor = User.Identity.Name;
+            var userAuthor = User.Identity.Name; // Get the user's name
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }

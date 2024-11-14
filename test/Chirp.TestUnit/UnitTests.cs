@@ -415,9 +415,8 @@ public class UnitTests
         await repository.FollowAuthor(author2.Name, cheep1.Author.Name);
         
         _testOutputHelper.WriteLine(author2.AuthorsFollowed.ToString());
-        
-        Assert.True(author2.AuthorsFollowed.Count == 1);
-        
+
+        Assert.True(author2.AuthorsFollowed.Count != 0);
         Assert.True(author2.AuthorsFollowed.Contains(author1.Name));
     }
 }

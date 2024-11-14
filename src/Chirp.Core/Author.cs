@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Chirp.Core.DTOs;
 using Microsoft.VisualBasic.CompilerServices;
 
 namespace Chirp.Core;

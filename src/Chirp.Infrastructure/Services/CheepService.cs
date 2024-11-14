@@ -66,11 +66,6 @@ public class CheepService : ICheepService
         await _cheepRepository.FollowAuthor(userAuthorName, followedAuthorName);
     }
 
-    public async Task<bool> IsAuthorAlreadyFollowed(string userAuthor, string cheepAuthor)
-    {
-        return await _cheepRepository.IsAuthorAlreadyFollowed(userAuthor, cheepAuthor);
-    }
-
     public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
     {
         await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);

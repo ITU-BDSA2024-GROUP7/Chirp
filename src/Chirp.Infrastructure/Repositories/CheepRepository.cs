@@ -189,40 +189,33 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
         
+        /// <summary>
+        /// Follows an author
+        /// </summary>
+        /// <param name="userAuthorName"></param>
+        /// <param name="followedAuthorName"></param>
         public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
         {
-
-
-            var author = FindAuthorByName(userAuthorName);
-            if (author != null && !author.AuthorsFollowed.Contains(followedAuthorName))
+            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            if (author != null && !author.AuthorsFollowed.Contains(followedAuthorName)) // Check if the author is not already followed
             {
-                author.AuthorsFollowed.Add(followedAuthorName);
-                await _dbContext.SaveChangesAsync();
+                author.AuthorsFollowed.Add(followedAuthorName); // Add the author to the list of followed authors
+                await _dbContext.SaveChangesAsync(); // Persist the changes to the database
             }
         }
 
-        public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
+        /// <summary>
+        /// Unfollows an author
+        /// </summary>
+        /// <param name="userAuthorName"></param>
+        /// <param name="authorToBeRemoved"></param>
+        public async Task UnfollowAuthor(string userAuthorName, string authorToBeRemoved)
         {
-            var author = FindAuthorByName(userAuthor);
-
-            if (author != null && !author.AuthorsFollowed.Contains(authorToBeRemoved))
+            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            if (author != null && author.AuthorsFollowed.Contains(authorToBeRemoved)) // Check if the author is followed
             {
-                author.AuthorsFollowed.Remove(authorToBeRemoved);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
-        
-        public async Task<bool> IsAuthorAlreadyFollowed(string userAuthor, string cheepAuthor)
-        {
-            var author = FindAuthorByName(userAuthor);
-
-            if (author != null)
-            {
-                return author.AuthorsFollowed.Contains(cheepAuthor);
-            }
-            else
-            {
-                return false;
+                author.AuthorsFollowed.Remove(authorToBeRemoved); // Remove the author from the list of followed authors
+                await _dbContext.SaveChangesAsync(); // Persist the changes to the database
             }
         }
     }

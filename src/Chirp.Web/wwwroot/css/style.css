@@ -41,10 +41,12 @@ input[type="submit"] {
 }
 
 div.page {
+    width: 700px;
     background: white;
     border: 1px solid #cc6e6e;
-    width: 700px;
     margin: 30px auto;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 div.page > h1 {
@@ -63,13 +65,14 @@ div.page h1 img {
 }
 
 div.page div.navigation {
-    background: #DEE9E8;
-    padding: 4px 10px;  
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #eee;
-    color: #888;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    position: fixed;
+    left: auto;             /* Distance from the left edge of the viewport */
+    margin-left: -220px; /* Adjust to place content right next to the navbar */
+    top: 50px;              /* Distance from the top to align with the header */
+    width: 150px;           /* Set a fixed width */
+    padding: 10px;
+    color: white;
+    overflow-y: auto;       /* Allow scrolling if content overflows */
 }
 
 div.page div.navigation a {
@@ -77,19 +80,20 @@ div.page div.navigation a {
     font-weight: bold;
     text-decoration: none;
     padding: 10px;
-    font-size: 14px;
-    /*vertical-align: middle;*/
-    display: inline-flex;  /* Turn the anchor tag into a flex container */
+    font-size: 22px;
+    margin-bottom: 15px;
+    display: inline-flex;  
     align-items: center;   /* Align children (image and text) vertically at the center */
+    transition: background-color 0.4s ease;
+    border-radius: 20px;
 }
 
 div.page div.navigation a:hover {
-    color: #95afc0;
-    border-radius: 5px;
+    background-color: #95afc0;
 }
 
 div.page div.navigation img {
-    height: 1em;
+    height: 1.3em;
     width: auto;
     margin-right: 2px;}
 
@@ -324,3 +328,17 @@ ul.nav li a:hover {
     width: auto;
     margin-right: 5px;
 }
+
+/*!* Sidebar styling *!*/
+/*.navbar {*/
+/*    position: fixed;*/
+/*    left: auto;             !* Distance from the left edge of the viewport *!*/
+/*    margin-left: -220px; !* Adjust to place content right next to the navbar *!*/
+/*    top: 50px;              !* Distance from the top to align with the header *!*/
+/*    width: 150px;           !* Set a fixed width *!*/
+/*    height: calc(100% - 60px);  !* Adjust height based on top and bottom spacing *!*/
+/*    padding: 10px;*/
+/*    color: white;*/
+/*    border-radius: 5px;*/
+/*    overflow-y: auto;       !* Allow scrolling if content overflows *!*/
+/*}*/

@@ -1,5 +1,5 @@
 body {
-  background: lightblue;
+  background: #c7ecee;
   font-family: 'Trebuchet MS', sans-serif;
   font-size: 14px;
 }
@@ -298,4 +298,9 @@ ul.nav li a {
 
 ul.nav li a:hover {
     background-color: #8b4949;
+}
+
+.providerImg {
+    height: 1em;
+    width: auto;
 }

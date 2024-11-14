@@ -1,0 +1,62 @@
+﻿/* General layout and centering for the login page */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-form {
+    max-width: 700px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 20px;
+    /*box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);*/
+}
+
+.login-form h1,
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Input fields spacing */
+.login-form .form-floating {
+    margin-top: 0.5rem;
+    text-align: center;
+    margin-bottom: 0.8rem;
+}
+
+.login-form button {
+    background-color: #cc6e6e;
+    border: none;
+    color: black;
+    padding: 8px 16px;  /* Add padding for even spacing */
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #8b4949;
+}
+
+.login-form a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #007bff;
+}
+
+.providerImg {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+}
+
+.external-login {
+    text-align: center;
+    margin-top: 20px;
+}

@@ -14,7 +14,7 @@
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
-    @if(User.Identity.IsAuthenticated){ 
+    @if(User.Identity != null && User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }

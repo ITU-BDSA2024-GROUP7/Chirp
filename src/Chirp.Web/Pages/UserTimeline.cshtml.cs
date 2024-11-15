@@ -33,8 +33,7 @@ public class UserTimelineModel : PageModel
 
         CurrentAuthor = author;
         PageNumber = page;
-        // Cheeps = await _service.GetCheepsFromAuthor(author, page);
-        Cheeps = await _service.GetCheeps(page);
+        Cheeps = await _service.GetCheepsFromAuthor(author, page);
         TotalPageNumber = await _service.GetTotalPageNumber(author);
         
         if (User.Identity != null && User.Identity.IsAuthenticated)

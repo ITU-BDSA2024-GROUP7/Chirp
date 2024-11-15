@@ -38,6 +38,8 @@
     font-weight: bold;
     margin-top: 1rem;
     transition: background-color 0.4s ease;
+    border-radius: 7px;
+
 }
 
 .identity-form button:hover {

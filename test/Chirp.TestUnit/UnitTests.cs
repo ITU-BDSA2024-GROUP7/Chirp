@@ -26,7 +26,7 @@ public class UnitTests
         await context.Database.EnsureCreatedAsync();               
         
         // Seed the database with a test entry
-        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName, AuthorsFollowed = null};
+        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName, AuthorsFollowed = new List<string>()};
         
         var cheep = new Cheep
         {
@@ -67,8 +67,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
         
          var cheep1 = new Cheep
          {
@@ -135,8 +135,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
          
          var cheep1 = new Cheep
          {
@@ -206,8 +206,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();
 
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null};
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
 
          var cheep1 = new Cheep
          {
@@ -243,8 +243,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>() };
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
          
          var cheep1 = new Cheep
          {
@@ -314,8 +314,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = null};
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = null };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
          
          var cheep1 = new Cheep
          {

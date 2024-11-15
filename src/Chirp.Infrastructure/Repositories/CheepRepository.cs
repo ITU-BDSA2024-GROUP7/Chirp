@@ -60,6 +60,31 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<List<CheepDTO>> ReadPrivateCheeps(int page, string userName)
+        {
+            
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .Where(cheep => FindAuthorByName(userName).AuthorsFollowed.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip((page - 1) * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+
+            return await query.ToListAsync();
+        }
+        
         // get total count of pages 
         public async Task<int> GetTotalPages(string authorName = null)
         {

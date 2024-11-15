@@ -49,7 +49,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
             dbContext.Database.EnsureDeleted(); // Clear previous data
             dbContext.Database.EnsureCreated(); // Recreate the database
 
-            var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson", AuthorsFollowed = null};
+            var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson", AuthorsFollowed = new List<string>()};
         
             var cheep = new Cheep
             {
@@ -83,7 +83,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
             dbContext.Database.EnsureDeleted(); // Clear previous data
             dbContext.Database.EnsureCreated(); // Recreate the database
 
-            var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson", AuthorsFollowed = null };
+            var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson", AuthorsFollowed = new List<string>() };
     
             var cheep = new Cheep
             {

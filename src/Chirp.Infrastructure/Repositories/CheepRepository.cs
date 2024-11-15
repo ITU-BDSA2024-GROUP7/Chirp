@@ -80,12 +80,6 @@ namespace Chirp.Infrastructure.Repositories
         {
             // Find the author by name
             var author = FindAuthorByName(cheepDTO.Author.Name);
-            
-            if (author == null)
-            {
-                await CreateAuthor(cheepDTO.Author.Name);
-                author = FindAuthorByName(cheepDTO.Author.Name);
-            }
 
             // Create a new Cheep 
             Cheep newCheep = new Cheep
@@ -124,12 +118,12 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor(string authorName)
+        public async Task CreateAuthor(string authorName, string authorEmail)
         {
             var author = new Author()
             {   
                 Name = authorName,
-                Email = authorName,
+                Email = authorEmail,
                 Cheeps = new List<Cheep>(),
                 AuthorsFollowed = new List<string>()
             };

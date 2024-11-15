@@ -1,5 +1,4 @@
 ﻿@page
-@using Chirp.Web.Areas.Identity.Pages.Account.Manage
 @model DeletePersonalDataModel
 @{
     ViewData["Title"] = "Delete Personal Data";
@@ -10,22 +9,21 @@
 
 <div class="alert alert-warning" role="alert">
     <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.
+            <br/>
+            Remember the username field is case-sensitive.</strong>
     </p>
 </div>
 
 <div>
     <form id="delete-user" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-        @if (Model.RequirePassword)
-        {
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
-                <label asp-for="Input.Password" class="form-label"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-        }
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
+        <div class="form-floating mb-3">
+            <label asp-for="Input.Username" class="form-label"></label>
+            <input asp-for="Input.Username" class="form-control" autocomplete="Username" aria-required="true" placeholder="Please enter your username." />
+            <span asp-validation-for="Input.Username" class="text-danger"></span>
+        </div>
+        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete all my data and close my account</button>
     </form>
 </div>
 

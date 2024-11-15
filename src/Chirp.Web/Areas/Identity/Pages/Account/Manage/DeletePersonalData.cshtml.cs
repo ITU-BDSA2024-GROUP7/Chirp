@@ -2,16 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
@@ -55,6 +52,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
+            public string Username { get; set; }
         }
 
         /// <summary>
@@ -82,27 +80,31 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
-            RequirePassword = await _userManager.HasPasswordAsync(user);
-            if (RequirePassword)
+            
+            
+            if (await _userManager.GetUserNameAsync(user) != Input.Username)
             {
-                if (!await _userManager.CheckPasswordAsync(user, Input.Password))
-                {
-                    ModelState.AddModelError(string.Empty, "Incorrect password.");
-                    return Page();
-                }
+                ModelState.AddModelError(string.Empty, "Incorrect username.");
+                return Page();
             }
+
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var authorName = User.Identity.Name;
                 var authorEmail = User.Identity.Name;
 
-                var Author = new AuthorDTO
+                if (authorName != null)
                 {
-                    Name = authorName,
-                    Email = authorEmail
-                };
-                await _service.DeleteCheepsByAuthor(Author);
+                    if (authorEmail != null)
+                    {
+                        var author = new AuthorDTO
+                        {
+                            Name = authorName,
+                            Email = authorEmail
+                        };
+                        await _service.DeleteCheepsByAuthor(author);
+                    }
+                }
             }
 
 

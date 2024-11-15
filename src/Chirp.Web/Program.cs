@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -39,6 +41,7 @@ namespace Chirp.Web
             // Then add Identity services
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
                     options.SignIn.RequireConfirmedAccount = true)
+                .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddEntityFrameworkStores<CheepDBContext>();
 
             // Retrieve ClientId and ClientSecret from configuration
@@ -65,7 +68,22 @@ namespace Chirp.Web
                     options.ClientId = clientId;
                     options.ClientSecret = clientSecret;
                     options.CallbackPath = new PathString("/signin-github");
-                });
+                    options.Scope.Add("user:email");
+                    options.Scope.Add("user:email");
+
+                    options.Events.OnCreatingTicket = context =>
+                    {
+                        // Retrieve user details from claims
+                        var userName = context.Identity?.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+                        var email = context.Identity?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+
+                        // You can use these values as needed in your application
+                        Console.WriteLine($"GitHub Username: {userName}");
+                        Console.WriteLine($"GitHub Email: {email}");
+
+                        return Task.CompletedTask;
+                    };
+                }); 
             
             builder.Services.AddSession();
             
@@ -94,13 +112,34 @@ namespace Chirp.Web
                 app.UseHsts();
             }
             
-            // set the Content-Security-Policy header
+            // // set the Content-Security-Policy header
+            // app.Use(async (context, next) =>
+            // {
+            //     // The Content-Security-Policy header helps to protect the webapp from XSS attacks
+            //     context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
+            //     await next();
+            // });
+            
             app.Use(async (context, next) =>
             {
-                // The Content-Security-Policy header helps to protect the webapp from XSS attacks
-                context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
+                // The Content-Security-Policy header helps to protect the webapp from XSS attacks.
+                // Added connect-src to allow WebSocket connections
+                context.Response.Headers.Append("Content-Security-Policy", 
+                    "default-src 'self'; " +                            // Allow resources from the same origin
+                    "script-src 'self' https://bdsagroup07chirprazor.azurewebsites.net/; " +  // Allow scripts from self and Azure
+                    "style-src 'self' 'unsafe-inline'; " +               // Allow inline styles and styles from self
+                    "img-src 'self'; " +                                 // Allow images from self
+                    "script-src-elem 'self' 'unsafe-inline'; " +         // Allow inline scripts in elements
+                    "connect-src 'self' ws://localhost:53540/ wss://localhost:53539/ https://bdsagroup07chirprazor.azurewebsites.net/; " + // Allow WebSocket connections from localhost and Azure
+                    "font-src 'self'; " +                                // Allow fonts from self
+                    "frame-src 'self'; " +                               // Allow frames from self
+                    "object-src 'none'; " +                              // Disallow object elements
+                    "worker-src 'self';");                               // Allow workers from self
                 await next();
             });
+
+            
+            
 
             //Use CORS
             app.UseCors();

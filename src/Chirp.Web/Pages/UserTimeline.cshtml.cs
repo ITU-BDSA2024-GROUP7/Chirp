@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -20,6 +21,7 @@ public class UserTimelineModel : PageModel
     {
         _service = service;
     }
+    public Author userAuthor { get; set; }
 
     // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
@@ -31,8 +33,16 @@ public class UserTimelineModel : PageModel
 
         CurrentAuthor = author;
         PageNumber = page;
-        Cheeps = await _service.GetCheepsFromAuthor(author, page);
+        // Cheeps = await _service.GetCheepsFromAuthor(author, page);
+        Cheeps = await _service.GetCheeps(page);
         TotalPageNumber = await _service.GetTotalPageNumber(author);
+        
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var currentUserName = User.Identity.Name;
+            userAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+        
         return Page();
     }
     
@@ -69,6 +79,39 @@ public class UserTimelineModel : PageModel
             };
 
             await _service.CreateCheep(cheepDTO);
+        }
+
+        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+    }
+    
+    /// <summary>
+    /// Follows an author
+    /// </summary>
+    /// <param name="followedAuthorName"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
+        {
+            var userAuthor = User.Identity.Name; // Get the user's name
+            await _service.FollowAuthor(userAuthor, followedAuthorName);
+            
+        }
+        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+    }
+
+    /// <summary>
+    /// Unfollows an author
+    /// </summary>
+    /// <param name="followedAuthor"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
+        {
+            var userAuthor = User.Identity.Name; // Get the user's name
+            await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            
         }
 
         return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });

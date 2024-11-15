@@ -112,13 +112,34 @@ namespace Chirp.Web
                 app.UseHsts();
             }
             
-            // set the Content-Security-Policy header
+            // // set the Content-Security-Policy header
+            // app.Use(async (context, next) =>
+            // {
+            //     // The Content-Security-Policy header helps to protect the webapp from XSS attacks
+            //     context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
+            //     await next();
+            // });
+            
             app.Use(async (context, next) =>
             {
-                // The Content-Security-Policy header helps to protect the webapp from XSS attacks
-                context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
+                // The Content-Security-Policy header helps to protect the webapp from XSS attacks.
+                // Added connect-src to allow WebSocket connections
+                context.Response.Headers.Append("Content-Security-Policy", 
+                    "default-src 'self'; " +                            // Allow resources from the same origin
+                    "script-src 'self' https://bdsagroup07chirprazor.azurewebsites.net/; " +  // Allow scripts from self and Azure
+                    "style-src 'self' 'unsafe-inline'; " +               // Allow inline styles and styles from self
+                    "img-src 'self'; " +                                 // Allow images from self
+                    "script-src-elem 'self' 'unsafe-inline'; " +         // Allow inline scripts in elements
+                    "connect-src 'self' ws://localhost:53540/ wss://localhost:53539/ https://bdsagroup07chirprazor.azurewebsites.net/; " + // Allow WebSocket connections from localhost and Azure
+                    "font-src 'self'; " +                                // Allow fonts from self
+                    "frame-src 'self'; " +                               // Allow frames from self
+                    "object-src 'none'; " +                              // Disallow object elements
+                    "worker-src 'self';");                               // Allow workers from self
                 await next();
             });
+
+            
+            
 
             //Use CORS
             app.UseCors();

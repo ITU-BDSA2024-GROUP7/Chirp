@@ -5,8 +5,8 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="login-container">
-    <div class="login-form">
+<div class="identity-container">
+    <div class="identity-form">
         <h1>@ViewData["Title"]</h1>
         <section>
             <form id="account" method="post">
@@ -15,12 +15,10 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
-                    <label asp-for="Input.Email" class="form-label">Email</label>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password"/>
-                    <label asp-for="Input.Password" class="form-label">Password</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div class="checkbox mb-3">
@@ -62,8 +60,8 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
-                                    <button type="submit" class="button" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
-                                        <img class="providerImg" src="/images/@(provider.Name)-Symbol.png" alt="@provider.Name image"/>
+                                    <button type="submit" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                        <img src="/images/@(provider.Name)-Symbol.png" alt="@provider.Name image"/>
                                         @provider.DisplayName
                                     </button>
                                 }

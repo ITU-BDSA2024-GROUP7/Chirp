@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = false
+        Headless = true
     };
 
     [SetUp]

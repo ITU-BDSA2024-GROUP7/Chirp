@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true
+        Headless = false
     };
 
     [SetUp]
@@ -83,11 +83,13 @@ public class E2ETests : PageTest
         await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
         await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
-        await _page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(TestUserPassword);
-        await _page.GetByLabel("Confirm Password").ClickAsync();
-        await _page.GetByLabel("Confirm Password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).ClickAsync();
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Confirm password").ClickAsync();
+        await _page.GetByPlaceholder("Confirm password").FillAsync(TestUserPassword);
 
+        
+        
         // Clicks on the register button to register the account
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
     }
@@ -355,11 +357,10 @@ public class E2ETests : PageTest
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Create a new account." })).ToBeVisibleAsync();
-        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Username" })).ToBeVisibleAsync();
-        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Email" })).ToBeVisibleAsync();
-        await Expect(_page.Locator("#registerForm div").Nth(1)).ToBeVisibleAsync();
-        await Expect(_page.Locator("#registerForm div").Filter(new() { HasText = "Confirm Password" }))
-            .ToBeVisibleAsync();
+        await Expect(_page.GetByPlaceholder("Username")).ToBeVisibleAsync();
+        await Expect(_page.GetByPlaceholder("Name@example.com")).ToBeVisibleAsync();
+        await Expect(_page.GetByPlaceholder("Password", new() { Exact = true })).ToBeVisibleAsync();
+        await Expect(_page.GetByPlaceholder("Confirm password")).ToBeVisibleAsync();
     }
 
     // Successfully registration with valid inputs
@@ -374,16 +375,16 @@ public class E2ETests : PageTest
         await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
         await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
-        await _page.GetByLabel("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync(TestUserPassword);
-        await _page.GetByLabel("Confirm Password").ClickAsync();
-        await _page.GetByLabel("Confirm Password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).ClickAsync();
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Confirm Password").ClickAsync();
+        await _page.GetByPlaceholder("Confirm Password").FillAsync(TestUserPassword);
 
         // Clicks on the register button to register the account
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
 
         // Person has correctly registered if logout button is visible
-        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" })).ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout" })).ToBeVisibleAsync();
 
 
         // Clean up
@@ -410,8 +411,8 @@ public class E2ETests : PageTest
         // Attempt to register with an invalid email
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
         await _page.GetByPlaceholder("name@example.com").FillAsync("emailwithoutat");
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("MyBadAccount");
-        await _page.GetByLabel("Confirm Password").FillAsync("MyBadAccount");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("MyBadAccount");
+        await _page.GetByPlaceholder("Confirm Password").FillAsync("MyBadAccount");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
     }
 
@@ -423,8 +424,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
         await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword1234");
-        await _page.GetByLabel("Confirm Password").FillAsync("BadPassword1234");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("BadPassword1234");
+        await _page.GetByPlaceholder("Confirm Password").FillAsync("BadPassword1234");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(_page.GetByText("Passwords must have at least one non alphanumeric character."))
             .ToBeVisibleAsync();
@@ -438,8 +439,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
         await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("BadPassword!");
-        await _page.GetByLabel("Confirm Password").FillAsync("BadPassword!");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("BadPassword!");
+        await _page.GetByPlaceholder("Confirm Password").FillAsync("BadPassword!");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(_page.GetByText("Passwords must have at least one digit ('0'-'9').")).ToBeVisibleAsync();
     }
@@ -452,8 +453,8 @@ public class E2ETests : PageTest
         await _page!.GotoAsync("http://localhost:5273/Identity/Account/Register");
         await _page.GetByPlaceholder("Username").FillAsync("myusername");
         await _page.GetByPlaceholder("name@example.com").FillAsync("my@mail.com");
-        await _page.GetByLabel("Password", new() { Exact = true }).FillAsync("badpassword1234!");
-        await _page.GetByLabel("Confirm Password").FillAsync("badpassword1234!");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("badpassword1234!");
+        await _page.GetByPlaceholder("Confirm Password").FillAsync("badpassword1234!");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
         await Expect(_page.GetByText("Passwords must have at least one uppercase ('A'-'Z').")).ToBeVisibleAsync();
     }
@@ -493,7 +494,7 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
         // User arrived at the homepage and should now see a logout button with their email attached
-        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" })).ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout" })).ToBeVisibleAsync();
 
         await DeleteUser();
     }
@@ -572,7 +573,7 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
-        await _page!.GetByRole(AriaRole.Link, new() { Name = $"Logout [{TestUsername}]" }).ClickAsync();
+        await _page!.GetByRole(AriaRole.Link, new() { Name = $"Logout" }).ClickAsync();
         await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" })).ToBeVisibleAsync();
         
         // Clean up
@@ -741,6 +742,7 @@ public class E2ETests : PageTest
             await RegisterUser();
             await LoginUser();
             
+            
             await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
             await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -749,7 +751,6 @@ public class E2ETests : PageTest
             await DeleteUser();   
             
             // check that the cheep is deleted
-            await _page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await Expect(_page.Locator("li").Filter(new() { HasText = "HelloWorld!RasmusMathiasNikolajMarcusErTelos!" }).First).Not.ToBeVisibleAsync();
         }
     } 

@@ -3,15 +3,20 @@
 <head>
     <title>@ViewData["Title"]</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/css/identity.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/favicon/favicon.ico">
 </head>
 <body>
+<div class="background-blur"></div>
 <div class=page>
     <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1>
-    
-    <partial name="_Navbar"/>
+
+    <aside class="navigation">
+        <partial name="_Navbar"/>
+    </aside>
+
     @* <partial name="_ShareBar"/> *@
-    
+
     <div class=body>
         @RenderBody()
     </div>

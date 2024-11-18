@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
+using System.Globalization;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -16,8 +17,7 @@ public class UserTimelineModel : PageModel
     public int TotalPageNumber { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
-    
-    public string CurrentAuthor;
+    public string CurrentAuthor = string.Empty;
     public UserTimelineModel(CheepService service)
     {
         _service = service;
@@ -56,8 +56,7 @@ public class UserTimelineModel : PageModel
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1}")]
-    [Display(Name = "Message Text")]
-    public string CheepText { get; set; }
+    public string CheepText { get; set; } = string.Empty; 
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid) // Check if the model state is invalid
@@ -73,24 +72,28 @@ public class UserTimelineModel : PageModel
             return Page(); // Return the page with validation messages
         }
         
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
             var authorEmail = User.Identity.Name;
 
-            // Create the new CheepDTO
-            var cheepDTO = new CheepDTO
+            if (authorName != null && authorEmail != null)
             {
-                Author = new AuthorDTO
+                // Create the new CheepDTO
+                var cheepDTO = new CheepDTO
                 {
-                    Name = authorName, // this needs to be changed to user names going forward
-                    Email = authorEmail 
-                },
-                Text = CheepText,
-                FormattedTimeStamp = DateTime.UtcNow.ToString() // Or however you want to format this
-            };
+                    Author = new AuthorDTO
+                    {
+                        Name = authorName, // this needs to be changed to user names going forward
+                        Email = authorEmail
+                    },
+                    Text = CheepText,
+                    FormattedTimeStamp =
+                        DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
+                };
 
-            await _service.CreateCheep(cheepDTO);
+                await _service.CreateCheep(cheepDTO);
+            }
         }
 
         return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });

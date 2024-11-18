@@ -1,0 +1,76 @@
+﻿/* General layout and centering for the login page */
+.identity-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.identity-form {
+    max-width: 700px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 20px;
+    /*box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);*/
+}
+
+.identity-form h1,.identity-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Input fields spacing */
+.identity-form .form-floating {
+    margin-top: 0.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.identity-form button {
+    background-color: #da7c7c;
+    border: none;
+    color: black;
+    padding: 8px 16px;  /* Add padding for even spacing */
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+    margin-top: 1rem;
+    transition: background-color 0.4s ease;
+    border-radius: 7px;
+
+}
+
+.identity-form button:hover {
+    background-color: #cc6e6e;
+}
+
+/* Center the login button */
+.identity-form div > button {
+    margin: 0 auto;
+    display: block;
+}
+
+.identity-form a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #007bff;
+}
+
+.identity-form div.checkbox {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.identity-form img {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+}
+
+.external-login {
+    text-align: center;
+    margin-top: 20px;
+}

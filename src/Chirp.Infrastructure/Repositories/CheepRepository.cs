@@ -33,7 +33,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
                 });
 
             return await query.ToListAsync();
@@ -86,7 +86,7 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // get total count of pages 
-        public async Task<int> GetTotalPages(string authorName = null)
+        public async Task<int> GetTotalPages(string authorName = "")
         {
             var query = _dbContext.Cheeps.AsQueryable();
             
@@ -107,15 +107,19 @@ namespace Chirp.Infrastructure.Repositories
             var author = FindAuthorByName(cheepDTO.Author.Name);
 
             // Create a new Cheep 
-            Cheep newCheep = new Cheep
+            if (author != null)
             {
-                Text = cheepDTO.Text,
-                Author =  author,
-                TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-            };
+                Cheep newCheep = new Cheep
+                {
+                    Text = cheepDTO.Text,
+                    Author =  author,
+                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                };
 
-            // Add the new Cheep to the DbContext
-            await _dbContext.Cheeps.AddAsync(newCheep);
+                // Add the new Cheep to the DbContext
+                await _dbContext.Cheeps.AddAsync(newCheep);
+            }
+
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
 

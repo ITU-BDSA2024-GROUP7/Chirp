@@ -17,6 +17,7 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    public Author UserAuthor { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
@@ -25,9 +26,7 @@ public class PublicModel : PageModel
     {
         _service = service;
     }
-
-    public Author userAuthor { get; set; }
-
+    
     /// <summary>
     /// Gets cheeps and stores them in a list when the page is loaded.
     /// </summary>
@@ -47,7 +46,7 @@ public class PublicModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            userAuthor = await _service.FindAuthorByName(currentUserName);
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
         
         return Page();
@@ -64,6 +63,10 @@ public class PublicModel : PageModel
             // Ensure Cheeps and other required properties are populated
             Cheeps = await _service.GetCheeps(PageNumber);
             TotalPageNumber = await _service.GetTotalPageNumber();
+            
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+            
             return Page(); // Return the page with validation messages
         }
 

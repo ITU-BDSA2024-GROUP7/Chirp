@@ -129,7 +129,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
                         
-                    await _service.CreateAuthor(Input.Email, Input.Email);
+                    await _service.CreateAuthor(Input.UserName, Input.Email);
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);

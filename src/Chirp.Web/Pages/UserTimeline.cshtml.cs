@@ -61,9 +61,11 @@ public class UserTimelineModel : PageModel
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
         CurrentAuthor = currentAuthor;
+
+        userAuthor = await _service.FindAuthorByName(CurrentAuthor);
         
         PageNumber = 1;
-        TotalPageNumber = await _service.GetTotalPageNumber(currentAuthor);
+        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor);
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {

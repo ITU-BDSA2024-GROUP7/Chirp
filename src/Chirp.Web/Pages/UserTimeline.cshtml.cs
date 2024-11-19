@@ -17,7 +17,7 @@ public class UserTimelineModel : PageModel
     public int TotalPageNumber { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
-    public string CurrentAuthor = string.Empty;
+    public string CurrentAuthor { get; set; } = string.Empty;
     public UserTimelineModel(CheepService service)
     {
         _service = service;
@@ -59,6 +59,14 @@ public class UserTimelineModel : PageModel
     public string CheepText { get; set; } = string.Empty; 
     public async Task<IActionResult> OnPost()
     {
+        string? currentAuthor = RouteData.Values["author"]?.ToString();
+        CurrentAuthor = currentAuthor;
+
+        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        
+        PageNumber = 1;
+        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor);
+        
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
             // Ensure Cheeps and other required properties are populated
@@ -68,7 +76,6 @@ public class UserTimelineModel : PageModel
             } else {
                 Cheeps = await _service.GetCheepsFromAuthor(CurrentAuthor, PageNumber); 
             }
-            TotalPageNumber = await _service.GetTotalPageNumber();
             return Page(); // Return the page with validation messages
         }
         
@@ -96,6 +103,10 @@ public class UserTimelineModel : PageModel
             }
         }
 
+        // Returns to the authors timeline
+        // return RedirectToPage("UserTimeline", new { author = currentAuthor, page = 1 });
+        
+        // Returns to the users timeline
         return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
     
@@ -112,7 +123,8 @@ public class UserTimelineModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+        
+        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
     }
 
     /// <summary>
@@ -128,7 +140,7 @@ public class UserTimelineModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+        
+        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
     }
 }

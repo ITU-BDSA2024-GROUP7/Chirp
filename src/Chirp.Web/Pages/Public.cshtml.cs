@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Chirp.Core;
 using System.Globalization;
 using System.Text;
 using Chirp.Core.DTOs;
@@ -6,6 +7,7 @@ using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Distributed;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
@@ -15,6 +17,7 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    public Author UserAuthor { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
@@ -23,7 +26,7 @@ public class PublicModel : PageModel
     {
         _service = service;
     }
-
+    
     /// <summary>
     /// Gets cheeps and stores them in a list when the page is loaded.
     /// </summary>
@@ -39,6 +42,13 @@ public class PublicModel : PageModel
         Cheeps = await _service.GetCheeps(page);
         TotalPageNumber = await _service.GetTotalPageNumber();
 
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+        
         return Page();
     }
 
@@ -53,6 +63,10 @@ public class PublicModel : PageModel
             // Ensure Cheeps and other required properties are populated
             Cheeps = await _service.GetCheeps(PageNumber);
             TotalPageNumber = await _service.GetTotalPageNumber();
+            
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+            
             return Page(); // Return the page with validation messages
         }
 
@@ -81,4 +95,42 @@ public class PublicModel : PageModel
 
         return RedirectToPage("Public", new { page = 1 });
     }
+    
+    /// <summary>
+    /// Follows an author
+    /// </summary>
+    /// <param name="followedAuthorName"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
+        {
+            var userAuthor = User.Identity.Name; // Get the user's name
+            await _service.FollowAuthor(userAuthor, followedAuthorName);
+            
+        }
+        
+        return RedirectToPage("Public", new { page = PageNumber });
+    }
+
+    /// <summary>
+    /// Unfollows an author
+    /// </summary>
+    /// <param name="followedAuthor"></param>
+    /// <returns></returns>
+    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
+        {
+            var userAuthor = User.Identity.Name; // Get the user's name
+            await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            
+        }
+
+        return RedirectToPage("Public", new { page = PageNumber });
+    }
+
+    
+    
+    
 }

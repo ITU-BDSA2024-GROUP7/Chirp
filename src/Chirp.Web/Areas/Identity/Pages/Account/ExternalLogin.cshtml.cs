@@ -2,13 +2,23 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading;
+using System.Threading.Tasks;
 using Chirp.Infrastructure.Data;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account
 {
@@ -20,19 +30,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly CheepService _service;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            CheepService service)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _logger = logger;
+            _service = service;
         }
         
         public string ReturnUrl { get; set; }
@@ -105,6 +117,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 
                 if (accountResult.Succeeded) // If the account is successfully created.
                 {
+                    await _service.CreateAuthor(name, email);
+                    
                     accountResult = await _userManager.AddLoginAsync(user, info); // Add the external login to the user account.
                     if (accountResult.Succeeded) // If the external login is successfully added to the user account.
                     {

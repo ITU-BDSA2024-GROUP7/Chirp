@@ -3,6 +3,7 @@
 #nullable disable
 using System.ComponentModel.DataAnnotations;
 using Chirp.Infrastructure.Data;
+using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -19,19 +20,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly CheepService _service;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            CheepService service)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
+            _service = service;
         }
 
         /// <summary>
@@ -125,9 +128,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                        
+                    await _service.CreateAuthor(Input.UserName, Input.Email);
                     
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)
                 {

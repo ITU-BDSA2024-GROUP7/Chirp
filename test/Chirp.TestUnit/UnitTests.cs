@@ -1,9 +1,17 @@
 using Chirp.Core.DTOs;
+using Xunit.Abstractions;
 
 namespace Chirp.Test;
 
 public class UnitTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public UnitTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Theory]
     [InlineData("Helge", "Hello, BDSA students!", 1690892208)]
     //[InlineData("Adrian", "Hej, velkommen til kurset.", 1690895308)]
@@ -18,7 +26,7 @@ public class UnitTests
         await context.Database.EnsureCreatedAsync();               
         
         // Seed the database with a test entry
-        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName };
+        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = authorName, AuthorsFollowed = new List<string>()};
         
         var cheep = new Cheep
         {
@@ -59,8 +67,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
         
          var cheep1 = new Cheep
          {
@@ -127,8 +135,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
          
          var cheep1 = new Cheep
          {
@@ -175,8 +183,8 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Adrian", Email = "" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null});
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Adrian", Email = "", AuthorsFollowed = null });
             
             var cheepList = await repository.ReadAllCheeps(0);
          
@@ -198,8 +206,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();
 
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>()};
 
          var cheep1 = new Cheep
          {
@@ -235,8 +243,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>() };
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
          
          var cheep1 = new Cheep
          {
@@ -283,7 +291,7 @@ public class UnitTests
          ICheepRepository repository = new CheepRepository(context);
          
             // Act
-            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail" });
+            await repository.DeleteCheepsByAuthor(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null });
             
             
             var cheepList = await repository.ReadAllCheeps(0);
@@ -306,8 +314,8 @@ public class UnitTests
          await context.Database.EnsureCreatedAsync();               
         
          // Seed the database with a test entry
-         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge" };
-         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian" };
+         var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+         var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
          
          var cheep1 = new Cheep
          {
@@ -363,14 +371,52 @@ public class UnitTests
             // Assert
             Assert.True(cheepList.Count() == 3);
      }
-
-
-
+     
      private static String UnixTimeStampToDateTimeString(double unixTimeStamp)
     {
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         dateTime = dateTime.AddSeconds(unixTimeStamp);
         return dateTime.ToString("yyyy-MM-dd H:mm:ss");
+    }
+
+    [Fact]
+    public async void AddFollowersToList()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();   
+        
+        // Seed the database with a test entry
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        ICheepRepository repository = new CheepRepository(context);
+        
+        await repository.FollowAuthor(author2.Name, cheep1.Author.Name);
+        
+        _testOutputHelper.WriteLine(author2.AuthorsFollowed.ToString());
+
+        Assert.True(author2.AuthorsFollowed.Count != 0);
+        Assert.True(author2.AuthorsFollowed.Contains(author1.Name));
     }
 }

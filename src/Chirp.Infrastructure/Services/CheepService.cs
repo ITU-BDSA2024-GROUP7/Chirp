@@ -1,3 +1,4 @@
+using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Repositories;
 
@@ -36,10 +37,25 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.ReadCheepsFromAuthor(author, page);
     }
+
+    public async Task<List<Core.DTOs.CheepDTO>> GetPrivateCheeps(int page, string username)
+    {
+        return await _cheepRepository.ReadPrivateCheeps(page, username);
+    }
     
     public async Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps()
     {
         return await _cheepRepository.RetrieveAllCheepsForEndPoint();
+    }
+
+    public async Task CreateAuthor(string authorName, string authorEmail)
+    {
+        await _cheepRepository.CreateAuthor(authorName, authorEmail);
+    }
+
+    public async Task<Author>? FindAuthorByName(String name)
+    {
+        return _cheepRepository.FindAuthorByName(name);
     }
     
     public async Task CreateCheep(CheepDTO Cheep)
@@ -53,5 +69,15 @@ public class CheepService : ICheepService
     public async Task DeleteCheep(int cheepId)
     {
         await _cheepRepository.DeleteCheep(cheepId);
+    }
+
+    public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
+    {
+        await _cheepRepository.FollowAuthor(userAuthorName, followedAuthorName);
+    }
+
+    public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
+    {
+        await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
     }
 }

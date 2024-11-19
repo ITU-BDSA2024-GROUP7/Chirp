@@ -29,7 +29,8 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
@@ -50,7 +51,8 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
@@ -58,6 +60,31 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<List<CheepDTO>> ReadPrivateCheeps(int page, string userName)
+        {
+            
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .Where(cheep => FindAuthorByName(userName).AuthorsFollowed.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip((page - 1) * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+
+            return await query.ToListAsync();
+        }
+        
         // get total count of pages 
         public async Task<int> GetTotalPages(string authorName = "")
         {
@@ -78,12 +105,6 @@ namespace Chirp.Infrastructure.Repositories
         {
             // Find the author by name
             var author = FindAuthorByName(cheepDTO.Author.Name);
-            
-            if (author == null)
-            {
-                await CreateAuthor(cheepDTO.Author.Name);
-                author = FindAuthorByName(cheepDTO.Author.Name);
-            }
 
             // Create a new Cheep 
             if (author != null)
@@ -126,13 +147,14 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor(string authorName)
+        public async Task CreateAuthor(string authorName, string authorEmail)
         {
             var author = new Author()
             {   
                 Name = authorName,
-                Email = authorName,
+                Email = authorEmail,
                 Cheeps = new List<Cheep>(),
+                AuthorsFollowed = new List<string>()
             };
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
@@ -180,13 +202,44 @@ namespace Chirp.Infrastructure.Repositories
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
-                        Email = cheep.Author.Email
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
                 });
             // Execute the query and return the list of messages
             return await query.ToListAsync();
+        }
+        
+        /// <summary>
+        /// Follows an author
+        /// </summary>
+        /// <param name="userAuthorName"></param>
+        /// <param name="followedAuthorName"></param>
+        public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
+        {
+            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            if (author != null && !author.AuthorsFollowed.Contains(followedAuthorName)) // Check if the author is not already followed
+            {
+                author.AuthorsFollowed.Add(followedAuthorName); // Add the author to the list of followed authors
+                await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+            }
+        }
+
+        /// <summary>
+        /// Unfollows an author
+        /// </summary>
+        /// <param name="userAuthorName"></param>
+        /// <param name="authorToBeRemoved"></param>
+        public async Task UnfollowAuthor(string userAuthorName, string authorToBeRemoved)
+        {
+            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            if (author != null && author.AuthorsFollowed.Contains(authorToBeRemoved)) // Check if the author is followed
+            {
+                author.AuthorsFollowed.Remove(authorToBeRemoved); // Remove the author from the list of followed authors
+                await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+            }
         }
     }
 }

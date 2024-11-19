@@ -62,7 +62,7 @@ public class UserTimelineModel : PageModel
         string? currentAuthor = RouteData.Values["author"]?.ToString();
         CurrentAuthor = currentAuthor;
 
-        userAuthor = await _service.FindAuthorByName(CurrentAuthor);
+        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
         
         PageNumber = 1;
         TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor);
@@ -125,7 +125,6 @@ public class UserTimelineModel : PageModel
         }
         
         return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
 
     /// <summary>
@@ -143,6 +142,5 @@ public class UserTimelineModel : PageModel
         }
         
         return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
 }

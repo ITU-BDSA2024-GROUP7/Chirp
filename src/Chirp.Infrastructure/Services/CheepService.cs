@@ -15,6 +15,8 @@ public interface ICheepService
     public Task CreateCheep(CheepDTO Cheep);
     
     public Task DeleteCheepsByAuthor(AuthorDTO Author);
+    
+    public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheepsFromAnAuthor(string authorName);
 }
 public class CheepService : ICheepService
 {
@@ -53,9 +55,9 @@ public class CheepService : ICheepService
         await _cheepRepository.CreateAuthor(authorName, authorEmail);
     }
 
-    public async Task<Author>? FindAuthorByName(String name)
+    public async Task<AuthorDTO>? FindAuthorByName(String name)
     {
-        return _cheepRepository.FindAuthorByName(name);
+        return _cheepRepository.FindAuthorByNameDTO(name);
     }
     
     public async Task CreateCheep(CheepDTO Cheep)
@@ -79,5 +81,9 @@ public class CheepService : ICheepService
     public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
     {
         await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
+    }
+    public async Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheepsFromAnAuthor(string authorName)
+    {
+        return await _cheepRepository.RetrieveAllCheepsFromAnAuthor(authorName);
     }
 }

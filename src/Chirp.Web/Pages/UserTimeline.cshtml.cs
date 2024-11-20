@@ -22,7 +22,7 @@ public class UserTimelineModel : PageModel
     {
         _service = service;
     }
-    public Author userAuthor { get; set; }
+    public AuthorDTO userAuthor { get; set; }
 
     // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)

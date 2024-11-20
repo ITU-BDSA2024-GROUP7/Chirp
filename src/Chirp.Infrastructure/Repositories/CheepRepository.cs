@@ -39,6 +39,27 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<List<CheepDTO>> RetrieveAllCheepsFromAnAuthor(string Username)
+        {
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author) 
+                .Where(cheep => cheep.Author.Name == Username)
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Select(cheep => new CheepDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+            
+            return await query.ToListAsync();
+        }
+
         public async Task<List<CheepDTO>> ReadAllCheeps(int page)
         {
             var query = _dbContext.Cheeps
@@ -105,7 +126,7 @@ namespace Chirp.Infrastructure.Repositories
         {
             // Find the author by name
             var author = FindAuthorByName(cheepDTO.Author.Name);
-
+            
             // Create a new Cheep 
             if (author != null)
             {
@@ -129,6 +150,20 @@ namespace Chirp.Infrastructure.Repositories
             throw new NotImplementedException();
         }
         // Find The author by name
+        public AuthorDTO? FindAuthorByNameDTO(String name)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Name == name
+                select new AuthorDTO()
+                {
+                    Name = a.Name,
+                    Email = a.Email,
+                    AuthorsFollowed = a.AuthorsFollowed
+                }).FirstOrDefault();
+            
+            return author;
+        }
+        
         public Author? FindAuthorByName(String name)
         {
             var author = (from a in _dbContext.Authors

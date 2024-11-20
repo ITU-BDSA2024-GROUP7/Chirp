@@ -13,4 +13,5 @@ public interface ICheepRepository
     Task DeleteCheepsByAuthor(AuthorDTO author);
     Task FollowAuthor(string userAuthor, string followedAuthor);
     Task UnfollowAuthor(string userAuthor, string authorToBeRemoved);
+    Task<List<CheepDTO>> RetrieveAllCheepsFromAnAuthor(string Username);
 }

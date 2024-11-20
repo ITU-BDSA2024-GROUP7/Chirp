@@ -81,13 +81,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
             
-            
-            if (await _userManager.GetUserNameAsync(user) != Input.Username)
-            {
-                ModelState.AddModelError(string.Empty, "Incorrect username.");
-                return Page();
-            }
-
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var authorName = User.Identity.Name;

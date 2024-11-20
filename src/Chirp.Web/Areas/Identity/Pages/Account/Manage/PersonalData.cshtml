@@ -14,9 +14,14 @@
         <form id="download-data" asp-page="DownloadPersonalData" method="post">
             <button class="btn btn-primary" type="submit">Download my data</button>
         </form>
-        <br>
-        <a asp-page="DeletePersonalCheeps" class="btn btn-primary"><button class="btn btn-primary">Delete my Cheeps</button></a>
-        <a asp-page="DeletePersonalData" class="btn btn-primary"><button class="btn btn-primary">Delete all my data</button></a>
+        
+        <form id="delete-personal-cheeps" asp-page="DeletePersonalCheeps" method="post">
+            <button class="btn btn-primary" type="submit">Delete my Cheeps</button>
+        </form>
+        
+        <form id="delete-personal-data" asp-page="DeletePersonalData" method="post">
+            <button class="btn btn-primary" type="submit">Forget me!</button>
+        </form>
     </div>
 </div>
 

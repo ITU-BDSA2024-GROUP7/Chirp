@@ -64,7 +64,7 @@ public class CheepService : ICheepService
     }
     public async Task DeleteCheepsByAuthor(AuthorDTO Author)
     {
-        await _cheepRepository.DeleteCheepsByAuthor(Author);
+        await _cheepRepository.DeleteUserData(Author);
     }
     public async Task DeleteCheep(int cheepId)
     {
@@ -79,5 +79,10 @@ public class CheepService : ICheepService
     public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
     {
         await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
+    }
+
+    public async Task RemovedAuthorFromFollowingList(string authorName)
+    {
+        await _cheepRepository.RemovedAuthorFromFollowingList(authorName);
     }
 }

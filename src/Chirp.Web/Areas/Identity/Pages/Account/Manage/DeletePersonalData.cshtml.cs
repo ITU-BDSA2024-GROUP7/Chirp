@@ -103,7 +103,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                             Email = authorEmail
                         };
                         await _service.RemovedAuthorFromFollowingList(authorName);
-                        await _service.DeleteCheepsByAuthor(author);
+                        await _service.DeleteUserCheeps(author);
+                        await _service.DeleteUser(author);
                     }
                 }
             }

@@ -170,7 +170,7 @@ namespace Chirp.Infrastructure.Repositories
             }
         }
         
-        public async Task DeleteUserData(AuthorDTO Author)
+        public async Task DeleteUserCheeps(AuthorDTO Author)
         {
             var cheeps = await _dbContext.Cheeps
                 .Where(cheep => cheep.Author.Name == Author.Name)
@@ -179,17 +179,22 @@ namespace Chirp.Infrastructure.Repositories
             {
                 _dbContext.Cheeps.RemoveRange(cheeps);
 
-                // Retrieve the author by name and then remove them
-                var author = await _dbContext.Authors
-                    .FirstOrDefaultAsync(a => a.Name == Author.Name);
-
-                if (author != null)
-                {
-                    _dbContext.Authors.Remove(author);
-                }
-
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteUser(AuthorDTO Author)
+        {
+            // Retrieve the author by name and then remove them
+            var author = await _dbContext.Authors
+                .FirstOrDefaultAsync(a => a.Name == Author.Name);
+
+            if (author != null)
+            {
+                _dbContext.Authors.Remove(author);
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
         
         public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()

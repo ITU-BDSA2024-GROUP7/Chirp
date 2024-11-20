@@ -257,7 +257,7 @@ namespace Chirp.Infrastructure.Repositories
             // Remove the specific author from the list for all authors
             foreach (var author in authors) 
             {
-                author.AuthorsFollowed.Remove(author.Name);
+                author.AuthorsFollowed.Remove(authorName);
             }
             
             await _dbContext.SaveChangesAsync();

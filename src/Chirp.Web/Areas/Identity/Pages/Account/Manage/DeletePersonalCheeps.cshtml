@@ -1,7 +1,7 @@
 ﻿@page
-@model DeletePersonalDataModel
+@model DeletePersonalCheepsModel
 @{
-    ViewData["Title"] = "Delete Personal Data";
+    ViewData["Title"] = "Delete my Cheeps";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
@@ -9,7 +9,7 @@
 
 <div class="alert alert-warning" role="alert">
     <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.
+        <strong>Deleting your Cheeps will permanently delete your Cheeps, and this cannot be recovered.
             <br/>
             Remember the username field is case-sensitive.</strong>
     </p>
@@ -23,7 +23,7 @@
             <input asp-for="Input.Username" class="form-control" style="width: 200px;" autocomplete="Username" aria-required="true" placeholder="Please enter your username..." />
             <span asp-validation-for="Input.Username" class="text-danger"></span>
         </div>
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete all my data and close my account</button>
+        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete all my Cheeps</button>
     </form>
 </div>
 

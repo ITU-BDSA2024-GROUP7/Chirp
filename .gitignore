@@ -7,6 +7,10 @@
 Cheep.db
 Cheep.db-shm
 Cheep.db-wal
+CheepTest.db
+CheepTest.db-shm
+CheepTest.db-wal
+
 # dotenv files
 .env
 

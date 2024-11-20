@@ -47,7 +47,7 @@ public class E2ETests : PageTest
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"run --project \"{_startupProjectPath}\"",
+                Arguments = $"run --project \"{_startupProjectPath}\" test",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -70,6 +70,12 @@ public class E2ETests : PageTest
             _appProcess.Kill();
             _appProcess.Dispose();
         }
+        
+        // Dispose of the browser context
+        _context?.DisposeAsync().GetAwaiter().GetResult();
+
+        // Dispose of the browser
+        _browser?.DisposeAsync().GetAwaiter().GetResult();
     }
     
     //---------------------------------- HELPER METHODS ----------------------------------

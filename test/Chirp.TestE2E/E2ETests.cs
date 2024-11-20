@@ -844,7 +844,62 @@ public class E2ETests : PageTest
             // check that the cheep is deleted
             await Expect(_page.Locator("li").Filter(new() { HasText = "HelloWorld!RasmusMathiasNikolajMarcusErTelos!" }).First).Not.ToBeVisibleAsync();
         }
-    } 
+    }
+
+    //---------------------------------- FOLLOWING TESTS ----------------------------------
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await Expect(_page.Locator("li").Locator("#followButton").First).ToBeVisibleAsync();
+  
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesUnfollowButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await _page.Locator("li").Locator("#followButton").First.ClickAsync();
+        
+        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        
+        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+
+
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowedAuthorLoadCheeps()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await _page.Locator("li").Locator("#followButton").First.ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
+        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        
+        
+        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
     //---------------------------------- GitHub ACCOUNT TESTS ----------------------------------
     
     

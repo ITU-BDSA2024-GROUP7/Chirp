@@ -77,12 +77,12 @@ public class E2ETests : PageTest
         // Dispose of the browser
         _browser?.DisposeAsync().GetAwaiter().GetResult();
         
-        // Delete the test database file
-        var testDatabasePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\Chirp.Infrastructure\Data\CheepTest.db");
-        if (File.Exists(testDatabasePath))
-        {
-            File.Delete(testDatabasePath);
-        }
+        // Delete the test database file doesnt work atm
+        // var testDatabasePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\Chirp.Infrastructure\Data\CheepTest.db");
+        // if (File.Exists(testDatabasePath))
+        // {
+        //     File.Delete(testDatabasePath);
+        // }
     }
     
     //---------------------------------- HELPER METHODS ----------------------------------

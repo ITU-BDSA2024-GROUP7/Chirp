@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
-    public class DeletePersonalDataModel : PageModel
+    public class DeletePersonalCheepsModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -20,7 +20,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         private readonly CheepService _service;
         
 
-        public DeletePersonalDataModel(
+        public DeletePersonalCheepsModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<DeletePersonalDataModel> logger,
@@ -80,7 +80,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var authorName = User.Identity.Name;
@@ -95,24 +95,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                             Name = authorName,
                             Email = authorEmail
                         };
-                        await _service.RemovedAuthorFromFollowingList(authorName);
                         await _service.DeleteUserCheeps(author);
-                        await _service.DeleteUser(author);
                     }
                 }
             }
-
-
-            var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user.");
-            }
-
-            await _signInManager.SignOutAsync();
-
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
             return Redirect("~/");
         }

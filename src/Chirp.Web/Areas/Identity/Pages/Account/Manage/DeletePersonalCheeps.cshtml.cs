@@ -107,7 +107,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            return Page();
+            return Redirect("~/");
         }
     }
 }

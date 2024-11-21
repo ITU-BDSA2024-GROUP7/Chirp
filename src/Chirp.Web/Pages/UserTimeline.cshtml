@@ -42,11 +42,13 @@
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                                 {
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
                                 else
                                 {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
                                 }
                             </form>

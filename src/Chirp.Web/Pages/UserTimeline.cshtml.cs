@@ -122,12 +122,12 @@ public class UserTimelineModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        
-        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
+        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
     }
 
     /// <summary>
@@ -139,11 +139,11 @@ public class UserTimelineModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        
-        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
+        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
     }
 }

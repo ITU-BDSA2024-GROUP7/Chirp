@@ -112,12 +112,12 @@ public class PublicModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        
-        return RedirectToPage("Public", new { page = PageNumber });
+        return Redirect($"/?page={PageNumber}");
     }
 
     /// <summary>
@@ -129,12 +129,12 @@ public class PublicModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-
-        return RedirectToPage("Public", new { page = PageNumber });
+        return Redirect($"/?page={PageNumber}");
     }
 
     

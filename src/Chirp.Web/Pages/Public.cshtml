@@ -21,6 +21,9 @@
     </div>
     @if(User.Identity != null && User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
+        {
+            ViewData["pageNumber"] = pageNumber;
+        }
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
     

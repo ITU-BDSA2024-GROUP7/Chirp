@@ -93,7 +93,18 @@ namespace Chirp.Infrastructure.Repositories
             // Apply the where clause if there is a valid authorName.
             if (!string.IsNullOrEmpty(authorName))
             {
-                query = query.Where(cheep => cheep.Author.Name == authorName);
+                // Get the author from the database (assuming the 'authors' table contains the relevant information).
+                var author = await _dbContext.Authors
+                    .Where(a => a.Name == authorName)
+                    .FirstOrDefaultAsync();
+
+                if (author != null)
+                {
+                    // Get all cheeps from the author and the authors they follow
+                    query = query
+                        .Where(cheep => cheep.Author.Name == authorName 
+                                        || author.AuthorsFollowed.Contains(cheep.Author.Name));
+                }
             }
 
             var totalCheeps = await query.CountAsync();

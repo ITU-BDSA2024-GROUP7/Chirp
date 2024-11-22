@@ -114,7 +114,18 @@ namespace Chirp.Infrastructure.Repositories
             // Apply the where clause if there is a valid authorName.
             if (!string.IsNullOrEmpty(authorName))
             {
-                query = query.Where(cheep => cheep.Author.Name == authorName);
+                // Get the author from the database (assuming the 'authors' table contains the relevant information).
+                var author = await _dbContext.Authors
+                    .Where(a => a.Name == authorName)
+                    .FirstOrDefaultAsync();
+
+                if (author != null)
+                {
+                    // Get all cheeps from the author and the authors they follow
+                    query = query
+                        .Where(cheep => cheep.Author.Name == authorName 
+                                        || author.AuthorsFollowed.Contains(cheep.Author.Name));
+                }
             }
 
             var totalCheeps = await query.CountAsync();
@@ -205,7 +216,7 @@ namespace Chirp.Infrastructure.Repositories
             }
         }
         
-        public async Task DeleteCheepsByAuthor(AuthorDTO Author)
+        public async Task DeleteUserCheeps(AuthorDTO Author)
         {
             var cheeps = await _dbContext.Cheeps
                 .Where(cheep => cheep.Author.Name == Author.Name)
@@ -214,17 +225,22 @@ namespace Chirp.Infrastructure.Repositories
             {
                 _dbContext.Cheeps.RemoveRange(cheeps);
 
-                // Retrieve the author by name and then remove them
-                var author = await _dbContext.Authors
-                    .FirstOrDefaultAsync(a => a.Name == Author.Name);
-
-                if (author != null)
-                {
-                    _dbContext.Authors.Remove(author);
-                }
-
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteUser(AuthorDTO Author)
+        {
+            // Retrieve the author by name and then remove them
+            var author = await _dbContext.Authors
+                .FirstOrDefaultAsync(a => a.Name == Author.Name);
+
+            if (author != null)
+            {
+                _dbContext.Authors.Remove(author);
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
         
         public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()
@@ -275,6 +291,27 @@ namespace Chirp.Infrastructure.Repositories
                 author.AuthorsFollowed.Remove(authorToBeRemoved); // Remove the author from the list of followed authors
                 await _dbContext.SaveChangesAsync(); // Persist the changes to the database
             }
+        }
+
+        /// <summary>
+        /// When deleting user data we need to delete the username for every other author list. 
+        /// </summary>
+        /// <param name="authorName"></param>
+        /// <param name="page"></param>
+        public async Task RemovedAuthorFromFollowingList(string authorName)
+        {
+            // Fetch all authors that follows a specific author 
+            var authors = await _dbContext.Authors
+                .Where(author => author.AuthorsFollowed.Contains(authorName))
+                .ToListAsync();
+            
+            // Remove the specific author from the list for all authors
+            foreach (var author in authors) 
+            {
+                author.AuthorsFollowed.Remove(authorName);
+            }
+            
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

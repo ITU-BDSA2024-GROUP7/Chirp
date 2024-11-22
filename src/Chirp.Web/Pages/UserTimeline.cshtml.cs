@@ -42,7 +42,7 @@ public class UserTimelineModel : PageModel
             Cheeps = await _service.GetCheepsFromAuthor(author, page); 
         }
 
-        TotalPageNumber = await _service.GetTotalPageNumber(author);
+        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
         
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
@@ -54,6 +54,8 @@ public class UserTimelineModel : PageModel
     }
     
     [BindProperty]
+    public int pageNumber { get; set; }
+    [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1}")]
     public string CheepText { get; set; } = string.Empty; 
@@ -64,8 +66,9 @@ public class UserTimelineModel : PageModel
 
         userAuthor = await _service.FindAuthorByName(User.Identity.Name);
         
-        PageNumber = 1;
-        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor);
+        PageNumber = pageNumber;
+        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
+        Console.WriteLine("totalpagenumber: "+ TotalPageNumber);
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
@@ -119,12 +122,12 @@ public class UserTimelineModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        
-        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
+        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
     }
 
     /// <summary>
@@ -136,11 +139,11 @@ public class UserTimelineModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        
-        return RedirectToPage("UserTimeline", new { author = RouteData.Values["author"]?.ToString(), page = "1" });
+        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
     }
 }

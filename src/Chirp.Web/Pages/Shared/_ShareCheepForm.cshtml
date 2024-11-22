@@ -25,6 +25,7 @@
     }
     <form asp-page="SubmitCheep">
         <input style="float: left" type="text" asp-for="CheepText">
+        <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
         <input type="submit" value="Share">
         <div style="clear: both;"></div> <!-- Clears float -->
         <span asp-validation-for="CheepText" class="text-danger"></span>

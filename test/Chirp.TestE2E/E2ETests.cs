@@ -274,7 +274,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineNextAndPreviousPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        await _page!.GotoAsync($"{AppUrl}/Darth%20Vader");
 
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
@@ -292,7 +292,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineFirstAndLastPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        await _page!.GotoAsync($"{AppUrl}/Darth%20Vader");
         
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
         {

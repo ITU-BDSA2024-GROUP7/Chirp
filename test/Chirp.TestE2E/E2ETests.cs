@@ -78,7 +78,9 @@ public class E2ETests : PageTest
         _browser?.DisposeAsync().GetAwaiter().GetResult();
         
         // Delete the test database file
-        string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
+        //string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var testDbFilePath = Path.Combine(solutionDirectory, "src", "Chirp.Infrastructure", "Data", "CheepTest.db");
         string walFilePath = testDbFilePath + "-wal";
         string shmFilePath = testDbFilePath + "-shm";
         
@@ -211,9 +213,9 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task DoesUserTimelinePageSuccessfullyLoad()
     {
-        // Go to Adrian's page
-        await _page!.GotoAsync($"{AppUrl}/Adrian");
-        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
+        // Go to Tony Stark's page
+        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Tony Stark's Timeline" })).ToBeVisibleAsync();
     }
 
     // Verify that clicking on a user goes to their timeline
@@ -257,8 +259,8 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task BackButtonGoesToPublicTimeline()
     {
-        // Go to Adrian's page
-        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        // Go to Tony Stark's page
+        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
 
         // Click on the back button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Back" }).ClickAsync();
@@ -292,8 +294,7 @@ public class E2ETests : PageTest
     public async Task UserTimelineFirstAndLastPage()
     {
         await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
-
-        // If there is a next page button
+        
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
@@ -754,13 +755,14 @@ public class E2ETests : PageTest
         {
             await RegisterUser();
             await LoginUser();
-
-            await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+    
+            await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
-            await _page.Locator("#CheepText").FillAsync("Hello World!");
+            await _page.Locator("#CheepText").FillAsync("Hello");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-            await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).ToBeVisibleAsync();
-
+            await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+            await Expect(_page.GetByText("Hello")).ToBeVisibleAsync();
+    
         
             // Clean up and delete data
             await DeleteUser();   

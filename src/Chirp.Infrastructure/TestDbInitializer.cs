@@ -57,13 +57,49 @@ public static class TestDbInitializer
             var c35 = new Cheep() { CheepId = 35, AuthorId = a5.AuthorId, Author = a5, Text = "Magic doesn't solve everything. But it sure helps with dishes.", TimeStamp = DateTime.Parse("2023-09-04 11:00:00") };
             var c36 = new Cheep() { CheepId = 36, AuthorId = a1.AuthorId, Author = a1, Text = "Jarvis says my jokes are bad. Jarvis is wrong.", TimeStamp = DateTime.Parse("2023-09-05 12:00:00") };
 
+            var c37 = new Cheep() { CheepId = 37, AuthorId = a1.AuthorId, Author = a1, Text = "I'm pretty sure I could have solved all of science by now, but I’m still figuring out autocorrect.", TimeStamp = DateTime.Parse("2023-08-06 15:00:00") };
+            var c38 = new Cheep() { CheepId = 38, AuthorId = a1.AuthorId, Author = a1, Text = "I designed a robot that can cook. It's already better than most of my attempts.", TimeStamp = DateTime.Parse("2023-08-07 16:10:00") };
+            var c39 = new Cheep() { CheepId = 39, AuthorId = a1.AuthorId, Author = a1, Text = "Having a nap in my suit. The tech's comfortable, but the joke’s on me when I wake up.", TimeStamp = DateTime.Parse("2023-08-08 17:20:00") };
+            var c40 = new Cheep() { CheepId = 40, AuthorId = a1.AuthorId, Author = a1, Text = "Pepper says I need hobbies. I told her 'Building a new suit every week counts, right?'", TimeStamp = DateTime.Parse("2023-08-09 18:30:00") };
+            var c41 = new Cheep() { CheepId = 41, AuthorId = a1.AuthorId, Author = a1, Text = "Note to self: Don't mix coffee and tech. The last update nearly crashed the coffee machine.", TimeStamp = DateTime.Parse("2023-08-10 19:40:00") };
+            var c42 = new Cheep() { CheepId = 42, AuthorId = a1.AuthorId, Author = a1, Text = "Building an AI to keep track of my to-do list... It keeps adding more things to itself.", TimeStamp = DateTime.Parse("2023-08-11 20:50:00") };
+            var c43 = new Cheep() { CheepId = 43, AuthorId = a1.AuthorId, Author = a1, Text = "I created a supercharged vacuum cleaner. It’s now cleaning up my old projects, too.", TimeStamp = DateTime.Parse("2023-08-12 21:00:00") };
+            var c44 = new Cheep() { CheepId = 44, AuthorId = a1.AuthorId, Author = a1, Text = "Had a meeting with the Avengers. I’m still the smartest one. #humblebrag", TimeStamp = DateTime.Parse("2023-08-13 22:10:00") };
+            var c45 = new Cheep() { CheepId = 45, AuthorId = a1.AuthorId, Author = a1, Text = "I built a better Iron Man suit, but the real upgrade was the Wi-Fi. You can’t beat 5G.", TimeStamp = DateTime.Parse("2023-08-14 23:20:00") };
+            var c46 = new Cheep() { CheepId = 46, AuthorId = a1.AuthorId, Author = a1, Text = "I should really teach a course on genius. No one’s figured it out like I have.", TimeStamp = DateTime.Parse("2023-08-15 10:30:00") };
+            var c47 = new Cheep() { CheepId = 47, AuthorId = a1.AuthorId, Author = a1, Text = "Creating new tech is fun, but trying to explain it to Pepper? That's the real challenge.", TimeStamp = DateTime.Parse("2023-08-16 11:40:00") };
+            var c48 = new Cheep() { CheepId = 48, AuthorId = a1.AuthorId, Author = a1, Text = "Just realized my suit’s AI has more personality than I do. Might be time to fix that.", TimeStamp = DateTime.Parse("2023-08-17 12:50:00") };
+            var c49 = new Cheep() { CheepId = 49, AuthorId = a1.AuthorId, Author = a1, Text = "I might be a genius, but I still can’t figure out why Wi-Fi goes down every time I need it.", TimeStamp = DateTime.Parse("2023-08-18 13:00:00") };
+            var c50 = new Cheep() { CheepId = 50, AuthorId = a1.AuthorId, Author = a1, Text = "Just sent out a ‘vacation alert’ to the team. I’ll be ‘working remotely’ from a beach in Malibu.", TimeStamp = DateTime.Parse("2023-08-19 14:10:00") };
+            var c51 = new Cheep() { CheepId = 51, AuthorId = a1.AuthorId, Author = a1, Text = "I’m not saying I’m a genius, but the world’s best superhero suit just dropped. You’re welcome.", TimeStamp = DateTime.Parse("2023-08-20 15:20:00") };
+            var c52 = new Cheep() { CheepId = 52, AuthorId = a1.AuthorId, Author = a1, Text = "Can we talk about the Avengers' meeting? It’s basically me explaining tech to a bunch of kids.", TimeStamp = DateTime.Parse("2023-08-21 16:30:00") };
+            var c53 = new Cheep() { CheepId = 53, AuthorId = a1.AuthorId, Author = a1, Text = "I’ve decided that my next suit will come with an in-built snack dispenser. It's the future.", TimeStamp = DateTime.Parse("2023-08-22 17:40:00") };
+            var c54 = new Cheep() { CheepId = 54, AuthorId = a1.AuthorId, Author = a1, Text = "I once made a device that could locate lost socks. Haven't quite figured out world peace yet, though.", TimeStamp = DateTime.Parse("2023-08-23 18:50:00") };
+            var c55 = new Cheep() { CheepId = 55, AuthorId = a1.AuthorId, Author = a1, Text = "I could conquer the world. But first, I need to finish upgrading my suit.", TimeStamp = DateTime.Parse("2023-08-24 19:00:00") };
+            var c56 = new Cheep() { CheepId = 56, AuthorId = a1.AuthorId, Author = a1, Text = "Another day, another genius-level invention. Someone stop me.", TimeStamp = DateTime.Parse("2023-08-25 20:10:00") };
+            var c57 = new Cheep() { CheepId = 57, AuthorId = a1.AuthorId, Author = a1, Text = "My suit can fly. But can it avoid awkward family dinners? Asking for a friend.", TimeStamp = DateTime.Parse("2023-08-26 21:20:00") };
+            var c58 = new Cheep() { CheepId = 58, AuthorId = a1.AuthorId, Author = a1, Text = "I built a machine that does the dishes. Now I need one that can take out the trash.", TimeStamp = DateTime.Parse("2023-08-27 22:30:00") };
+            var c59 = new Cheep() { CheepId = 59, AuthorId = a1.AuthorId, Author = a1, Text = "I invented a robot to make my morning coffee. It's still better than me at it.", TimeStamp = DateTime.Parse("2023-08-28 23:40:00") };
+            var c60 = new Cheep() { CheepId = 60, AuthorId = a1.AuthorId, Author = a1, Text = "Trying to figure out how to invent teleportation. Getting closer, but the Wi-Fi’s still the bigger problem.", TimeStamp = DateTime.Parse("2023-08-29 10:50:00") };
+            var c61 = new Cheep() { CheepId = 61, AuthorId = a1.AuthorId, Author = a1, Text = "I’ve upgraded my suit. Now it can even handle Pepper’s shopping lists. Progress.", TimeStamp = DateTime.Parse("2023-08-30 12:00:00") };
+            var c62 = new Cheep() { CheepId = 62, AuthorId = a1.AuthorId, Author = a1, Text = "Invented a new gadget. It’s too cool for words, but I’ll just call it ‘Stark-finity’ for now.", TimeStamp = DateTime.Parse("2023-08-31 13:10:00") };
+            var c63 = new Cheep() { CheepId = 63, AuthorId = a1.AuthorId, Author = a1, Text = "Just spent an hour fixing my suit. Could have been saving the world, but priorities, right?", TimeStamp = DateTime.Parse("2023-09-01 14:20:00") };
+            var c64 = new Cheep() { CheepId = 64, AuthorId = a1.AuthorId, Author = a1, Text = "I think I’ve just solved the mystery of why socks always disappear in the laundry. #genius", TimeStamp = DateTime.Parse("2023-09-02 15:30:00") };
+            var c65 = new Cheep() { CheepId = 65, AuthorId = a1.AuthorId, Author = a1, Text = "Sometimes, I wonder if my suit is smarter than me. It probably is.", TimeStamp = DateTime.Parse("2023-09-03 16:40:00") };
+            var c66 = new Cheep() { CheepId = 66, AuthorId = a1.AuthorId, Author = a1, Text = "Created a new AI assistant. It’s way better at multitasking than I am.", TimeStamp = DateTime.Parse("2023-09-04 17:50:00") };
+            var c67 = new Cheep() { CheepId = 67, AuthorId = a1.AuthorId, Author = a1, Text = "I’m starting to think my suit has better social skills than I do.", TimeStamp = DateTime.Parse("2023-09-05 19:00:00") };
+            var c68 = new Cheep() { CheepId = 68, AuthorId = a1.AuthorId, Author = a1, Text = "Invented a robot that does my laundry. Unfortunately, it still won’t fold the shirts the way I like it.", TimeStamp = DateTime.Parse("2023-09-06 20:10:00") };
+            var c69 = new Cheep() { CheepId = 69, AuthorId = a1.AuthorId, Author = a1, Text = "Apparently, I’m the only one who thinks my jokes are funny. Still, I’m laughing.", TimeStamp = DateTime.Parse("2023-09-07 21:20:00") };
+            var c70 = new Cheep() { CheepId = 70, AuthorId = a1.AuthorId, Author = a1, Text = "I built a new suit. It doesn’t do much, but at least it makes a great party trick.", TimeStamp = DateTime.Parse("2023-09-08 22:30:00") };
+
 
             var cheeps = new List<Cheep>()
             {
                 c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22,
-                c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36
+                c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36,
+                c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60, c61, c62, c63, c64, c65, c66, c67, c68, c69, c70
             };
-            a1.Cheeps = new List<Cheep>() { c1, c2, c3, c4, c5, c26, c31, c36 };
+            a1.Cheeps = new List<Cheep>() { c1, c2, c3, c4, c5, c26, c31, c36, c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60, c61, c62, c63, c64, c65, c66, c67, c68, c69, c70 };
             a2.Cheeps = new List<Cheep>() { c6, c7, c8, c9, c10 , c27, c32 };
             a3.Cheeps = new List<Cheep>() { c11, c12, c13, c14, c15, c28, c33 };
             a4.Cheeps = new List<Cheep>() { c16, c17, c18, c19, c20, c29, c34 };

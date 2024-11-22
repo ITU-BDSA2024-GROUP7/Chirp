@@ -17,7 +17,7 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    public Author UserAuthor { get; set; }
+    public AuthorDTO UserAuthor { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();

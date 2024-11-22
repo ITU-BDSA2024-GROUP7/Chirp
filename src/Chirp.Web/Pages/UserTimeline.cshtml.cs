@@ -18,12 +18,12 @@ public class UserTimelineModel : PageModel
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
     public string CurrentAuthor { get; set; } = string.Empty;
+    public AuthorDTO userAuthor { get; set; }
+
     public UserTimelineModel(CheepService service)
     {
         _service = service;
     }
-    public Author userAuthor { get; set; }
-
     // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
     {

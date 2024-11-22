@@ -67,12 +67,16 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             var logins = await _userManager.GetLoginsAsync(user);
             foreach (var l in logins)
             {
-                // personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
-                csvContent.AppendLine($"{l.LoginProvider} external login provider key: {l.ProviderKey}");
+                if (l.ProviderKey != null)
+                {
+                    // personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
+                    csvContent.AppendLine($"{l.LoginProvider} external login provider key: {l.ProviderKey}");
+                }
             }
 
             // personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
-            csvContent.AppendLine("Authenticator Key: " + await _userManager.GetAuthenticatorKeyAsync(user));
+            var authenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user) != null;
+            if (authenticatorKey) csvContent.AppendLine("Authenticator Key: " + authenticatorKey);
             
             // Retrieve authors that the user follows
             var followedAuthors = await _service.FindAuthorByName(user.UserName);

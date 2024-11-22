@@ -36,8 +36,19 @@
             <h2> @authorName's Data </h2>
         </div>
         <div>
-            <h3 class="timeline-header">Name: @userAuthor.Name</h3>
-            <h3 class="timeline-header">E-mail: @userAuthor.Email</h3>
+            <ul id="followerlist" class="cheeps">
+                @foreach (var dataLine in Model.UserData)
+                {
+                    <li>
+                        <div class="cheep-container">
+                            <strong>
+                                @dataLine
+                            </strong>
+                        </div>
+                        <br><br>
+                    </li>
+                }
+            </ul>
         </div>
         <div>
             @if (Model.FollowList.Any())

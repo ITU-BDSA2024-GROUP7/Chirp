@@ -7,11 +7,11 @@ public static class TestDbInitializer
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))
         {
-            var a1 = new Author() { AuthorId = 6, Name = "Tony Stark", Email = "Tony.Stark@avengers.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a2 = new Author() { AuthorId = 7, Name = "Natasha Romanoff", Email = "Natasha.Romanoff@shield.gov", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a3 = new Author() { AuthorId = 8, Name = "Peter Parker", Email = "Peter.Parker@dailybugle.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a4 = new Author() { AuthorId = 9, Name = "Steve Rogers", Email = "Steve.Rogers@avengers.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a5 = new Author() { AuthorId = 10, Name = "Wanda Maximoff", Email = "Wanda.Maximoff@sokovia.net", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a1 = new Author() { AuthorId = 1, Name = "Tony Stark", Email = "Tony.Stark@avengers.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a2 = new Author() { AuthorId = 2, Name = "Natasha Romanoff", Email = "Natasha.Romanoff@shield.gov", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a3 = new Author() { AuthorId = 3, Name = "Peter Parker", Email = "Peter.Parker@dailybugle.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a4 = new Author() { AuthorId = 4, Name = "Steve Rogers", Email = "Steve.Rogers@avengers.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a5 = new Author() { AuthorId = 5, Name = "Wanda Maximoff", Email = "Wanda.Maximoff@sokovia.net", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
             var authors = new List<Author>() { a1, a2, a3, a4, a5 };
 
             var c1 = new Cheep() { CheepId = 1, AuthorId = a1.AuthorId, Author = a1, Text = "Building suits is easy. Wearing them during summer? Not so much.", TimeStamp = DateTime.Parse("2023-08-01 10:00:00") };

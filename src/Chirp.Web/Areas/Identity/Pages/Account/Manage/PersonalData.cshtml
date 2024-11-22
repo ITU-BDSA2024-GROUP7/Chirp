@@ -32,66 +32,69 @@
     </div>
 
     <div>
-        <div class="timeline-header">
-            <h2> @authorName's Data </h2>
-        </div>
-        <div>
-            <ul id="followerlist" class="cheeps">
-                @foreach (var dataLine in Model.UserData)
-                {
-                    <li>
-                        <div class="cheep-container">
-                            <strong>
-                                @dataLine
-                            </strong>
-                        </div>
-                        <br><br>
-                    </li>
-                }
-            </ul>
-        </div>
-        <div>
-            @if (Model.FollowList.Any())
-            {
-                <h3 class="timeline-header">Users followed:</h3>
-
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <div class="timeline-header">
+                <h2> @authorName's Data </h2>
+            </div>
+            <div>
                 <ul id="followerlist" class="cheeps">
-                    @foreach (var author in Model.FollowList)
+                    @foreach (var dataLine in Model.UserData)
                     {
                         <li>
                             <div class="cheep-container">
                                 <strong>
-                                    <a href="/@author">@author</a>
+                                    @dataLine
                                 </strong>
                             </div>
                             <br><br>
                         </li>
                     }
                 </ul>
-            }
-        </div>
-        <div>
-            @if (Model.Cheeps.Any())
-            {
-                <h3 class="timeline-header">Cheeps sent:</h3>
-                <ul id="messagelist" class="cheeps">
-                    @foreach (var cheep in Model.Cheeps)
-                    {
-                        <li>
-                            <div class="cheep-container">
-                                <strong>
-                                    <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
-                                </strong>
-                            </div>
-                            <small>@cheep.FormattedTimeStamp</small>
-                            <br><br>
-                            <p>@cheep.Text</p>
+            </div>
+            <div>
+                @if (Model.FollowList.Any())
+                {
+                    <h3 class="timeline-header">Users followed:</h3>
 
-                        </li>
-                    }
-                </ul>
-            }
-        </div>
+                    <ul id="followerlist" class="cheeps">
+                        @foreach (var author in Model.FollowList)
+                        {
+                            <li>
+                                <div class="cheep-container">
+                                    <strong>
+                                        <a href="/@author">@author</a>
+                                    </strong>
+                                </div>
+                                <br><br>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <div>
+                @if (Model.Cheeps.Any())
+                {
+                    <h3 class="timeline-header">Cheeps sent:</h3>
+                    <ul id="messagelist" class="cheeps">
+                        @foreach (var cheep in Model.Cheeps)
+                        {
+                            <li>
+                                <div class="cheep-container">
+                                    <strong>
+                                        <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                                    </strong>
+                                </div>
+                                <small>@cheep.FormattedTimeStamp</small>
+                                <br><br>
+                                <p>@cheep.Text</p>
+
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
     </div>
 </div>
 

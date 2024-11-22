@@ -36,10 +36,12 @@ namespace Chirp.Web
             // Determine if we are running tests
             var isTesting = args.Contains("test");
             
-            // Load the appropriate connection string
-            string? connectionString = isTesting
-                ? builder.Configuration.GetConnectionString("TestConnection")
-                : builder.Configuration.GetConnectionString("DefaultConnection");
+            // // Load the appropriate connection string
+            // string? connectionString = isTesting
+            //     ? builder.Configuration.GetConnectionString("TestConnection")
+            //     : builder.Configuration.GetConnectionString("DefaultConnection");
+            
+            string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             // Add the DbContext first
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));

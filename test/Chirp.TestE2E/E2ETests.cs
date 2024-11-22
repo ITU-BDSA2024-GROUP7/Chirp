@@ -78,7 +78,6 @@ public class E2ETests : PageTest
         _browser?.DisposeAsync().GetAwaiter().GetResult();
         
         // Delete the test database file
-        //string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
         var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
         var testDbFilePath = Path.Combine(solutionDirectory, "src", "Chirp.Infrastructure", "Data", "CheepTest.db");
         string walFilePath = testDbFilePath + "-wal";

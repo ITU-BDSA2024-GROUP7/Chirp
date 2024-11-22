@@ -33,8 +33,13 @@ namespace Chirp.Web
             // Once you are sure everything works, you might want to increase this value to up to 1 or 2 years
             builder.Services.AddHsts(options => options.MaxAge = TimeSpan.FromDays(700));
             
-            // Load database connection via configuration
-            string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            // Determine if we are running tests
+            var isTesting = args.Contains("test");
+            
+            // Load the appropriate connection string
+            string? connectionString = isTesting
+                ? builder.Configuration.GetConnectionString("TestConnection")
+                : builder.Configuration.GetConnectionString("DefaultConnection");
 
             // Add the DbContext first
             builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
@@ -102,6 +107,15 @@ namespace Chirp.Web
                 var context = services.GetRequiredService<CheepDBContext>();
                 
                 context.Database.Migrate();
+                
+                // if (isTesting)
+                // {
+                //     TestDbInitializer.SeedDatabase(context);
+                // }
+                // else
+                // {
+                //     DbInitializer.SeedDatabase(context);
+                // }
                 DbInitializer.SeedDatabase(context);
             }
             

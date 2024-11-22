@@ -68,7 +68,6 @@ public class UserTimelineModel : PageModel
         
         PageNumber = pageNumber;
         TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
-        Console.WriteLine("totalpagenumber: "+ TotalPageNumber);
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {

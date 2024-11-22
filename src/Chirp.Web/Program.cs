@@ -108,15 +108,15 @@ namespace Chirp.Web
                 
                 context.Database.Migrate();
                 
-                if (isTesting)
-                {
-                    TestDbInitializer.SeedDatabase(context);
-                }
-                else
-                {
-                    DbInitializer.SeedDatabase(context);
-                }
-                // DbInitializer.SeedDatabase(context);
+                // if (isTesting)
+                // {
+                //     TestDbInitializer.SeedDatabase(context);
+                // }
+                // else
+                // {
+                //     DbInitializer.SeedDatabase(context);
+                // }
+                DbInitializer.SeedDatabase(context);
             }
             
 

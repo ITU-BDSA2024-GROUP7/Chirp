@@ -213,9 +213,9 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task DoesUserTimelinePageSuccessfullyLoad()
     {
-        // Go to Tony Stark's page
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
-        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Tony Stark's Timeline" })).ToBeVisibleAsync();
+        // Go to Adrians's page
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
     }
 
     // Verify that clicking on a user goes to their timeline
@@ -239,8 +239,8 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task PresenceOfCheeps()
     {
-        // Go to Tony Starks's page
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+        // Go to Adrian's page
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
     }
 
@@ -259,8 +259,8 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task BackButtonGoesToPublicTimeline()
     {
-        // Go to Tony Stark's page
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+        // Go to Adrian's page
+        await _page!.GotoAsync($"{AppUrl}/Adrian");
 
         // Click on the back button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Back" }).ClickAsync();
@@ -275,7 +275,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineNextAndPreviousPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
 
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
@@ -293,7 +293,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineFirstAndLastPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
         
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
         {

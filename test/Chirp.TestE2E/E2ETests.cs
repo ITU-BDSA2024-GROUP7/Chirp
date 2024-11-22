@@ -77,12 +77,26 @@ public class E2ETests : PageTest
         // Dispose of the browser
         _browser?.DisposeAsync().GetAwaiter().GetResult();
         
-        // Delete the test database file doesnt work atm
-        // var testDatabasePath = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\Chirp.Infrastructure\Data\CheepTest.db");
-        // if (File.Exists(testDatabasePath))
-        // {
-        //     File.Delete(testDatabasePath);
-        // }
+        // Delete the test database file
+        string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
+        string walFilePath = testDbFilePath + "-wal";
+        string shmFilePath = testDbFilePath + "-shm";
+        
+        // Check if the database file exists and delete it
+        if (File.Exists(testDbFilePath))
+        {
+            File.Delete(testDbFilePath);
+        }
+        // Check if the WAL file exists and delete it
+        if (File.Exists(walFilePath))
+        {
+            File.Delete(walFilePath);
+        }
+        // Check if the SHM file exists and delete it
+        if (File.Exists(shmFilePath))
+        {
+            File.Delete(shmFilePath);
+        }
     }
     
     //---------------------------------- HELPER METHODS ----------------------------------
@@ -314,7 +328,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineNextAndPreviousPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
 
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
@@ -332,7 +346,7 @@ public class E2ETests : PageTest
     [Category("UserTimeline")]
     public async Task UserTimelineFirstAndLastPage()
     {
-        await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
+        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
 
         // If there is a next page button
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)

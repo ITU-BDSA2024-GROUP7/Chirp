@@ -17,7 +17,6 @@ public interface ICheepService
     public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheepsFromAnAuthor(string authorName);
    
     public Task DeleteUserCheeps(AuthorDTO Author);
-
 }
 public class CheepService : ICheepService
 {

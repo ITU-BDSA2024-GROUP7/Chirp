@@ -51,17 +51,24 @@ public class PublicModel : PageModel
         
         return Page();
     }
-
+    
+    [BindProperty]
+    public int pageNumber { get; set; }
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
     public async Task<IActionResult> OnPost()
     {
+        
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
+            // Gets current page number
+            PageNumber = pageNumber;
+            
             // Ensure Cheeps and other required properties are populated
             Cheeps = await _service.GetCheeps(PageNumber);
+            
             TotalPageNumber = await _service.GetTotalPageNumber();
             
             var currentUserName = User.Identity.Name;
@@ -105,12 +112,12 @@ public class PublicModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        
-        return RedirectToPage("Public", new { page = PageNumber });
+        return Redirect($"/?page={PageNumber}");
     }
 
     /// <summary>
@@ -122,12 +129,12 @@ public class PublicModel : PageModel
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
+            PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-
-        return RedirectToPage("Public", new { page = PageNumber });
+        return Redirect($"/?page={PageNumber}");
     }
 
     

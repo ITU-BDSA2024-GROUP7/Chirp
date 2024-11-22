@@ -14,7 +14,7 @@ public interface ICheepService
     
     public Task CreateCheep(CheepDTO Cheep);
     
-    public Task DeleteCheepsByAuthor(AuthorDTO Author);
+    public Task DeleteUserCheeps(AuthorDTO Author);
 }
 public class CheepService : ICheepService
 {
@@ -62,10 +62,16 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.CreateCheep(Cheep);
     }
-    public async Task DeleteCheepsByAuthor(AuthorDTO Author)
+    public async Task DeleteUserCheeps(AuthorDTO Author)
     {
-        await _cheepRepository.DeleteCheepsByAuthor(Author);
+        await _cheepRepository.DeleteUserCheeps(Author);
     }
+
+    public async Task DeleteUser(AuthorDTO Author)
+    {
+        await _cheepRepository.DeleteUser(Author);
+    }
+    
     public async Task DeleteCheep(int cheepId)
     {
         await _cheepRepository.DeleteCheep(cheepId);
@@ -79,5 +85,10 @@ public class CheepService : ICheepService
     public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
     {
         await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
+    }
+
+    public async Task RemovedAuthorFromFollowingList(string authorName)
+    {
+        await _cheepRepository.RemovedAuthorFromFollowingList(authorName);
     }
 }

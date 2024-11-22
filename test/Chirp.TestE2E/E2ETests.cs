@@ -150,10 +150,7 @@ public class E2ETests : PageTest
         // Removing the test user
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Manage");
         await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
-        await _page.GetByPlaceholder("Please enter your username.").ClickAsync();
-        await _page.GetByPlaceholder("Please enter your username.").FillAsync(TestUsername);
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete all my data and close my account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Forget me!" }).ClickAsync();
     }
     
     /*
@@ -592,21 +589,6 @@ public class E2ETests : PageTest
    
     //---------------------------------- LOGOUT PAGE TESTS ----------------------------------
 
-    // Logout page load successfully (check for logout button)
-    [Test]
-    [Category("End2End")]
-    public async Task LogoutPageLoads()
-    {
-        await RegisterUser();
-        await LoginUser();
-        
-        await _page!.GetByRole(AriaRole.Link, new() { Name = $"Logout" }).ClickAsync();
-        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" })).ToBeVisibleAsync();
-        
-        // Clean up
-        await DeleteUser();
-    }
-
     // The logout button logs user out (check for no authentication and redirect)
     [Test]
     [Category("End2End")]
@@ -615,9 +597,9 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
         
-        await _page!.GotoAsync($"{AppUrl}/Identity/Account/Logout");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" }).ClickAsync();
-        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Use a local account to log in." })).ToBeVisibleAsync();
+        await _page!.GotoAsync($"{AppUrl}");
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Log in", Exact = true })).ToBeVisibleAsync();
         
         // Clean up
         await LoginUser();
@@ -659,6 +641,115 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
+    
+    // Check that users don't follow authors that are deleting.
+    [Test]
+    [Category("End2End")]
+    public async Task StopFollowingDeletedUser()
+    {
+        await _page!.GotoAsync($"{AppUrl}");
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Register Symbol Register" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob1");
+        await _page.GetByPlaceholder("Name@example.com").ClickAsync();
+        await _page.GetByPlaceholder("Name@example.com").FillAsync("bob1@bob.dk");
+        await _page.GetByPlaceholder("Name@example.com").PressAsync("Tab");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("Bob1234!");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).PressAsync("Tab");
+        await _page.GetByPlaceholder("Confirm password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("hej");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Register Symbol Register" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob2");
+        await _page.GetByPlaceholder("Username").PressAsync("Tab");
+        await _page.GetByPlaceholder("Name@example.com").FillAsync("bob2@bob.dk");
+        await _page.GetByPlaceholder("Name@example.com").PressAsync("Tab");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("Bob1234!");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).PressAsync("Tab");
+        await _page.GetByPlaceholder("Confirm password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await _page.Locator("li").Filter(new() { HasText = "bob1 Follow" }).Locator("#followButton").First.ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob1");
+        await _page.GetByPlaceholder("Password").ClickAsync();
+        await _page.GetByPlaceholder("Password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Manage account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Forget me!" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Register Symbol Register" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob1");
+        await _page.GetByPlaceholder("Name@example.com").ClickAsync();
+        await _page.GetByPlaceholder("Name@example.com").FillAsync("bob1@bob.dk");
+        await _page.GetByPlaceholder("Name@example.com").PressAsync("Tab");
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync("Bob1234!");
+        await _page.GetByPlaceholder("Confirm password").ClickAsync();
+        await _page.GetByPlaceholder("Confirm password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("hejsa");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob2");
+        await _page.GetByPlaceholder("Password").ClickAsync();
+        await _page.GetByPlaceholder("Password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        
+        // Assert
+        await Expect(_page.GetByText("bob1 Follow")).ToBeVisibleAsync();
+        
+        // Clean up
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Manage account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Forget me!" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Login" }).ClickAsync();
+        await _page.GetByPlaceholder("Username").ClickAsync();
+        await _page.GetByPlaceholder("Username").FillAsync("bob1");
+        await _page.GetByPlaceholder("Username").PressAsync("Tab");
+        await _page.GetByPlaceholder("Password").FillAsync("Bob1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Manage account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Forget me!" }).ClickAsync();
+    }
+    
+    // Personal data page loads successfully
+    [Test]
+    [Category("End2End")]
+    public async Task DeleteUserCheeps()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page!.GotoAsync($"{AppUrl}");
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("My message");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("So nice");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Manage account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete my Cheeps" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        await Expect(_page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+        await Expect(_page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    
     
     //---------------------------------- CHEEPS TESTS ----------------------------------
     
@@ -780,7 +871,62 @@ public class E2ETests : PageTest
             // check that the cheep is deleted
             await Expect(_page.Locator("li").Filter(new() { HasText = "HelloWorld!RasmusMathiasNikolajMarcusErTelos!" }).First).Not.ToBeVisibleAsync();
         }
-    } 
+    }
+
+    //---------------------------------- FOLLOWING TESTS ----------------------------------
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await Expect(_page.Locator("li").Locator("#followButton").First).ToBeVisibleAsync();
+  
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesUnfollowButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await _page.Locator("li").Locator("#followButton").First.ClickAsync();
+        
+        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        
+        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+
+
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowedAuthorLoadCheeps()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await _page.Locator("li").Locator("#followButton").First.ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
+        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        
+        
+        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
     //---------------------------------- GitHub ACCOUNT TESTS ----------------------------------
     
     

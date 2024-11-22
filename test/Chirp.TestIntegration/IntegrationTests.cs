@@ -113,6 +113,27 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
         cheeps.Should().ContainSingle(c =>  c.Author.Name == "testPerson");
     }
     
+    [Fact]
+    public async Task CheckGetCheepsWhenEmpty()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
+            dbContext.Database.EnsureDeleted(); // Clear previous data
+            dbContext.Database.EnsureCreated(); // Recreate the database
+        }
+
+        
+        var response = await _client.GetAsync("/cheeps");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    
+        var cheeps = await response.Content.ReadFromJsonAsync<List<Core.DTOs.CheepDTO>>();
+        cheeps.Should().NotBeNull();
+    
+        // Check whether a cheep with author was returned
+        cheeps.Should().BeEmpty();
+    }
+    
     // Is called after all tests finish
     public void Dispose()
     {

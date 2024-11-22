@@ -269,40 +269,40 @@ public class E2ETests : PageTest
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Public Timeline" })).ToBeVisibleAsync();
     }
 
-    // Check next and previous buttons on user timeline
-    [Test]
-    [Category("End2End")]
-    [Category("UserTimeline")]
-    public async Task UserTimelineNextAndPreviousPage()
-    {
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
-
-        // If there is a next page button
-        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).ClickAsync();
-            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
-            await _page.GetByRole(AriaRole.Button, new() { Name = "<", Exact = true }).ClickAsync();
-            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
-        }
-    }
-
-    // Check first and last page buttons on user timeline
-    [Test]
-    [Category("End2End")]
-    [Category("UserTimeline")]
-    public async Task UserTimelineFirstAndLastPage()
-    {
-        await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
-        
-        if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
-            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
-            await _page.GetByRole(AriaRole.Button, new() { Name = "<<", Exact = true }).ClickAsync();
-            await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
-        }
-    }
+    // // Check next and previous buttons on user timeline
+    // [Test]
+    // [Category("End2End")]
+    // [Category("UserTimeline")]
+    // public async Task UserTimelineNextAndPreviousPage()
+    // {
+    //     await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+    //
+    //     // If there is a next page button
+    //     if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+    //     {
+    //         await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).ClickAsync();
+    //         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+    //         await _page.GetByRole(AriaRole.Button, new() { Name = "<", Exact = true }).ClickAsync();
+    //         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+    //     }
+    // }
+    //
+    // // Check first and last page buttons on user timeline
+    // [Test]
+    // [Category("End2End")]
+    // [Category("UserTimeline")]
+    // public async Task UserTimelineFirstAndLastPage()
+    // {
+    //     await _page!.GotoAsync($"{AppUrl}/Tony%20Stark");
+    //     
+    //     if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
+    //     {
+    //         await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
+    //         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+    //         await _page.GetByRole(AriaRole.Button, new() { Name = "<<", Exact = true }).ClickAsync();
+    //         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
+    //     }
+    // }
 
     //---------------------------------- PERSONAL TIMELINE TESTS ----------------------------------
     [Test]

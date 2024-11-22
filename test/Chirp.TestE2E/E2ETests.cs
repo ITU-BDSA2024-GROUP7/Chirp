@@ -47,7 +47,7 @@ public class E2ETests : PageTest
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"run --project \"{_startupProjectPath}\"",
+                Arguments = $"run --project \"{_startupProjectPath}\" test",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -69,6 +69,34 @@ public class E2ETests : PageTest
         {
             _appProcess.Kill();
             _appProcess.Dispose();
+        }
+        
+        // Dispose of the browser context
+        _context?.DisposeAsync().GetAwaiter().GetResult();
+
+        // Dispose of the browser
+        _browser?.DisposeAsync().GetAwaiter().GetResult();
+        
+        // Delete the test database file
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var testDbFilePath = Path.Combine(solutionDirectory, "src", "Chirp.Infrastructure", "Data", "CheepTest.db");
+        string walFilePath = testDbFilePath + "-wal";
+        string shmFilePath = testDbFilePath + "-shm";
+        
+        // Check if the database file exists and delete it
+        if (File.Exists(testDbFilePath))
+        {
+            File.Delete(testDbFilePath);
+        }
+        // Check if the WAL file exists and delete it
+        if (File.Exists(walFilePath))
+        {
+            File.Delete(walFilePath);
+        }
+        // Check if the SHM file exists and delete it
+        if (File.Exists(shmFilePath))
+        {
+            File.Delete(shmFilePath);
         }
     }
     
@@ -125,58 +153,6 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "Forget me!" }).ClickAsync();
     }
-    
-    /*
-    private async Task GithubRegisterUser()
-    {
-        await _page.GotoAsync("http://localhost:5273/Identity/Account/Register");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
-        await _page.GetByLabel("Username or email address").FillAsync(GitHubCredentials.GetGitHubTestEmail());
-        await _page.GetByLabel("Password").ClickAsync();
-        await _page.GetByLabel("Password").FillAsync(GitHubCredentials.GetGitHubTestPassword());
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact = true }).ClickAsync();
-
-        // If reauthorization is required
-        if (await _page.GetByRole(AriaRole.Heading, new() { Name = "Reauthorization required", Exact = true })
-                .CountAsync() > 0)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Authorize ITU-BDSA2024-GROUP7" }).ClickAsync();
-        }
-
-        await _page.GetByPlaceholder("Please enter your email.").FillAsync("mygithubaccount@gmail.com");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-        await _page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
-    }
-    
-    
-    // If github login is saved in cache
-    // Use this when you have already authorized with github in the test
-    public async Task GithubCacheLoginUser()
-    {
-        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
-    }
-    
-    // If github login is not saved in cache
-    // Use this if it's the first time authorizing with github in the test
-    public async Task GithubNoCacheLoginUser()
-    {
-        await _page!.GotoAsync("http://localhost:5273/Identity/Account/Login");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "GitHub" }).ClickAsync();
-        await _page.GetByLabel("Username or email address").FillAsync("CODE-TEMP-TESTER");
-        await _page.GetByLabel("Password").FillAsync("Telos@54321!");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Sign in", Exact = true }).ClickAsync();
-    }
-    
-    public async Task GithubDeleteUser()
-    {
-        // Removing the test user
-        await _page!.GotoAsync($"{AppUrl}/Identity/Account/Manage");
-        await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete" }).ClickAsync();
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
-    }
-    */
 
     //---------------------------------- PUBLIC TIMELINE TESTS ----------------------------------
     [Test]
@@ -236,7 +212,7 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task DoesUserTimelinePageSuccessfullyLoad()
     {
-        // Go to Adrian's page
+        // Go to Adrians's page
         await _page!.GotoAsync($"{AppUrl}/Adrian");
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" })).ToBeVisibleAsync();
     }
@@ -317,8 +293,7 @@ public class E2ETests : PageTest
     public async Task UserTimelineFirstAndLastPage()
     {
         await _page!.GotoAsync($"{AppUrl}/Jacqualine%20Gilcoine");
-
-        // If there is a next page button
+        
         if (await _page.GetByRole(AriaRole.Button, new() { Name = ">", Exact = true }).CountAsync() > 0)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = ">>", Exact = true }).ClickAsync();
@@ -779,13 +754,14 @@ public class E2ETests : PageTest
         {
             await RegisterUser();
             await LoginUser();
-            
-            await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+    
+            await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
-            await _page.Locator("#CheepText").FillAsync("Hello World!");
+            await _page.Locator("#CheepText").FillAsync("Hello");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-            await Expect(_page.Locator("li").Filter(new() { HasText = "Hello World!" }).First).ToBeVisibleAsync();
-
+            await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+            await Expect(_page.GetByText("Hello")).ToBeVisibleAsync();
+    
         
             // Clean up and delete data
             await DeleteUser();   
@@ -899,71 +875,4 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
-    
-    //---------------------------------- GitHub ACCOUNT TESTS ----------------------------------
-    
-    
-    // // Login with Github (cached / login saved in cache)
-    // [Test]
-    // [Category("End2End")]
-    // public async Task LoginWithCachedGithub()
-    // {
-    //     await GithubRegisterUser();
-    //     await GithubCacheLoginUser();
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
-    //
-    //     await GithubDeleteUser();
-    // }
-    
-    // Login with Github (non cached / login not saved in cache)
-    // [Test]
-    // [Category("End2End")]
-    // public async Task LoginWithNoCachedGithub()
-    // {
-    //     await GithubRegisterUser();
-    //     await _context!.CloseAsync(); // Close the current context to clear cache
-    //     _context = await _browser.NewContextAsync(); // Create a new context
-    //     _page = await _context.NewPageAsync(); // Create a new page in the new context
-    //     await GithubNoCacheLoginUser();
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Logout [mygithubaccount@gmail" })).ToBeVisibleAsync();
-    //
-    //     await GithubDeleteUser();
-    // }
-
-    // // Register with Github
-    // [Test]
-    // [Category("End2End")]
-    // public async Task RegisterWithGithub()
-    // {
-    //     await GithubRegisterUser();
-    //     await Expect(_page.GetByText("Thank you for confirming your")).ToBeVisibleAsync();
-    //
-    //     await GithubCacheLoginUser();
-    //     await GithubDeleteUser();
-    // }
 }
-
-
-// This is used to get the GitHub credentials from the user secrets
-// public class GitHubCredentials
-// {
-//     private static IConfiguration GetConfiguration()
-//     {
-//         return new ConfigurationBuilder()
-//             .SetBasePath(Directory.GetCurrentDirectory())
-//             .AddUserSecrets<GitHubCredentials>()
-//             .Build();
-//     }
-//
-//     public static string GetGitHubTestEmail()
-//     {
-//         var config = GetConfiguration();
-//         return config["GITHUBTESTACCOUNTUSERNAME"];
-//     }
-//
-//     public static string GetGitHubTestPassword()
-//     {
-//         var config = GetConfiguration();
-//         return config["GITHUBTESTACCOUNTPASSWORD"];
-//     }
-// }

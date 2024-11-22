@@ -279,7 +279,7 @@ public class E2ETests : PageTest
     public async Task PresenceOfCheeps()
     {
         // Go to Adrian's page
-        await _page!.GotoAsync($"{AppUrl}/Adrian");
+        await _page!.GotoAsync($"{AppUrl}/Tony Stark");
         await Expect(_page.GetByText("There are no cheeps so far.")).Not.ToBeVisibleAsync();
     }
 

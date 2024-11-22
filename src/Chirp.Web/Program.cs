@@ -108,7 +108,14 @@ namespace Chirp.Web
                 
                 context.Database.Migrate();
                 
-                if (!isTesting) DbInitializer.SeedDatabase(context);
+                if (isTesting)
+                {
+                    TestDbInitializer.SeedDatabase(context);
+                }
+                else
+                {
+                    DbInitializer.SeedDatabase(context);
+                }
             }
             
 

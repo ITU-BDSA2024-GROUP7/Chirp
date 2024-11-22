@@ -77,28 +77,28 @@ public class E2ETests : PageTest
         // Dispose of the browser
         _browser?.DisposeAsync().GetAwaiter().GetResult();
         
-        // // Delete the test database file
-        // //string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
-        // var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
-        // var testDbFilePath = Path.Combine(solutionDirectory, "src", "Chirp.Infrastructure", "Data", "CheepTest.db");
-        // string walFilePath = testDbFilePath + "-wal";
-        // string shmFilePath = testDbFilePath + "-shm";
-        //
-        // // Check if the database file exists and delete it
-        // if (File.Exists(testDbFilePath))
-        // {
-        //     File.Delete(testDbFilePath);
-        // }
-        // // Check if the WAL file exists and delete it
-        // if (File.Exists(walFilePath))
-        // {
-        //     File.Delete(walFilePath);
-        // }
-        // // Check if the SHM file exists and delete it
-        // if (File.Exists(shmFilePath))
-        // {
-        //     File.Delete(shmFilePath);
-        // }
+        // Delete the test database file
+        //string testDbFilePath = "F:\\Udvikling\\CSharp\\Chirp\\src\\Chirp.Infrastructure\\Data\\CheepTest.db";
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var testDbFilePath = Path.Combine(solutionDirectory, "src", "Chirp.Infrastructure", "Data", "CheepTest.db");
+        string walFilePath = testDbFilePath + "-wal";
+        string shmFilePath = testDbFilePath + "-shm";
+        
+        // Check if the database file exists and delete it
+        if (File.Exists(testDbFilePath))
+        {
+            File.Delete(testDbFilePath);
+        }
+        // Check if the WAL file exists and delete it
+        if (File.Exists(walFilePath))
+        {
+            File.Delete(walFilePath);
+        }
+        // Check if the SHM file exists and delete it
+        if (File.Exists(shmFilePath))
+        {
+            File.Delete(shmFilePath);
+        }
     }
     
     //---------------------------------- HELPER METHODS ----------------------------------

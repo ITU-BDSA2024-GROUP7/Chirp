@@ -107,7 +107,8 @@ namespace Chirp.Web
                 var context = services.GetRequiredService<CheepDBContext>();
                 
                 context.Database.Migrate();
-                DbInitializer.SeedDatabase(context);
+                
+                if (!isTesting) DbInitializer.SeedDatabase(context);
             }
             
 

@@ -410,7 +410,7 @@ public class UnitTests
         
         await context.SaveChangesAsync();  // Save the seed data to the in-memory database
         
-        ICheepRepository repository = new CheepRepository(context);
+        IAuthorRepository repository = new AuthorRepository(context);
         
         await repository.FollowAuthor(author2.Name, cheep1.Author.Name);
         

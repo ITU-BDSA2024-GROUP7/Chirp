@@ -19,9 +19,11 @@ public interface ICheepService
 public class CheepService : ICheepService
 {
     private readonly CheepRepository _cheepRepository;
-    public CheepService(CheepRepository cheepRepository)
+    private readonly AuthorRepository _authorRepository;
+    public CheepService(CheepRepository cheepRepository, AuthorRepository authorRepository)
     {
         _cheepRepository = cheepRepository;
+        _authorRepository = authorRepository;
     }
     
     public async Task<int> GetTotalPageNumber(string authorName = "")
@@ -50,12 +52,12 @@ public class CheepService : ICheepService
 
     public async Task CreateAuthor(string authorName, string authorEmail)
     {
-        await _cheepRepository.CreateAuthor(authorName, authorEmail);
+        await _authorRepository.CreateAuthor(authorName, authorEmail);
     }
 
-    public async Task<Author>? FindAuthorByName(String name)
+    public async Task<Author?> FindAuthorByName(String name)
     {
-        return _cheepRepository.FindAuthorByName(name);
+        return _authorRepository.FindAuthorByName(name);
     }
     
     public async Task CreateCheep(CheepDTO Cheep)
@@ -69,7 +71,7 @@ public class CheepService : ICheepService
 
     public async Task DeleteUser(AuthorDTO Author)
     {
-        await _cheepRepository.DeleteUser(Author);
+        await _authorRepository.DeleteUser(Author);
     }
     
     public async Task DeleteCheep(int cheepId)
@@ -79,16 +81,16 @@ public class CheepService : ICheepService
 
     public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
     {
-        await _cheepRepository.FollowAuthor(userAuthorName, followedAuthorName);
+        await _authorRepository.FollowAuthor(userAuthorName, followedAuthorName);
     }
 
     public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
     {
-        await _cheepRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
+        await _authorRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
     }
 
     public async Task RemovedAuthorFromFollowingList(string authorName)
     {
-        await _cheepRepository.RemovedAuthorFromFollowingList(authorName);
+        await _authorRepository.RemovedAuthorFromFollowingList(authorName);
     }
 }

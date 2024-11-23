@@ -90,6 +90,7 @@ namespace Chirp.Web
             
             // Register your repositories and services
             builder.Services.AddScoped<CheepRepository>();
+            builder.Services.AddScoped<AuthorRepository>();
             builder.Services.AddScoped<CheepService>();
 
             // Build the application

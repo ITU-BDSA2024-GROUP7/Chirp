@@ -11,6 +11,4 @@ public interface ICheepRepository
     Task<int> GetTotalPages(string authorName);
     Task DeleteCheep(int cheepId);
     Task DeleteUserCheeps(AuthorDTO author);
-    Task FollowAuthor(string userAuthor, string followedAuthor);
-    Task UnfollowAuthor(string userAuthor, string authorToBeRemoved);
 }

@@ -4,7 +4,11 @@
     <title>@ViewData["Title"]</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <link href="/css/identity.css" rel="stylesheet" type="text/css" />
+    <link href="/css/mobile.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/favicon/favicon.ico">
+    @* <meta name="viewport" content="width=device-width, initial-scale=1.0"> *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#cc6e6e">
 </head>
 <body>
 <div class="background-blur"></div>
@@ -14,6 +18,8 @@
     <aside class="navigation">
         <partial name="_Navbar"/>
     </aside>
+    
+    <partial name="_mobileNavbar"/>
 
     @* <partial name="_ShareBar"/> *@
 

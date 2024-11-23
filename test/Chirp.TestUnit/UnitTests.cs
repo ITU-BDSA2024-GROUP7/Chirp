@@ -40,9 +40,8 @@ public class UnitTests
         context.Authors.Add(author);
         context.Cheeps.Add(cheep);
         await context.SaveChangesAsync();  // Save the seed data to the in-memory database
-
         
-        ICheepRepository repository = new CheepRepository(context);
+        ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
         
         // Act
         var cheepList = await repository.ReadCheepsFromAuthor(authorName, 1);
@@ -112,7 +111,7 @@ public class UnitTests
          await context.SaveChangesAsync();  // Save the seed data to the in-memory database
 
         
-         ICheepRepository repository = new CheepRepository(context);
+         ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
         
          // Act
          var cheepList = await repository.ReadAllCheeps(0);
@@ -180,7 +179,7 @@ public class UnitTests
          await context.SaveChangesAsync();  // Save the seed data to the in-memory database
 
         
-         ICheepRepository repository = new CheepRepository(context);
+         ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
          
             // Act
             await repository.DeleteUserCheeps(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null});
@@ -220,7 +219,7 @@ public class UnitTests
          };
          context.Authors.Add(author1);
          context.Cheeps.Add(cheep1);
-         ICheepRepository repository = new CheepRepository(context);
+         ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
          
          await repository.DeleteCheep(1);
          var cheepList = await repository.ReadAllCheeps(0);
@@ -288,7 +287,7 @@ public class UnitTests
          await context.SaveChangesAsync();  // Save the seed data to the in-memory database
 
         
-         ICheepRepository repository = new CheepRepository(context);
+         ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
          
             // Act
             await repository.DeleteUserCheeps(new AuthorDTO { Name = "Helge", Email = "helge@hotmail", AuthorsFollowed = null });
@@ -359,7 +358,7 @@ public class UnitTests
          await context.SaveChangesAsync();  // Save the seed data to the in-memory database
 
         
-         ICheepRepository repository = new CheepRepository(context);
+         ICheepRepository repository = new CheepRepository(context, new AuthorRepository(context));
          
             // Act
             await repository.DeleteCheep(1);

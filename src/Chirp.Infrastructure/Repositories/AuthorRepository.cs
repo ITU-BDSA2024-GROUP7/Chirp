@@ -16,6 +16,21 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Find The author by name
+        public AuthorDTO? FindAuthorByNameDTO(String name)
+        {
+            var author = (from a in _dbContext.Authors
+                where a.Name == name
+                select new AuthorDTO()
+                {
+                    Name = a.Name,
+                    Email = a.Email,
+                    AuthorsFollowed = a.AuthorsFollowed
+                }).FirstOrDefault();
+            
+            return author;
+        }
+        
+        // Find The author by name
         public Author? FindAuthorByName(String name)
         {
             var author = (from a in _dbContext.Authors

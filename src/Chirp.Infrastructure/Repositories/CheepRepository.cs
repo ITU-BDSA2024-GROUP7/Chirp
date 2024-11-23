@@ -9,10 +9,12 @@ namespace Chirp.Infrastructure.Repositories
     public class CheepRepository : ICheepRepository
     {
         private readonly CheepDBContext _dbContext;
+        private readonly AuthorRepository _authorRepository;
 
-        public CheepRepository(CheepDBContext dbContext)
+        public CheepRepository(CheepDBContext dbContext, AuthorRepository authorRepository)
         {
             _dbContext = dbContext;
+            _authorRepository = authorRepository;
         }
 
         // Read messages by a specific user and map to CheepDTO
@@ -87,7 +89,7 @@ namespace Chirp.Infrastructure.Repositories
             
             var query = _dbContext.Cheeps
                 .Include(c => c.Author) 
-                .Where(cheep => FindAuthorByName(userName).AuthorsFollowed.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
+                .Where(cheep => _authorRepository.FindAuthorByName(userName).AuthorsFollowed.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((page - 1) * 32)
                 .Take(32)
@@ -136,7 +138,7 @@ namespace Chirp.Infrastructure.Repositories
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = FindAuthorByName(cheepDTO.Author.Name);
+            var author = _authorRepository.FindAuthorByName(cheepDTO.Author.Name);
             
             // Create a new Cheep 
             if (author != null)
@@ -160,28 +162,7 @@ namespace Chirp.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
-        // Find The author by name
-        public AuthorDTO? FindAuthorByNameDTO(String name)
-        {
-            var author = (from a in _dbContext.Authors
-                where a.Name == name
-                select new AuthorDTO()
-                {
-                    Name = a.Name,
-                    Email = a.Email,
-                    AuthorsFollowed = a.AuthorsFollowed
-                }).FirstOrDefault();
-            
-            return author;
-        }
         
-        public Author? FindAuthorByName(String name)
-        {
-            var author = (from a in _dbContext.Authors
-                where a.Name == name
-                select a).FirstOrDefault();
-            return author;
-        }
         public async Task DeleteCheep(int cheepId)
         {
             var cheep = await _dbContext.Cheeps.FindAsync(cheepId);

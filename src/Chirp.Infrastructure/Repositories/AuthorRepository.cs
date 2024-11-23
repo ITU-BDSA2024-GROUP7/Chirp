@@ -15,37 +15,25 @@ namespace Chirp.Infrastructure.Repositories
             _dbContext = dbContext;
         }
         
-        // Find The author by name
-        public AuthorDTO? FindAuthorByNameDTO(String name)
+        public async Task<AuthorDTO?> FindAuthorByNameDTO(string name)
         {
-            var author = (from a in _dbContext.Authors
+            var author = await (from a in _dbContext.Authors
                 where a.Name == name
-                select new AuthorDTO()
+                select new AuthorDTO
                 {
                     Name = a.Name,
                     Email = a.Email,
                     AuthorsFollowed = a.AuthorsFollowed
-                }).FirstOrDefault();
-            
+                }).FirstOrDefaultAsync();
+
             return author;
         }
         
         // Find The author by name
-        public Author? FindAuthorByName(String name)
+        public async Task<Author?> FindAuthorByName(string name)
         {
-            var author = (from a in _dbContext.Authors
-                where a.Name == name
-                select a).FirstOrDefault();
-            return author;
-        }
-        
-        // Find a user by their email
-        public Author? FindAuthorByEmail(string email)
-        {
-            var author = (from a in _dbContext.Authors
-                where a.Email == email
-                select a).FirstOrDefault();
-            return author;
+            return await _dbContext.Authors
+                .FirstOrDefaultAsync(a => a.Name == name);
         }
         
         // Used for creating a new author when the author is not existing
@@ -83,7 +71,7 @@ namespace Chirp.Infrastructure.Repositories
         /// <param name="followedAuthorName"></param>
         public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
         {
-            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            var author = await FindAuthorByName(userAuthorName); // Find the author by name
             if (author != null && !author.AuthorsFollowed.Contains(followedAuthorName)) // Check if the author is not already followed
             {
                 author.AuthorsFollowed.Add(followedAuthorName); // Add the author to the list of followed authors
@@ -98,7 +86,7 @@ namespace Chirp.Infrastructure.Repositories
         /// <param name="authorToBeRemoved"></param>
         public async Task UnfollowAuthor(string userAuthorName, string authorToBeRemoved)
         {
-            var author = FindAuthorByName(userAuthorName); // Find the author by name
+            var author = await FindAuthorByName(userAuthorName); // Find the author by name
             if (author != null && author.AuthorsFollowed.Contains(authorToBeRemoved)) // Check if the author is followed
             {
                 author.AuthorsFollowed.Remove(authorToBeRemoved); // Remove the author from the list of followed authors

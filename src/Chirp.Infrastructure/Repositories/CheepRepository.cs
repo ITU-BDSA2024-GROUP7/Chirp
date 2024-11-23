@@ -86,10 +86,20 @@ namespace Chirp.Infrastructure.Repositories
 
         public async Task<List<CheepDTO>> ReadPrivateCheeps(int page, string userName)
         {
+            // Resolve the user and their followed authors first
+            var userAuthor = await _authorRepository.FindAuthorByName(userName);
+            if (userAuthor == null)
+            {
+                // Return an empty list if the user is not found
+                return new List<CheepDTO>();
+            }
+            
+            // Get the list of authors followed by the user
+            var followedAuthors = userAuthor.AuthorsFollowed;
             
             var query = _dbContext.Cheeps
                 .Include(c => c.Author) 
-                .Where(cheep => _authorRepository.FindAuthorByName(userName).AuthorsFollowed.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
+                .Where(cheep => followedAuthors.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((page - 1) * 32)
                 .Take(32)
@@ -138,7 +148,7 @@ namespace Chirp.Infrastructure.Repositories
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
-            var author = _authorRepository.FindAuthorByName(cheepDTO.Author.Name);
+            var author = await _authorRepository.FindAuthorByName(cheepDTO.Author.Name);
             
             // Create a new Cheep 
             if (author != null)

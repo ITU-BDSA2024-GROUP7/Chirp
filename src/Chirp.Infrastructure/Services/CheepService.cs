@@ -59,7 +59,7 @@ public class CheepService : ICheepService
 
     public async Task<AuthorDTO>? FindAuthorByName(String name)
     {
-        return _authorRepository.FindAuthorByNameDTO(name);
+        return await _authorRepository.FindAuthorByNameDTO(name);
     }
     
     public async Task CreateCheep(CheepDTO Cheep)

@@ -1,15 +1,16 @@
 ﻿@page "/{author}"
 @using Chirp.Core
+@using Chirp.Core.DTOs
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Chirp.Web.Pages.UserTimelineModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var authorName = HttpContext.GetRouteValue("author");
     
+    var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber;
-    Author userAuthor = Model.userAuthor;
+    AuthorDTO userAuthor = Model.userAuthor;
 }
 
 <div>

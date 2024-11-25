@@ -1,4 +1,4 @@
-﻿@media (min-width: 481px) {
+@media (min-width: 481px) {
     div.mobile-navigation {
         display: none;
     }
@@ -31,7 +31,7 @@
     }
     
     .body {
-        padding: 10px 10px 10px 10px!important;
+        padding: 10px!important;
     }
     
     div.page div.navigation {

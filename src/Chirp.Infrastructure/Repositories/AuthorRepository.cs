@@ -114,5 +114,15 @@ namespace Chirp.Infrastructure.Repositories
             
             await _dbContext.SaveChangesAsync();
         }
+        /// <summary>
+        /// Returns the list of authors that a user follows
+        /// </summary>
+        /// <param name="userName">The username from the url</param>
+        /// <returns></returns>
+        public async Task<List<string>> GetFollowedAuthors(string userName)
+        {
+            var author = await Task.Run(() => FindAuthorByName(userName));
+            return author?.AuthorsFollowed.ToList() ?? new List<string>();
+        }
     }    
 }

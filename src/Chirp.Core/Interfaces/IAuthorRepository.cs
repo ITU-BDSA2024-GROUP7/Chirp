@@ -11,4 +11,5 @@ public interface IAuthorRepository
     Task FollowAuthor(string userAuthor, string followedAuthor);
     Task UnfollowAuthor(string userAuthor, string authorToBeRemoved);
     Task RemovedAuthorFromFollowingList(string authorName);
+    Task<List<string>> GetFollowedAuthors(string userName);
 }

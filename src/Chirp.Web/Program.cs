@@ -176,6 +176,12 @@ namespace Chirp.Web
                 return Results.Ok(cheeps);
             });
             
+            app.MapGet("/{userName}/follows", async (string userName, CheepService cheepService) =>
+            {
+                var followedAuthors = await cheepService.GetFollowedAuthors(userName);
+                return Results.Ok(followedAuthors);
+            });
+            
             // Run the application
             app.Run();
         }

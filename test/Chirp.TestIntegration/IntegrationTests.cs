@@ -133,6 +133,91 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
         // Check whether a cheep with author was returned
         cheeps.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task CheckGetFollowsWhenEmpty()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
+            dbContext.Database.EnsureDeleted(); // Clear previous data
+            dbContext.Database.EnsureCreated(); // Recreate the database
+        }
+        
+        var author = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson", AuthorsFollowed = new List<string>() };
+        
+        var response = await _client.GetAsync("/" + author.Name +"/follows");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    
+        var followedAuthors = await response.Content.ReadFromJsonAsync<List<string>>();
+        followedAuthors.Should().NotBeNull();
+    
+        // Check whether a cheep with author was returned
+        followedAuthors.Should().BeEmpty();
+    }
+    
+    [Fact]
+    public async Task CheckGetFollowsWhenFollowing()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
+            dbContext.Database.EnsureDeleted(); // Clear previous data
+            dbContext.Database.EnsureCreated(); // Recreate the database
+
+            var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson1", AuthorsFollowed = new List<string>() };
+            var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "my2mail", Name = "testPerson2", AuthorsFollowed = new List<string>() };
+
+            dbContext.Authors.Add(author1);
+            dbContext.Authors.Add(author2);
+            await dbContext.SaveChangesAsync();
+
+            // Use the repository to follow the author
+            var authorRepository = new AuthorRepository(dbContext);
+            await authorRepository.FollowAuthor(author1.Name, author2.Name);
+        }
+
+        var response = await _client.GetAsync("/testPerson1/follows");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var followedAuthors = await response.Content.ReadFromJsonAsync<List<string>>();
+        followedAuthors.Should().NotBeNull();
+
+        // Check whether author2 is in the list of followed authors
+        followedAuthors.Should().Contain("testPerson2");
+    }
+    
+    [Fact]
+    public async Task CheckGetFollowsAfterUnfollowing()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<CheepDBContext>();
+            dbContext.Database.EnsureDeleted(); // Clear previous data
+            dbContext.Database.EnsureCreated(); // Recreate the database
+
+            var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "mymail", Name = "testPerson1", AuthorsFollowed = new List<string>() };
+            var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "my2mail", Name = "testPerson2", AuthorsFollowed = new List<string>() };
+
+            dbContext.Authors.Add(author1);
+            dbContext.Authors.Add(author2);
+            await dbContext.SaveChangesAsync();
+
+            // Use the repository to follow the author
+            var authorRepository = new AuthorRepository(dbContext);
+            await authorRepository.FollowAuthor(author1.Name, author2.Name);
+            await authorRepository.UnfollowAuthor(author1.Name, author2.Name);
+        }
+
+        var response = await _client.GetAsync("/testPerson1/follows");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var followedAuthors = await response.Content.ReadFromJsonAsync<List<string>>();
+        followedAuthors.Should().NotBeNull();
+
+        // Check if the list is empty after unfollowing
+        followedAuthors.Should().BeEmpty();
+    }
     
     // Is called after all tests finish
     public void Dispose()

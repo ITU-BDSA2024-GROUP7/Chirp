@@ -420,9 +420,3 @@ ul.nav li a:hover {
     color: #9a0e0e !important;
 }
 
-.CheepReactions button.likedButton .fa-thumbs-up:hover {
-    color: dimgrey !important;
-}
-.CheepReactions button.dislikedButton .fa-thumbs-down:hover {
-    color: dimgrey !important;
-}

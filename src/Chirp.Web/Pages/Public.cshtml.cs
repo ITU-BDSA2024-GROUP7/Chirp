@@ -150,5 +150,12 @@ public class PublicModel : PageModel
         
         return Redirect($"/?page={PageNumber}");
     }
+    
+    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
+    {
+        Console.WriteLine("Commenting on cheep with id: " + cheepId);
+        
+        return Redirect($"/?page={PageNumber}");
+    }
 
 }

@@ -145,4 +145,14 @@ public class UserTimelineModel : PageModel
         }
         return Redirect($"/{User.Identity.Name}?page={PageNumber}");
     }
+    
+    /// <summary>
+    /// Takes the user to the cheep page and lets you handle comments
+    /// </summary>
+    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
+    {
+        Console.WriteLine("Commenting on cheep with id: " + cheepId);
+        
+        return Redirect($"/?page={PageNumber}");
+    }
 }

@@ -74,8 +74,15 @@
                                 <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")" type="submit" asp-page-handler="DisLikeMethod"><i class="fas fa-thumbs-down fa-2x fareact"></i></button>
                             </form>
                             <p>@cheep.DislikesCount</p>
+
+                            
                         }
                     </div>
+                    <form style="display: flex;" method="post">
+                        <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                        <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                        <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments</button>
+                    </form>
                 </li>
             }
         </ul>

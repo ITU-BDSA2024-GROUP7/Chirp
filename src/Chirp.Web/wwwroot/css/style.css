@@ -367,8 +367,28 @@ ul.nav li a:hover {
 .cheep-container>form:has(#unfollowButton)>button {
     background-color: #cc6e6e;
 }
+
 .providerImg {
     height: 2em;
     width: auto;
     margin-right: 5px;
+}
+
+.stat-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.stat-container .border {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center; /* Align items vertically in the center */
+    border: 2px solid #cc6e6e;
+    border-radius: 15px;
+}
+
+.stat-container div {
+    margin: 0 10px; /* Optional spacing between child divs */
 }

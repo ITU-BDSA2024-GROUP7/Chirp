@@ -17,6 +17,8 @@ public class UserTimelineModel : PageModel
     public int TotalPageNumber { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
+    public required List<String>? FollowList { get; set; } 
+    public required List<String>? FollowingList { get; set; }
     public string CurrentAuthor { get; set; } = string.Empty;
     public AuthorDTO userAuthor { get; set; }
 
@@ -49,6 +51,11 @@ public class UserTimelineModel : PageModel
             var currentUserName = User.Identity.Name;
             userAuthor = await _service.FindAuthorByName(currentUserName);
         }
+        
+        // var followAuthorDto = await _service.FindAuthorByName(author);
+        // FollowList = followAuthorDto.AuthorsFollowed as List<string>;
+        FollowList = await _service.GetFollowedAuthors(author);
+        FollowingList = await _service.GetFollowingAuthors(author);
         
         return Page();
     }

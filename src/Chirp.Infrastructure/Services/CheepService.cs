@@ -105,4 +105,14 @@ public class CheepService : ICheepService
     {
         return await _authorRepository.GetFollowedAuthors(userName);
     }
+    
+    /// <summary>
+    /// Returns the list of authors that follows a user
+    /// </summary>
+    /// <param name="userName">The username from the url</param>
+    /// <returns></returns>
+    public async Task<List<string>> GetFollowingAuthors(string userName)
+    {
+        return await _authorRepository.GetFollowingAuthors(userName);
+    }
 }

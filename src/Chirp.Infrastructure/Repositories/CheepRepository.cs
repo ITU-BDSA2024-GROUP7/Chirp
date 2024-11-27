@@ -349,19 +349,5 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-        
-        public async Task<int> GetLikesForCheep(int cheepId)
-        {
-            return await _dbContext.Likes
-                .Where(l => l.CheepId == cheepId)
-                .CountAsync();
-        }
-        
-        public async Task<int> GetDislikesForCheep(int cheepId)
-        {
-            return await _dbContext.Dislikes
-                .Where(dl => dl.CheepId == cheepId)
-                .CountAsync();
-        }
     }
 }

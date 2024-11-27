@@ -247,18 +247,28 @@ namespace Chirp.Infrastructure.Repositories
                 throw new Exception("Cheep not found");
             }
             
+            // Check if the author has disliked this cheep
+            var existingDislike = await _dbContext.Dislikes
+                .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
+            
             // Check if the author has already liked this cheep
             var existingLike = await _dbContext.Likes
                 .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
 
-            if (existingLike != null)
+            
+            if (existingLike != null) // if the user has already liked the cheep
             {
-                // if the user has already liked the cheep
+                
                 await UnlikeCheep(existingLike);
             }
-            else
+            else // if the user has not liked the cheep
             {
-                // if the user has not liked the cheep
+                if (existingDislike != null)
+                {
+                    // undislike cheep if the user has disliked it
+                    await UnDislikeCheep(existingDislike);
+                }
+                
                 await LikeCheep(authorId, cheepId);
             }
         }
@@ -308,18 +318,24 @@ namespace Chirp.Infrastructure.Repositories
                 // Handle case where cheep is not found
                 throw new Exception("Cheep not found");
             }
+            // Check if the author has already liked this cheep
+            var existingLike = await _dbContext.Likes
+                .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
             
             // Check if the author has already disliked this cheep
-            var existingLike = await _dbContext.Dislikes
+            var existingDislike = await _dbContext.Dislikes
                 .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
 
-            if (existingLike != null)
+            if (existingDislike != null) // if the user has already disliked the cheep
             {
-                // if the user has already disliked the cheep
-                await UnDislikeCheep(existingLike);
+                await UnDislikeCheep(existingDislike);
             }
-            else
+            else // undislike cheep if the user has disliked it
             {
+                if (existingLike != null)
+                {
+                    await UnlikeCheep(existingLike);
+                }
                 // if the user has not disliked the cheep
                 await DislikeCheep(authorId, cheepId);
             }

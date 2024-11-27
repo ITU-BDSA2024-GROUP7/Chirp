@@ -155,7 +155,7 @@ public class PublicModel : PageModel
     {
         Console.WriteLine("Commenting on cheep with id: " + cheepId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/{cheepId}/comments");
     }
 
 }

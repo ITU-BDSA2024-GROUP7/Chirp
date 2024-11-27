@@ -1,8 +1,8 @@
-﻿@page "/{author}"
+@page "/{cheepId:int}/comments"
 @using Chirp.Core
 @using Chirp.Core.DTOs
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Chirp.Web.Pages.UserTimelineModel
+@model Chirp.Web.Pages.CheepCommentModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
@@ -18,17 +18,19 @@
         <a class="timeline-button" href="/">
             <button >Back</button>
         </a>
-        <h2> @authorName's Timeline </h2>
+        <h2> Cheep Timeline </h2>
     </div>
     @if(User.Identity != null && User.Identity.IsAuthenticated){
         @* Render the Share Form Partial View *@
         {
             ViewData["pageNumber"] = pageNumber;
         }
-        @await Html.PartialAsync("_ShareCheepForm", Model.SharedViewModel)
     }
     @if (Model.Cheeps.Any())
     {
+        // Display the original cheep first
+        
+        // For each comment in the Cheep, display the author, timestamp, and text
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
@@ -59,14 +61,7 @@
                     <small>@cheep.FormattedTimeStamp</small>
                     <br><br>
                     
-                    <p>@cheep.Text</p>
-                    <div class="Comment">
-                        <form style="display: flex;" method="post">
-                            <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
-                            <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments</button>
-                        </form>
-                    </div>
+                    <p>@cheep.Text</p> // comments
                 </li>
             }
         </ul>

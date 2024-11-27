@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
 using System.Globalization;
 using Chirp.Core.DTOs;
@@ -10,39 +10,34 @@ using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
 
-public class UserTimelineModel : PageModel
+public class CheepCommentModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
     public string CurrentAuthor { get; set; } = string.Empty;
+    public int CheepId { get; set; }
     public AuthorDTO userAuthor { get; set; }
 
-    public UserTimelineModel(CheepService service)
+    public CheepCommentModel(CheepService service)
     {
         _service = service;
     }
     // Runs when the site is loaded (Request Method: GET)
-    public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
+    public async Task<IActionResult> OnGet(int cheepId, [FromQuery] int page)
     {
         if (page <= 0)
         {
             page = 1;
         }
 
-        CurrentAuthor = author;
+        CheepId = cheepId;
         PageNumber = page;
         
-        if (User.Identity != null && User.Identity.Name == author) 
-        {
-            Cheeps = await _service.GetPrivateCheeps(page, author);
-        } else {
-            Cheeps = await _service.GetCheepsFromAuthor(author, page); 
-        }
+        // get list of comments from cheep
 
-        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
+        //TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
         
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
@@ -144,15 +139,5 @@ public class UserTimelineModel : PageModel
             
         }
         return Redirect($"/{User.Identity.Name}?page={PageNumber}");
-    }
-    
-    /// <summary>
-    /// Takes the user to the cheep page and allows them to comment on the cheep
-    /// </summary>
-    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
-    {
-        Console.WriteLine("Commenting on cheep with id: " + cheepId);
-        
-        return Redirect($"/{cheepId}/comments");
     }
 }

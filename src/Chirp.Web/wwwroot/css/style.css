@@ -420,3 +420,17 @@ ul.nav li a:hover {
     color: #9a0e0e !important;
 }
 
+.Comment button {
+    background-color: rgba(52, 137, 243, 0);
+    border: none;
+    color: #486dfa;
+    padding: 4px 0px;  
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+}
+.Comment button:hover {
+    color: #003bae;
+}
+

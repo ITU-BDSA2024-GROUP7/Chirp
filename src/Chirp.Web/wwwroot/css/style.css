@@ -372,3 +372,23 @@ ul.nav li a:hover {
     width: auto;
     margin-right: 5px;
 }
+
+.reactionform {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
+
+
+
+.reactionform button {
+    background-color: grey;
+}
+
+.reactionform button:has(.likeactive) {
+    background-color: green;
+}
+
+.reactionform button:has(.dislikeactive) {
+    background-color: red;
+}

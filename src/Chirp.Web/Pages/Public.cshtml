@@ -65,12 +65,12 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <p>@cheep.LikesCount</p>
-                            <form style="display: flex;" method="post">
+                            <form class="reactionform" method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                                 <button id="likeMethod" type="submit" asp-page-handler="LikeMethod">Like</button>
                             </form>
                             <p>@cheep.DislikesCount</p>
-                            <form style="display: flex;" method="post">
+                            <form class="reactionform" method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                                 <button id="dislikeMethod" type="submit" asp-page-handler="DisLikeMethod">Dislike</button>
                             </form>

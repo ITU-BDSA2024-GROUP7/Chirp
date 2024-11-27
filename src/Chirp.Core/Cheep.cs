@@ -14,5 +14,6 @@ public class Cheep
     [Required]
     [StringLength(160)]
     public required string Text { get; set; }
+    public string? ImageReference { get; set; }
     public DateTime TimeStamp { get; set; } 
 }

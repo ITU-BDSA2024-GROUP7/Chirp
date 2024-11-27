@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true
+        Headless = false
     };
 
     [SetUp]
@@ -123,16 +123,16 @@ public class E2ETests : PageTest
     }
 
     // Login
-    private async Task LoginUser()
+    private async Task LoginUser(String? userCount="")
     {
         // Goes to login page
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
         await _page.GetByPlaceholder("Username").ClickAsync();
-        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername+userCount);
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword+userCount);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
@@ -867,50 +867,51 @@ public class E2ETests : PageTest
         
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
         
-        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
         
-        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
         
         // Clean up
         await DeleteUser();
     }
 
     /*---------------------------------- FOLLOWING LISTS TESTS ----------------------------------*/
-    // [Test]
-    // [Category("End2End")]
-    // public async Task DoesListsDisplayCorrectCount()
-    // {
-    //     await RegisterUser();
-    //     await LoginUser();
-    //     
-    //     // Follow Adrian
-    //     await _page.Locator("li").Filter(new() { HasText = "Adrian Follow 2024-11-22 13:" }).Locator("#followButton").ClickAsync();
-    //     
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Followers:" })).ToBeVisibleAsync();
-    //
-    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "BigChungus" })).ToBeVisibleAsync();
-    //
-    //     // Clean up
-    //     await DeleteUser();
-    // }
-    //
-    // [Test]
-    // [Category("End2End")]
-    // public async Task DoesListsDisplayCorrectCountMultiple()
-    // {
-    //     await RegisterUser();
-    //     await LoginUser();
-    //
-    //     await _page.Locator("li").Locator("#followButton").First.ClickAsync();
-    //     
-    //     await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
-    //     
-    //     await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
-    //     
-    //     
-    //     await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
-    //     
-    //     // Clean up
-    //     await DeleteUser();
-    // }
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowListDisplayCorrectAmountFollowers()
+    {
+        // Follows another user and checks if the count for following is 1 and then unfollows the user and checks if the count is 0
+        await RegisterUser();
+        await LoginUser();
+
+        await _page.Locator("li").Filter(new() { HasText = "Adrian Follow 2024-11-22 13:" }).Locator("#followButton").ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Following: 1");
+        
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowListDisplayCorrectAmountFollowing()
+    {
+        await RegisterUser();
+        await LoginUser();
+    
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 1");
+        
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
 }

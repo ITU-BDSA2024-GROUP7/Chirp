@@ -9,4 +9,7 @@ public class CheepDTO
     public required string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
     public ICollection<CommentDTO> Comments { get; set; } = new List<CommentDTO>(); // List of comments
     
+    public int LikesCount { get; set; }
+    public int DislikesCount { get; set; }
+    
 }

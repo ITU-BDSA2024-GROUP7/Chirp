@@ -36,7 +36,9 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
@@ -57,7 +59,9 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
             
             return await query.ToListAsync();
@@ -80,7 +84,9 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
@@ -115,7 +121,9 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
@@ -340,6 +348,20 @@ namespace Chirp.Infrastructure.Repositories
 
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
+        }
+        
+        public async Task<int> GetLikesForCheep(int cheepId)
+        {
+            return await _dbContext.Likes
+                .Where(l => l.CheepId == cheepId)
+                .CountAsync();
+        }
+        
+        public async Task<int> GetDislikesForCheep(int cheepId)
+        {
+            return await _dbContext.Dislikes
+                .Where(dl => dl.CheepId == cheepId)
+                .CountAsync();
         }
     }
 }

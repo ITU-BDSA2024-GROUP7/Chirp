@@ -7,13 +7,14 @@ public class Comment
 {
     [Key]
     public int CommentId { get; set; } // Primary Key
-    [ForeignKey("Cheep")]
-    public int CheepId { get; set; } // Foreign key to Cheep
-    public Cheep Cheep { get; set; } // Navigation property for Cheep
     
-    [ForeignKey("Author")]
-    public int AuthorId { get; set; } // Foreign key to Author
+    [ForeignKey("CheepId")]
+    public Cheep Cheep { get; set; } // Navigation property for Cheep
+    public int CheepId { get; set; } // Foreign key to Cheep
+    
+    [ForeignKey("AuthorId")]
     public Author Author { get; set; } // Navigation property for Author
+    public int AuthorId { get; set; } // Foreign key to Author
     
     [Required]
     [StringLength(160)]

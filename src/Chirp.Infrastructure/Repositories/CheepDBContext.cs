@@ -12,7 +12,7 @@ public class CheepDBContext : IdentityDbContext<ApplicationUser>
     public  DbSet<Cheep> Cheeps { get; set; }
     public DbSet<Author> Authors { get; set; }
     
-    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Comment> Comment { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Dislike> Dislikes { get; set; }
     

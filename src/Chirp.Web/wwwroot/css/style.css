@@ -486,10 +486,6 @@ ul.nav li a:hover {
     margin-left: 5px; /* Ensures button is aligned to the right side of the link */
 }
 
-.popup .content li button {
-    margin-left: 5px; /* Ensures button is aligned to the right side of the link */
-}
-
 #followButton {
     border: none;
     color: white;

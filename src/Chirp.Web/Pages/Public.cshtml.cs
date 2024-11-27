@@ -151,7 +151,4 @@ public class PublicModel : PageModel
         return Redirect($"/?page={PageNumber}");
     }
 
-    
-    
-    
 }

@@ -253,11 +253,6 @@ namespace Chirp.Infrastructure.Repositories
                 // if the user has not liked the cheep
                 await LikeCheep(authorId, cheepId);
             }
-            
-            
-            
-            // else (the user has not liked the cheep)
-            // Add like
         }
         
         public async Task LikeCheep(int authorId, int cheepId)
@@ -289,30 +284,62 @@ namespace Chirp.Infrastructure.Repositories
 
         public async Task HandleDislike(string authorName, int cheepId)
         {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+
+            // Find the Cheep by its Id
+            var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
+            if (cheep == null)
+            {
+                // Handle case where cheep is not found
+                throw new Exception("Cheep not found");
+            }
             
+            // Check if the author has already disliked this cheep
+            var existingLike = await _dbContext.Dislikes
+                .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
+
+            if (existingLike != null)
+            {
+                // if the user has already disliked the cheep
+                await UnDislikeCheep(existingLike);
+            }
+            else
+            {
+                // if the user has not disliked the cheep
+                await DislikeCheep(authorId, cheepId);
+            }
         }
         
         public async Task DislikeCheep(int authorId, int cheepId)
         {
-            /*
-            // Create a new Like record
-            var like = new Like
+            // Create a new Dislike record
+            var dislike = new Dislike()
             {
                 CheepId = cheepId,
                 AuthorId = authorId
             };
 
-            // Add the new Like to the DbContext
-            await _dbContext.Dislikes.AddAsync(like);
+            // Add the new Dislike to the DbContext
+            await _dbContext.Dislikes.AddAsync(dislike);
 
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
-            */
         }
 
-        public async Task UnDislikeCheep(int authorId, int cheepId)
+        public async Task UnDislikeCheep(Dislike existingLike)
         {
-            
+            // Remove the Dislike from the DbContext
+            _dbContext.Dislikes.Remove(existingLike);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

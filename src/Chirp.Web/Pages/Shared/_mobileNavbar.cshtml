@@ -1,0 +1,16 @@
+﻿<div class=mobile-navigation>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <a href="/@(User.Identity.Name)"> <img src="/images/Icon1.svg" alt="Home Symbol"/>@*My timeline*@</a> 
+        <a href="/"><img src="/images/Home.svg" alt="Home Symbol"/>@*Public timeline*@</a> 
+        <a href="/identity/Account/Manage"> <img src="/images/User.svg" alt="Login Symbol"/>@*Manage account*@</a>  
+        <a href="/Identity/Account/Logout"> <img src="/images/ArrowRightStartOnRectangle.svg" alt="Login Symbol"/>@*Logout*@</a> 
+        @* [@(User.Identity.Name)] *@
+    }
+    else
+    {
+        <a href="/"> <img src="/images/Home.svg" alt="Home Symbol"/>@*Timeline*@</a> 
+        <a href="/Identity/Account/Register"> <img src="/images/register.svg" alt="Register Symbol"/>@*Register*@</a>
+        <a href="/Identity/Account/Login"> <img src="/images/User.svg" alt="Login Symbol"/>@*Login*@</a>
+    }
+</div>

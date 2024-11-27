@@ -21,6 +21,7 @@ namespace Chirp.Infrastructure.Repositories
                 where a.Name == name
                 select new AuthorDTO
                 {
+                    AuthorId = a.AuthorId,
                     Name = a.Name,
                     Email = a.Email,
                     AuthorsFollowed = a.AuthorsFollowed

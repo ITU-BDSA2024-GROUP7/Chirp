@@ -37,6 +37,8 @@ namespace Chirp.Infrastructure.Repositories
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });
@@ -60,6 +62,8 @@ namespace Chirp.Infrastructure.Repositories
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });
@@ -85,6 +89,8 @@ namespace Chirp.Infrastructure.Repositories
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });
@@ -122,6 +128,8 @@ namespace Chirp.Infrastructure.Repositories
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });

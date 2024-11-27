@@ -183,7 +183,7 @@ div.page ul.cheeps li {
 }
 
 div.page ul.cheeps p {
-    margin: 0;
+    margin: 5px 0;
 }
 
 div.page ul.cheeps li img {
@@ -373,22 +373,45 @@ ul.nav li a:hover {
     margin-right: 5px;
 }
 
-.reactionform {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0;
+.CheepReactions {
+    display: flex;
+    align-items: center; /* Vertically center elements */
+    gap: 0px; /* Space between elements */
 }
 
+.CheepReactions p {
+    margin-right: 5px!important;
+    margin-left: 2px!important;
+}
 
+.CheepReactions form {
+    margin: 0;
+    display: inline-block;
+}
 
-.reactionform button {
+.CheepReactions button {
+    padding: 5px 10px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     background-color: grey;
 }
 
-.reactionform button:has(.likeactive) {
-    background-color: green;
+.CheepReactions button.likedButton {
+    background-color: #0c770c !important;
 }
 
-.reactionform button:has(.dislikeactive) {
-    background-color: red;
+.CheepReactions button.dislikedButton {
+    background-color: #9a0e0e !important;
+}
+
+.CheepReactions button:hover {
+    background-color: #5e5e5e; 
+}
+.CheepReactions button.likedButton:hover {
+    background-color: #0c770c;
+}
+.CheepReactions button.dislikedButton:hover {
+    background-color: #9a0e0e;
 }

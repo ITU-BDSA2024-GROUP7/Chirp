@@ -59,21 +59,21 @@
     
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
-                    <br><br>
+                    <br>
                     <p>@cheep.Text</p>
-                    <div>
+                    <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <p>@cheep.LikesCount</p>
-                            <form class="reactionform" method="post">
+                            <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                <button id="likeMethod" type="submit" asp-page-handler="LikeMethod">Like</button>
+                                <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod">Like</button>
+                            </form>
+                            <p>@cheep.LikesCount</p>
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")" type="submit" asp-page-handler="DisLikeMethod">Dislike</button>
                             </form>
                             <p>@cheep.DislikesCount</p>
-                            <form class="reactionform" method="post">
-                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                <button id="dislikeMethod" type="submit" asp-page-handler="DisLikeMethod">Dislike</button>
-                            </form>
                         }
                     </div>
                 </li>

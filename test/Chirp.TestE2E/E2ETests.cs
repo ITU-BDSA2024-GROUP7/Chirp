@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = false
+        Headless = true
     };
 
     [SetUp]
@@ -884,7 +884,7 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
 
-        await _page.Locator("li").Filter(new() { HasText = "Adrian Follow 2024-11-22 13:" }).Locator("#followButton").ClickAsync();
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
         
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
         
@@ -902,14 +902,54 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task DoesFollowListDisplayCorrectAmountFollowing()
     {
+        // Follows another user and checks if the count for followers is 1 and then unfollows the user and checks if the count is 0
+
         await RegisterUser();
         await LoginUser();
     
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+
         await _page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
         
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 1");
         
         await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
+        
+        // Clean up
+        await DeleteUser();
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowPopupDisplayCorrectFollowers()
+    {
+        // Follows another user and checks if a user shows up in the follower list popup
+
+        await RegisterUser();
+        await LoginUser();
+    
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Adrian" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Followers:" }).ClickAsync();
+        await Expect(_page.Locator("li").First).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowPopupDisplayCorrectFollowing()
+    {
+        // Follows another user and checks if a user shows up in the following list popup
+
+        await RegisterUser();
+        await LoginUser();
+    
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Following:" }).ClickAsync();
+        await Expect(_page.Locator("#popup2").GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
         
         // Clean up
         await DeleteUser();

@@ -380,8 +380,8 @@ ul.nav li a:hover {
 }
 
 .CheepReactions p {
-    margin-right: 5px!important;
-    margin-left: 2px!important;
+    margin-right: 15px!important;
+    margin-left: 5px!important;
 }
 
 .CheepReactions form {
@@ -389,29 +389,40 @@ ul.nav li a:hover {
     display: inline-block;
 }
 
-.CheepReactions button {
-    padding: 5px 10px; 
-    border: none;
-    border-radius: 5px;
+.CheepReactions button{
+    padding: 0; 
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: grey;
+    background-color: transparent;
 }
 
-.CheepReactions button.likedButton {
-    background-color: #0c770c !important;
+.CheepReactions button .fareact {
+    color: dimgrey !important;
+    transition: color 0.3s ease;
 }
 
-.CheepReactions button.dislikedButton {
-    background-color: #9a0e0e !important;
+.CheepReactions button.likedButton .fa-thumbs-up {
+    color: #0c770c !important;
 }
 
-.CheepReactions button:hover {
-    background-color: #5e5e5e; 
+.CheepReactions button.dislikedButton .fa-thumbs-down {
+    color: #9a0e0e !important;
 }
-.CheepReactions button.likedButton:hover {
-    background-color: #0c770c;
+
+/*.CheepReactions button:hover {*/
+/*    background-color: #5e5e5e;*/
+/*}*/
+
+.CheepReactions button .fa-thumbs-up:hover {
+    color: #0c770c !important;
 }
-.CheepReactions button.dislikedButton:hover {
-    background-color: #9a0e0e;
+
+.CheepReactions button .fa-thumbs-down:hover {
+    color: #9a0e0e !important;
+}
+
+.CheepReactions button.likedButton .fa-thumbs-up:hover {
+    color: dimgrey !important;
+}
+.CheepReactions button.dislikedButton .fa-thumbs-down:hover {
+    color: dimgrey !important;
 }

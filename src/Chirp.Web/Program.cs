@@ -143,10 +143,12 @@ namespace Chirp.Web
                 context.Response.Headers.Append("Content-Security-Policy", 
                     "default-src 'self'; " +                            // Allow resources from the same origin
                     "script-src 'self' https://bdsagroup07chirprazor.azurewebsites.net/; " +  // Allow scripts from self and Azure
+                    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; " + // Allow styles from Font Awesome CDN
                     "style-src 'self' 'unsafe-inline'; " +               // Allow inline styles and styles from self
                     "img-src 'self'; " +                                 // Allow images from self
                     "script-src-elem 'self' 'unsafe-inline'; " +         // Allow inline scripts in elements
                     "connect-src 'self' ws://localhost:53540/ wss://localhost:53539/ https://bdsagroup07chirprazor.azurewebsites.net/; " + // Allow WebSocket connections from localhost and Azure
+                    "font-src 'self' https://cdnjs.cloudflare.com; " + // Allow fonts from Font Awesome CDN
                     "font-src 'self'; " +                                // Allow fonts from self
                     "frame-src 'self'; " +                               // Allow frames from self
                     "object-src 'none'; " +                              // Disallow object elements

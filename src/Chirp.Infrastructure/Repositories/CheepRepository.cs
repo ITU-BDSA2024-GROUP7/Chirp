@@ -117,7 +117,6 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-        
         // get total count of pages 
         public async Task<int> GetTotalPages(string authorName = "")
         {
@@ -156,8 +155,10 @@ namespace Chirp.Infrastructure.Repositories
                 Cheep newCheep = new Cheep
                 {
                     Text = cheepDTO.Text,
-                    Author =  author,
-                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    Author = author,
+                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+
                 };
 
                 // Add the new Cheep to the DbContext

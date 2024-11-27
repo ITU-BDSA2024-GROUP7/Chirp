@@ -126,7 +126,7 @@ public class UserTimelineModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
+        return Redirect($"/{followedAuthorName}?page={PageNumber}");
     }
 
     /// <summary>
@@ -143,6 +143,6 @@ public class UserTimelineModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
+        return Redirect($"/{followedAuthor}?page={PageNumber}");
     }
 }

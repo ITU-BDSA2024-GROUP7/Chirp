@@ -23,13 +23,90 @@
     <div class="stat-container">
         <div class="border">
             <div>
-                <h3>Followers: @Model.FollowingMeList.Count</h3>
+                <a class="button" href="#popup1">
+                    <h3>Followers: @Model.FollowingMeList.Count</h3>
+                </a>
             </div>
             <div>
-                <h3>Following: @Model.FollowingList.Count</h3>
+                <a class="button" href="#popup2">
+                    <h3>Following: @Model.FollowingList.Count</h3>
+                </a>
             </div>
         </div>
     </div>
+    <div id="popup1" class="overlay">
+        <div class="popup">
+            <h2>Followers:</h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                @if (Model.FollowingMeList.Count > 0)
+                {
+                    @foreach (var author in Model.FollowingMeList)
+                    {
+                        <li>
+                            <a href="/@author">@author</a>
+                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            {
+                            <form method="post">
+                                @if (!userAuthor.AuthorsFollowed.Contains(author))
+                                {
+                                <input type="hidden" name="followedAuthorName" value="@author"/>
+                                <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                }
+                                else
+                                {
+                                <input type="hidden" name="followedAuthor" value="@author"/>
+                                <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                }
+                            </form>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p>No users are following this user.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="popup2" class="overlay">
+        <div class="popup">
+            <h2>"@authorName" is following:</h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                @if (Model.FollowingList.Count > 0)
+                {
+                    @foreach (var author in Model.FollowingList)
+                    {
+                        <li>
+                            <a href="/@author">@author</a>
+                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            {
+                                <form method="post">
+                                    @if (!userAuthor.AuthorsFollowed.Contains(author))
+                                    {
+                                        <input type="hidden" name="followedAuthorName" value="@author"/>
+                                        <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="followedAuthor" value="@author"/>
+                                        <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                    }
+                                </form>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p>No users are following this user.</p>
+                }
+            </div>
+        </div>
+    </div>
+
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         @* Render the Share Form Partial View *@
@@ -66,7 +143,6 @@
                                 }
                             </form>
                         }
-
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
                     <br><br>

@@ -15,4 +15,7 @@ public class Author
   public required string Email { get; set; } // Email of the author
   public required ICollection<Cheep> Cheeps { get; set; } // List of all cheeps from the author
   public required ICollection<string> AuthorsFollowed { get; set; } // List of authors followed
+  public ICollection<Like> Likes { get; set; } = new List<Like>();
+  public ICollection<Dislike> Dislikes { get; set; } = new List<Dislike>();
+
 }

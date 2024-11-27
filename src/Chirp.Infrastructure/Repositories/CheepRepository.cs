@@ -28,6 +28,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -71,6 +72,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -105,6 +107,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -215,6 +218,101 @@ namespace Chirp.Infrastructure.Repositories
                 });
             // Execute the query and return the list of messages
             return await query.ToListAsync();
+        }
+
+        public async Task HandleLike(string authorName, int cheepId)
+        {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+
+            // Find the Cheep by its Id
+            var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
+            if (cheep == null)
+            {
+                // Handle case where cheep is not found
+                throw new Exception("Cheep not found");
+            }
+            
+            // Check if the author has already liked this cheep
+            var existingLike = await _dbContext.Likes
+                .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
+
+            if (existingLike != null)
+            {
+                // if the user has already liked the cheep
+                await UnlikeCheep(existingLike);
+            }
+            else
+            {
+                // if the user has not liked the cheep
+                await LikeCheep(authorId, cheepId);
+            }
+            
+            
+            
+            // else (the user has not liked the cheep)
+            // Add like
+        }
+        
+        public async Task LikeCheep(int authorId, int cheepId)
+        {
+            
+            // Create a new Like record
+            var like = new Like
+            {
+                CheepId = cheepId,
+                AuthorId = authorId
+            };
+
+            // Add the new Like to the DbContext
+            await _dbContext.Likes.AddAsync(like);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UnlikeCheep(Like existingLike)
+        {
+            // Remove the Like from the DbContext
+            _dbContext.Likes.Remove(existingLike);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+
+        }
+
+        public async Task HandleDislike(string authorName, int cheepId)
+        {
+            
+        }
+        
+        public async Task DislikeCheep(int authorId, int cheepId)
+        {
+            /*
+            // Create a new Like record
+            var like = new Like
+            {
+                CheepId = cheepId,
+                AuthorId = authorId
+            };
+
+            // Add the new Like to the DbContext
+            await _dbContext.Dislikes.AddAsync(like);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+            */
+        }
+
+        public async Task UnDislikeCheep(int authorId, int cheepId)
+        {
+            
         }
     }
 }

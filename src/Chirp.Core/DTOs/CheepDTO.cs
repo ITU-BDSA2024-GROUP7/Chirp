@@ -2,6 +2,7 @@
 
 public class CheepDTO
 {
+    public int CheepId { get; set; }
     public required AuthorDTO Author { get; set; } // AuthorDTO
     public required string Text { get; set; } // Message text
     public string ImageReference { get; set; } // Message text

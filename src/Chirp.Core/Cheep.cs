@@ -19,4 +19,7 @@ public class Cheep
     public DateTime TimeStamp { get; set; } 
     
     public ICollection<Comment> Comments { get; set; } = new List<Comment>(); // Navigation Property
+    public ICollection<Like> Likes { get; set; } = new List<Like>();
+    public ICollection<Dislike> Dislikes { get; set; } = new List<Dislike>();
+
 }

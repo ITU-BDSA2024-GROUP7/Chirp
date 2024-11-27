@@ -61,7 +61,21 @@
                     <small>@cheep.FormattedTimeStamp</small>
                     <br><br>
                     <p>@cheep.Text</p>
-                    
+                    <div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <p>4</p>
+                            <form style="display: flex;" method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <button id="likeMethod" type="submit" asp-page-handler="LikeMethod">Like</button>
+                            </form>
+                            <p>1</p>
+                            <form style="display: flex;" method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <button id="dislikeMethod" type="submit" asp-page-handler="DisLikeMethod">Dislike</button>
+                            </form>
+                        }
+                    </div>
                 </li>
             }
         </ul>

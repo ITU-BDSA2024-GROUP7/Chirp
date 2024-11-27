@@ -136,6 +136,20 @@ public class PublicModel : PageModel
         }
         return Redirect($"/?page={PageNumber}");
     }
+    
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId)
+    {
+        await _service.HandleLike(User.Identity.Name, cheepId);
+        
+        return Redirect($"/?page={PageNumber}");
+    }
+    
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId)
+    {
+        await _service.HandleDislike(User.Identity.Name, cheepId);
+        
+        return Redirect($"/?page={PageNumber}");
+    }
 
     
     

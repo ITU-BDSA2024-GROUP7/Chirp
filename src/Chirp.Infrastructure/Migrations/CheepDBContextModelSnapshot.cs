@@ -37,7 +37,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.HasKey("AuthorId");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("Chirp.Core.Cheep", b =>
@@ -64,7 +64,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Cheeps");
+                    b.ToTable("Cheeps", (string)null);
                 });
 
             modelBuilder.Entity("Chirp.Core.Comment", b =>
@@ -93,7 +93,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.HasIndex("CheepId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("Chirp.Core.Dislike", b =>
@@ -114,7 +114,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.HasIndex("CheepId");
 
-                    b.ToTable("Dislikes");
+                    b.ToTable("Dislikes", (string)null);
                 });
 
             modelBuilder.Entity("Chirp.Core.Like", b =>
@@ -135,7 +135,7 @@ namespace Chirp.Infrastructure.Migrations
 
                     b.HasIndex("CheepId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", (string)null);
                 });
 
             modelBuilder.Entity("Chirp.Infrastructure.Data.ApplicationUser", b =>

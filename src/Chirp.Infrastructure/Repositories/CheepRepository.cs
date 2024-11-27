@@ -373,6 +373,49 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-       
+        public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
+        {
+            var query = _dbContext.Comment
+                .Where(comment => comment.CheepId == cheepId)
+                .OrderByDescending(comment => comment.TimeStamp)
+                .Select(comment => new CommentDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = comment.Author.Name,
+                        Email = comment.Author.Email,
+                        AuthorsFollowed = comment.Author.AuthorsFollowed
+                    },
+                    CheepId = comment.CheepId,
+                    Text = comment.Text,
+                    FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                });
+            
+            return await query.ToListAsync();
+        }
+        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text )
+        {
+            // Create a new Cheep 
+            if (cheepDto != null)
+            {
+                // Find the author by name
+                var author = await _authorRepository.FindAuthorByName(cheepDto.Author.Name);
+
+                Comment comment = new Comment
+                {
+                    CheepId = cheepDto.CheepId,
+                    Author = author,
+                    Text = Text,
+                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    
+                };
+                
+                // Add the new Cheep to the DbContext
+                await _dbContext.Comment.AddAsync(comment);
+            }
+
+            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+        }
     }
 }

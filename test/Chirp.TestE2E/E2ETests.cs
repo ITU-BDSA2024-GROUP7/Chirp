@@ -102,19 +102,19 @@ public class E2ETests : PageTest
     
     //---------------------------------- HELPER METHODS ----------------------------------
     // Register
-    private async Task RegisterUser()
+    private async Task RegisterUser(String? userCount="")
     {
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         // Arrived at register page, and put in email and password
         await _page.GetByPlaceholder("Username").ClickAsync();
-        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername+userCount);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail+userCount);
         await _page.GetByPlaceholder("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword+userCount);
         await _page.GetByPlaceholder("Confirm password").ClickAsync();
-        await _page.GetByPlaceholder("Confirm password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Confirm password").FillAsync(TestUserPassword+userCount);
 
         
         
@@ -869,10 +869,48 @@ public class E2ETests : PageTest
         
         await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
         
-        
         await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
         
         // Clean up
         await DeleteUser();
     }
+
+    /*---------------------------------- FOLLOWING LISTS TESTS ----------------------------------*/
+    // [Test]
+    // [Category("End2End")]
+    // public async Task DoesListsDisplayCorrectCount()
+    // {
+    //     await RegisterUser();
+    //     await LoginUser();
+    //     
+    //     // Follow Adrian
+    //     await _page.Locator("li").Filter(new() { HasText = "Adrian Follow 2024-11-22 13:" }).Locator("#followButton").ClickAsync();
+    //     
+    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "Followers:" })).ToBeVisibleAsync();
+    //
+    //     await Expect(_page.GetByRole(AriaRole.Link, new() { Name = "BigChungus" })).ToBeVisibleAsync();
+    //
+    //     // Clean up
+    //     await DeleteUser();
+    // }
+    //
+    // [Test]
+    // [Category("End2End")]
+    // public async Task DoesListsDisplayCorrectCountMultiple()
+    // {
+    //     await RegisterUser();
+    //     await LoginUser();
+    //
+    //     await _page.Locator("li").Locator("#followButton").First.ClickAsync();
+    //     
+    //     await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+    //     
+    //     await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+    //     
+    //     
+    //     await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+    //     
+    //     // Clean up
+    //     await DeleteUser();
+    // }
 }

@@ -177,7 +177,6 @@ namespace Chirp.Infrastructure.Repositories
                     Author = author,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-
                 };
 
                 // Add the new Cheep to the DbContext

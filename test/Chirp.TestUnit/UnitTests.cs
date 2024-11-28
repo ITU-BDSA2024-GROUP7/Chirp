@@ -418,4 +418,160 @@ public class UnitTests
         Assert.True(author2.AuthorsFollowed.Count != 0);
         Assert.True(author2.AuthorsFollowed.Contains(author1.Name));
     }
+
+    [Fact]
+    public async void DoesAuthorLike()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();  
+        
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        AuthorRepository authorRepository = new AuthorRepository(context);
+        CheepRepository repository = new CheepRepository(context,authorRepository);
+
+        await repository.HandleLike(author2.Name, cheep1.CheepId);
+        
+            
+        // Assert
+        Assert.True(cheep1.Likes.Count == 1);
+    }
+
+    [Fact]
+    public async void DoesAuthorUnlike()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();  
+        
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        AuthorRepository authorRepository = new AuthorRepository(context);
+        CheepRepository repository = new CheepRepository(context,authorRepository);
+
+        await repository.HandleLike(author2.Name, cheep1.CheepId); // Add like
+        await repository.HandleLike(author2.Name, cheep1.CheepId); // Remove like
+            
+        // Assert
+        Assert.True(cheep1.Likes.Count == 0);
+    }
+
+    [Fact]
+    public async void DoesAuthorDislike()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();  
+        
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        AuthorRepository authorRepository = new AuthorRepository(context);
+        CheepRepository repository = new CheepRepository(context,authorRepository);
+
+        await repository.HandleDislike(author2.Name, cheep1.CheepId);
+        
+            
+        // Assert
+        Assert.True(cheep1.Dislikes.Count == 1);
+    }
+
+    [Fact]
+    public async void DoesAuthorUndislike()
+    {
+        // Arrange
+        using var connection = new SqliteConnection("Filename=:memory:");
+        await connection.OpenAsync();                              
+        var builder = new DbContextOptionsBuilder<CheepDBContext>().UseSqlite(connection);
+                                                           
+        using var context = new CheepDBContext(builder.Options);   
+        await context.Database.EnsureCreatedAsync();  
+        
+        var author1 = new Author() { AuthorId = 1, Cheeps = null, Email = "helge@hotmail", Name = "Helge", AuthorsFollowed = new List<string>()};
+        var author2 = new Author() { AuthorId = 2, Cheeps = null, Email = "", Name = "Adrian", AuthorsFollowed = new List<string>() };
+        
+        context.Authors.Add(author1);
+        context.Authors.Add(author2);
+        
+        var cheep1 = new Cheep
+        {
+            CheepId = 1,
+            Author = author1,
+            AuthorId = author1.AuthorId,
+            Text = "Sådan!",
+            TimeStamp = DateTimeOffset.FromUnixTimeSeconds(1690892208).UtcDateTime // Ensure this matches the format in your model
+        };
+        context.Cheeps.Add(cheep1);
+        
+        await context.SaveChangesAsync();  // Save the seed data to the in-memory database
+        
+        AuthorRepository authorRepository = new AuthorRepository(context);
+        CheepRepository repository = new CheepRepository(context,authorRepository);
+
+        await repository.HandleDislike(author2.Name, cheep1.CheepId); // Add like
+        await repository.HandleDislike(author2.Name, cheep1.CheepId); // Remove like
+            
+        // Assert
+        Assert.True(cheep1.Dislikes.Count == 0);
+    }
 }

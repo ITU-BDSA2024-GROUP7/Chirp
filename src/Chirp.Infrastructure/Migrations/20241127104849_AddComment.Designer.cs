@@ -3,6 +3,7 @@ using System;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Infrastructure.Migrations
 {
     [DbContext(typeof(CheepDBContext))]
-    partial class CheepDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241127104849_AddComment")]
+    partial class AddComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0-rc.2.24474.1");
@@ -94,48 +97,6 @@ namespace Chirp.Infrastructure.Migrations
                     b.HasIndex("CheepId");
 
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("Chirp.Core.Dislike", b =>
-                {
-                    b.Property<int>("DislikeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CheepId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DislikeId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CheepId");
-
-                    b.ToTable("Dislikes");
-                });
-
-            modelBuilder.Entity("Chirp.Core.Like", b =>
-                {
-                    b.Property<int>("LikeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CheepId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("LikeId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CheepId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("Chirp.Infrastructure.Data.ApplicationUser", b =>
@@ -362,44 +323,6 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Dislike", b =>
-                {
-                    b.HasOne("Chirp.Core.Author", "Author")
-                        .WithMany("Dislikes")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chirp.Core.Cheep", "Cheep")
-                        .WithMany("Dislikes")
-                        .HasForeignKey("CheepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Cheep");
-                });
-
-            modelBuilder.Entity("Chirp.Core.Like", b =>
-                {
-                    b.HasOne("Chirp.Core.Author", "Author")
-                        .WithMany("Likes")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chirp.Core.Cheep", "Cheep")
-                        .WithMany("Likes")
-                        .HasForeignKey("CheepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Cheep");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -454,19 +377,11 @@ namespace Chirp.Infrastructure.Migrations
             modelBuilder.Entity("Chirp.Core.Author", b =>
                 {
                     b.Navigation("Cheeps");
-
-                    b.Navigation("Dislikes");
-
-                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("Chirp.Core.Cheep", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Dislikes");
-
-                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

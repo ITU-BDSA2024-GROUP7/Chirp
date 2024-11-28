@@ -184,7 +184,7 @@ div.page ul.cheeps li {
 }
 
 div.page ul.cheeps p {
-    margin: 0;
+    margin: 5px 0;
     word-wrap: break-word; 
     overflow-wrap: break-word;
 }
@@ -375,6 +375,53 @@ ul.nav li a:hover {
     height: 2em;
     width: auto;
     margin-right: 5px;
+}
+
+.CheepReactions {
+    display: flex;
+    align-items: center; /* Vertically center elements */
+    gap: 0px; /* Space between elements */
+}
+
+.CheepReactions p {
+    margin-right: 15px!important;
+    margin-left: 5px!important;
+}
+
+.CheepReactions form {
+    margin: 0;
+    display: inline-block;
+}
+
+.CheepReactions button{
+    padding: 0; 
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.CheepReactions button .fareact {
+    color: dimgrey !important;
+    transition: color 0.3s ease;
+}
+
+.CheepReactions button.likedButton .fa-thumbs-up {
+    color: #0c770c !important;
+}
+
+.CheepReactions button.dislikedButton .fa-thumbs-down {
+    color: #9a0e0e !important;
+}
+
+/*.CheepReactions button:hover {*/
+/*    background-color: #5e5e5e;*/
+/*}*/
+
+.CheepReactions button .fa-thumbs-up:hover {
+    color: #0c770c !important;
+}
+
+.CheepReactions button .fa-thumbs-down:hover {
+    color: #9a0e0e !important;
 }
 
 .stat-container {

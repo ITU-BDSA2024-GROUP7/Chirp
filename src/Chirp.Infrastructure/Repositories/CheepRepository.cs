@@ -28,6 +28,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -35,7 +36,11 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
@@ -56,7 +61,11 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
             
             return await query.ToListAsync();
@@ -71,6 +80,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -78,7 +88,11 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
@@ -105,6 +119,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Take(32)
                 .Select(cheep => new CheepDTO
                 {
+                    CheepId = cheep.CheepId,
                     Author = new AuthorDTO
                     {
                         Name = cheep.Author.Name,
@@ -112,12 +127,15 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
                 });
 
             return await query.ToListAsync();
         }
-        
         // get total count of pages 
         public async Task<int> GetTotalPages(string authorName = "")
         {
@@ -156,8 +174,9 @@ namespace Chirp.Infrastructure.Repositories
                 Cheep newCheep = new Cheep
                 {
                     Text = cheepDTO.Text,
-                    Author =  author,
-                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    Author = author,
+                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
 
                 // Add the new Cheep to the DbContext
@@ -214,6 +233,141 @@ namespace Chirp.Infrastructure.Repositories
                 });
             // Execute the query and return the list of messages
             return await query.ToListAsync();
+        }
+
+        public async Task HandleLike(string authorName, int cheepId)
+        {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+
+            // Find the Cheep by its Id
+            var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
+            if (cheep == null)
+            {
+                // Handle case where cheep is not found
+                throw new Exception("Cheep not found");
+            }
+            
+            // Check if the author has disliked this cheep
+            var existingDislike = await _dbContext.Dislikes
+                .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
+            
+            // Check if the author has already liked this cheep
+            var existingLike = await _dbContext.Likes
+                .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
+
+            
+            if (existingLike != null) // if the user has already liked the cheep
+            {
+                await UnlikeCheep(existingLike);
+            }
+            else // if the user has not liked the cheep
+            {
+                if (existingDislike != null)
+                {
+                    // undislike cheep if the user has disliked it
+                    await UnDislikeCheep(existingDislike);
+                }
+                
+                await LikeCheep(authorId, cheepId);
+            }
+        }
+        
+        public async Task LikeCheep(int authorId, int cheepId)
+        {
+            // Create a new Like record
+            var like = new Like
+            {
+                CheepId = cheepId,
+                AuthorId = authorId
+            };
+
+            // Add the new Like to the DbContext
+            await _dbContext.Likes.AddAsync(like);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UnlikeCheep(Like existingLike)
+        {
+            // Remove the Like from the DbContext
+            _dbContext.Likes.Remove(existingLike);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task HandleDislike(string authorName, int cheepId)
+        {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+
+            // Find the Cheep by its Id
+            var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
+            if (cheep == null)
+            {
+                // Handle case where cheep is not found
+                throw new Exception("Cheep not found");
+            }
+            // Check if the author has already liked this cheep
+            var existingLike = await _dbContext.Likes
+                .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
+            
+            // Check if the author has already disliked this cheep
+            var existingDislike = await _dbContext.Dislikes
+                .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
+
+            if (existingDislike != null) // if the user has already disliked the cheep
+            {
+                await UnDislikeCheep(existingDislike);
+            }
+            else // undislike cheep if the user has disliked it
+            {
+                if (existingLike != null)
+                {
+                    await UnlikeCheep(existingLike);
+                }
+                // if the user has not disliked the cheep
+                await DislikeCheep(authorId, cheepId);
+            }
+        }
+        
+        public async Task DislikeCheep(int authorId, int cheepId)
+        {
+            // Create a new Dislike record
+            var dislike = new Dislike()
+            {
+                CheepId = cheepId,
+                AuthorId = authorId
+            };
+
+            // Add the new Dislike to the DbContext
+            await _dbContext.Dislikes.AddAsync(dislike);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UnDislikeCheep(Dislike existingLike)
+        {
+            // Remove the Dislike from the DbContext
+            _dbContext.Dislikes.Remove(existingLike);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

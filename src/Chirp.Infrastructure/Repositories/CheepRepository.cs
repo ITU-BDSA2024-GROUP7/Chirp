@@ -279,6 +279,7 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         public async Task LikeCheep(int authorId, int cheepId)
+        {
             // Create a new Like record
             var like = new Like
             {

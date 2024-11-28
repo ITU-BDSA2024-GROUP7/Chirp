@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true
+        Headless = false
     };
 
     [SetUp]
@@ -980,6 +980,26 @@ public class E2ETests : PageTest
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
         await _page.GetByRole(AriaRole.Link, new() { Name = "Following:" }).ClickAsync();
         await Expect(_page.Locator("#popup2").GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    // ---------------------------------- Delete TESTS ----------------------------------
+    [Test]
+    [Category("End2End")]
+    // Test that the cheep is being deleted
+    public async Task DoesDeleteButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Testing that this is a deleteable cheep");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Testing that this is a deleteable cheep" }).First).ToBeVisibleAsync();
+        await _page.Locator("#deleteButton").ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Testing that this is a deleteable cheep" }).First).Not.ToBeVisibleAsync();
         
         // Clean up
         await DeleteUser();

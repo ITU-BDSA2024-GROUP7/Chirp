@@ -986,21 +986,4 @@ public class E2ETests : PageTest
         await DeleteUser();
     }
     
-    // [Test]
-    // [Category("End2End")]
-    // public async Task KillUser()
-    // {
-    //     // Follows another user and checks if a user shows up in the following list popup
-    //     await RegisterUser();
-    //     await LoginUser();
-    //     await DeleteUser();
-    //     
-    //     await RegisterUser("1");
-    //     await LoginUser("1");
-    //     await DeleteUser();
-    //     
-    //     await RegisterUser("2");
-    //     await LoginUser("2");
-    //     await DeleteUser();
-    // }
 }

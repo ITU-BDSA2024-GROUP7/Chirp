@@ -78,13 +78,13 @@ div.page h1 img {
 
 div.page div.navigation {
     position: fixed;
-    left: auto;             /* Distance from the left edge of the viewport */
+    left: auto; /* Distance from the left edge of the viewport */
     margin-left: -220px; /* Adjust to place content right next to the navbar */
-    top: 50px;              /* Distance from the top to align with the header */
-    width: 150px;           /* Set a fixed width */
+    top: 50px; /* Distance from the top to align with the header */
+    width: 150px; /* Set a fixed width */
     padding: 10px;
     color: white;
-    overflow-y: auto;       /* Allow scrolling if content overflows */
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
 
 div.page div.navigation a {
@@ -94,8 +94,8 @@ div.page div.navigation a {
     padding: 10px;
     font-size: 22px;
     margin-bottom: 15px;
-    display: inline-flex;  
-    align-items: center;   /* Align children (image and text) vertically at the center */
+    display: inline-flex;
+    align-items: center; /* Align children (image and text) vertically at the center */
     transition: background-color 0.4s ease;
     border-radius: 20px;
 }
@@ -107,7 +107,8 @@ div.page div.navigation a:hover {
 div.page div.navigation img {
     height: 1.3em;
     width: auto;
-    margin-right: 10px;}
+    margin-right: 10px;
+}
 
 div.page div.navigation form {
     display: contents;
@@ -300,7 +301,7 @@ button {
     background-color: #cc6e6e;
     border: none;
     color: white;
-    padding: 8px 16px;  /* Add padding for even spacing */
+    padding: 8px 16px; /* Add padding for even spacing */
     text-align: center;
     text-decoration: none;
     cursor: pointer;
@@ -348,7 +349,7 @@ ul.nav li a:hover {
     margin: 0;
 }
 
-.cheep-container>form>button {
+.cheep-container > form > button {
     border: none;
     color: white;
     padding: 2px 8px;
@@ -362,15 +363,157 @@ ul.nav li a:hover {
     border-radius: 50px;
 }
 
-.cheep-container>form:has(#followButton)>button {
+.cheep-container > form:has(#followButton) > button {
     background-color: #5690a3;
 }
 
-.cheep-container>form:has(#unfollowButton)>button {
+.cheep-container > form:has(#unfollowButton) > button {
     background-color: #cc6e6e;
 }
+
 .providerImg {
     height: 2em;
     width: auto;
     margin-right: 5px;
+}
+
+.stat-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.stat-container .border {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center; /* Align items vertically in the center */
+    border: 2px solid #cc6e6e;
+    border-radius: 15px;
+}
+
+.stat-container div {
+    margin: 0 10px; /* Optional spacing between child divs */
+}
+
+/* Java scriptless popup from https://jsfiddle.net/kzgjr6so/ */
+
+.stat-container .button {
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    color: #cc6e6e;
+}
+
+.stat-container .button:hover {
+    background: orange;
+    text-decoration: underline;
+
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup {
+    margin: 70px auto; /* Centers the popup horizontally */
+    padding: 30px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: 2s ease-in;
+    box-sizing: border-box; /* Ensure padding is part of the total width */
+}
+
+.popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+.popup .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.popup .close:hover {
+    color: orange;
+}
+
+.popup .content {
+    margin-top: 20px;
+    max-height: 30%;
+    overflow: auto;
+    font-size: 15px;
+}
+
+.popup .content li {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Vertically center the items */
+    padding: 5px;
+    background: #F0FAF9;
+    border: 1px solid #DBF3F1;
+    border-radius: 2px;
+    min-height: 48px;
+    list-style: none;
+    margin-bottom: 5px;
+}
+
+.popup .content li a {
+    margin-right: 10px; /* Add space between the link and the button */
+    font-weight: bold;
+}
+
+.popup .content li button {
+    margin-left: 5px; /* Ensures button is aligned to the right side of the link */
+}
+
+#followButton {
+    border: none;
+    color: white;
+    padding: 2px 8px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 0 5px;
+    height: auto;
+    border-radius: 50px;
+    background-color: #5690a3;
+}
+
+#unfollowButton {
+    border: none;
+    color: white;
+    padding: 2px 8px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 0 5px;
+    height: auto;
+    border-radius: 50px;
+    background-color: #cc6e6e;
 }

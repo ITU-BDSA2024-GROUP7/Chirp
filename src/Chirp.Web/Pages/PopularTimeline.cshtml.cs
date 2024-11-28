@@ -12,7 +12,7 @@ using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
 
-public class PublicModel : PageModel
+public class PopularTimelineModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
@@ -23,7 +23,7 @@ public class PublicModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
-    public PublicModel(CheepService service)
+    public PopularTimelineModel(CheepService service)
     {
         _service = service;
     }
@@ -40,7 +40,7 @@ public class PublicModel : PageModel
         }
 
         PageNumber = page;
-        Cheeps = await _service.GetCheeps(page);
+        Cheeps = await _service.GetPopularCheeps(page);
         TotalPageNumber = await _service.GetTotalPageNumber();
 
 
@@ -151,6 +151,22 @@ public class PublicModel : PageModel
         
         return Redirect($"/?page={PageNumber}");
     }
-    
+
+    public async Task<IActionResult> OnPostShowPopularCheeps(int pageNumber)
+    {
+        PageNumber = pageNumber;
+        ShowPopularCheeps = true;
+
+        Cheeps = await _service.GetPopularCheeps(pageNumber);
+        TotalPageNumber = await _service.GetTotalPageNumber();
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+
+        return Page();
+    }
 
 }

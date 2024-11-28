@@ -1,11 +1,11 @@
-﻿@page "/"
+﻿@page "/popular"
 @using Chirp.Core
 @using Chirp.Core.DTOs
 @using Chirp.Web.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.IdentityModel.Tokens
-@model Chirp.Web.Pages.PublicModel
+@model Chirp.Web.Pages.PopularTimelineModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
@@ -18,11 +18,11 @@
 
 <div xmlns="http://www.w3.org/1999/html">
     <div class="timeline-header">
-        <h2> Public Timeline </h2>
+        <h2> Popular Cheeps Timeline </h2>
     </div>
-    <div class="PopularCheeps">
-        <a href="/popular">
-            <button type="button">What's Popular?</button>
+    <div class="PublicCheeps">
+        <a href="/">
+            <button type="button">What's Public?</button>
         </a>
     </div>
     @if(User.Identity != null && User.Identity.IsAuthenticated){ 

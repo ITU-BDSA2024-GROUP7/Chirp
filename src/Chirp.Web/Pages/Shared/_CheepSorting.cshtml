@@ -1,8 +1,20 @@
-﻿<div>
-    <a href="/">
-        <button type="submit">newest</button>
-    </a>
-    <a href="/popular">
-        <button type="submit">popular</button>
-    </a>
-</div>
+﻿@{
+    var currentPath = Context.Request.Path.Value;
+    var isHomePage = currentPath == "/";
+    var isPopularPage = currentPath == "/popular";
+}
+
+<select id="cheepSortingDropdown">
+    <option value="/" selected="@(isHomePage ? "selected" : null)">Newest Cheeps</option>
+    <option value="/popular" selected="@(isPopularPage ? "selected" : null)">Popular Cheeps</option>
+</select>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dropdown = document.getElementById("cheepSortingDropdown");
+        dropdown.addEventListener("change", function () {
+            var selectedValue = dropdown.value;
+            window.location.href = selectedValue;
+        });
+    });
+</script>

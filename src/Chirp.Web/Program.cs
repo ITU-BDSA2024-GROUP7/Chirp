@@ -152,6 +152,7 @@ namespace Chirp.Web
                     "font-src 'self'; " +                                // Allow fonts from self
                     "frame-src 'self'; " +                               // Allow frames from self
                     "object-src 'none'; " +                              // Disallow object elements
+                    "script-src 'self' 'unsafe-inline' https://bdsagroup07chirprazor.azurewebsites.net/;" + // Allow scripts from self and Azure
                     "worker-src 'self';");                               // Allow workers from self
                 await next();
             });

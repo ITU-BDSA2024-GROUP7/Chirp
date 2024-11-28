@@ -133,6 +133,12 @@ div.page h2 {
     justify-content: center; /* Center the content */
     align-items: center;
     position: relative; /* Ensures the button can be placed to the left */
+    width: 100%;
+}
+
+.cheep-sorting-container {
+    position: absolute;
+    left: 0; /* Position the dropdown on the far left */
 }
 
 .timeline-button {

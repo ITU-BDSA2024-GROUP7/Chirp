@@ -11,7 +11,7 @@
     Layout = "Shared/_Layout";
     
     int pageNumber = Model.PageNumber;
-    int totalPages = Model.TotalPageNumber;
+    int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.UserAuthor;
 
 }
@@ -19,8 +19,10 @@
 <div xmlns="http://www.w3.org/1999/html">
     <div class="timeline-header">
         <h2> Popular Cheeps Timeline </h2>
+        <div class="cheep-sorting-container">
+            @await Html.PartialAsync("_CheepSorting")
+        </div>
     </div>
-    @await Html.PartialAsync("_CheepSorting")
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         @* Render the Share Form Partial View *@

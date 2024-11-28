@@ -9,7 +9,7 @@
 
     var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
-    int totalPages = Model.TotalPageNumber;
+    int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
 }
 

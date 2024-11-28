@@ -17,5 +17,4 @@ public class Author
   public required ICollection<string> AuthorsFollowed { get; set; } // List of authors followed
   public ICollection<Like> Likes { get; set; } = new List<Like>();
   public ICollection<Dislike> Dislikes { get; set; } = new List<Dislike>();
-
 }

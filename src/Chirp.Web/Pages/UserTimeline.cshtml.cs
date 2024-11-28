@@ -123,8 +123,9 @@ public class UserTimelineModel : PageModel
     /// Follows an author
     /// </summary>
     /// <param name="followedAuthorName"></param>
+    /// <param name="currentAuthorPageName"></param>
     /// <returns></returns>
-    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName, string currentAuthorPageName)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
@@ -133,15 +134,16 @@ public class UserTimelineModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/{followedAuthorName}?page={PageNumber}");
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
 
     /// <summary>
     /// Unfollows an author
     /// </summary>
     /// <param name="followedAuthor"></param>
+    /// <param name="currentAuthorPageName"></param>
     /// <returns></returns>
-    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
+    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor, string currentAuthorPageName)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
@@ -150,6 +152,6 @@ public class UserTimelineModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/{followedAuthor}?page={PageNumber}");
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
 }

@@ -47,18 +47,20 @@
                             <a href="/@author">@author</a>
                             @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
                             {
-                            <form method="post">
-                                @if (!userAuthor.AuthorsFollowed.Contains(author))
-                                {
-                                <input type="hidden" name="followedAuthorName" value="@author"/>
-                                <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
-                                }
-                                else
-                                {
-                                <input type="hidden" name="followedAuthor" value="@author"/>
-                                <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
-                                }
-                            </form>
+                                <form method="post">
+                                    @if (!userAuthor.AuthorsFollowed.Contains(author))
+                                    {
+                                        <input type="hidden" name="followedAuthorName" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="followedAuthor" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                    }
+                                </form>
                             }
                         </li>
                     }

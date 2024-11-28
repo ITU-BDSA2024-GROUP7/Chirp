@@ -137,12 +137,14 @@
                                 {
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
                                     <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
                                 else
                                 {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
                                     <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
                                 }
                             </form>

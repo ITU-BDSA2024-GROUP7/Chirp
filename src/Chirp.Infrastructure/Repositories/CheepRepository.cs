@@ -264,6 +264,7 @@ namespace Chirp.Infrastructure.Repositories
 
             
             if (existingLike != null) // if the user has already liked the cheep
+            {
                 await UnlikeCheep(existingLike);
             }
             else // if the user has not liked the cheep

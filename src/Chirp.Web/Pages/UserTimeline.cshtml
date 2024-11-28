@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    
+
     var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber;
@@ -20,7 +20,99 @@
         </a>
         <h2> @authorName's Timeline </h2>
     </div>
-    @if(User.Identity != null && User.Identity.IsAuthenticated){
+    <div class="stat-container">
+        <div class="border">
+            <div>
+                <a class="button" href="#popup1">
+                    <h3>Followers: @Model.FollowingMeList.Count</h3>
+                </a>
+            </div>
+            <div>
+                <a class="button" href="#popup2">
+                    <h3>Following: @Model.FollowingList.Count</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="popup1" class="overlay">
+        <div class="popup">
+            <h2>Followers:</h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                @if (Model.FollowingMeList.Count > 0)
+                {
+                    @foreach (var author in Model.FollowingMeList)
+                    {
+                        <li>
+                            <a href="/@author">@author</a>
+                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            {
+                                <form method="post">
+                                    @if (!userAuthor.AuthorsFollowed.Contains(author))
+                                    {
+                                        <input type="hidden" name="followedAuthorName" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="followedAuthor" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                    }
+                                </form>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p>No users are following this user.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="popup2" class="overlay">
+        <div class="popup">
+            <h2>"@authorName" is following:</h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                @if (Model.FollowingList.Count > 0)
+                {
+                    @foreach (var author in Model.FollowingList)
+                    {
+                        <li>
+                            <a href="/@author">@author</a>
+                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            {
+                                <form method="post">
+                                    @if (!userAuthor.AuthorsFollowed.Contains(author))
+                                    {
+                                        <input type="hidden" name="followedAuthorName" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="followedAuthor" value="@author"/>
+                                        <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                        <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                    }
+                                </form>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p>No users are following this user.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
         @* Render the Share Form Partial View *@
         {
             ViewData["pageNumber"] = pageNumber;
@@ -37,24 +129,26 @@
                         <strong>
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
-    
-                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
+
+                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        {
                             <form style="display: flex;" method="post">
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                                 {
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
                                 else
                                 {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
                                 }
                             </form>
                         }
-    
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
                     <br><br>
@@ -77,6 +171,8 @@
                             <p>@cheep.DislikesCount</p>
                         }
                     </div>
+
+
                 </li>
             }
         </ul>
@@ -106,7 +202,7 @@
                     <button style="display: inline; margin: 0;">&gt;&gt;</button>
                 </a>
             }
-            
+
         </div>
     </div>
 </div>

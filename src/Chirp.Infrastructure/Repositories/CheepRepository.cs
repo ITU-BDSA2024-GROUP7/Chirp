@@ -297,7 +297,6 @@ namespace Chirp.Infrastructure.Repositories
             
             if (existingLike != null) // if the user has already liked the cheep
             {
-                
                 await UnlikeCheep(existingLike);
             }
             else // if the user has not liked the cheep
@@ -314,7 +313,6 @@ namespace Chirp.Infrastructure.Repositories
         
         public async Task LikeCheep(int authorId, int cheepId)
         {
-            
             // Create a new Like record
             var like = new Like
             {
@@ -336,7 +334,6 @@ namespace Chirp.Infrastructure.Repositories
 
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
-
         }
 
         public async Task HandleDislike(string authorName, int cheepId)

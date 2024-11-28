@@ -59,7 +59,24 @@
                     <small>@cheep.FormattedTimeStamp</small>
                     <br><br>
                     <p>@cheep.Text</p>
-                    
+                    <div class="CheepReactions">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
+                            </form>
+                            
+                            <p>@cheep.LikesCount</p>
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")" type="submit" asp-page-handler="DisLikeMethod"><i class="fas fa-thumbs-down fa-2x fareact"></i></button>
+                            </form>
+                            <p>@cheep.DislikesCount</p>
+                        }
+                    </div>
                 </li>
             }
         </ul>

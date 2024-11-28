@@ -117,7 +117,6 @@ public class CheepService : ICheepService
     public async Task HandleDislike(string authorName, int cheepId)
     {
         await _cheepRepository.HandleDislike(authorName, cheepId);
-
     }
 
     /// <summary>

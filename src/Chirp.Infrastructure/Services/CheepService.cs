@@ -21,6 +21,9 @@ public interface ICheepService
     public Task <List<string>>GetFollowedAuthors(string userName);
     public Task HandleLike(string authorName, int cheepId);
     public Task HandleDislike(string authorName, int cheepId);
+    public Task<List<CheepDTO>> GetPopularCheeps(int page);
+    public Task<int> GetTotalPageNumberForPopular();
+
 }
 public class CheepService : ICheepService
 {
@@ -128,5 +131,14 @@ public class CheepService : ICheepService
     public async Task<List<string>> GetFollowingAuthors(string userName)
     {
         return await _authorRepository.GetFollowingAuthors(userName);
+    }
+
+    public async Task<List<CheepDTO>> GetPopularCheeps(int page)
+    {
+        return await _cheepRepository.GetPopularCheeps(page);
+    }
+    public async Task<int> GetTotalPageNumberForPopular()
+    {
+        return await _cheepRepository.GetTotalPageNumberForPopular();
     }
 }

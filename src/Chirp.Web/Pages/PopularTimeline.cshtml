@@ -1,11 +1,11 @@
-﻿@page "/"
+﻿@page "/popular"
 @using Chirp.Core
 @using Chirp.Core.DTOs
 @using Chirp.Web.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.IdentityModel.Tokens
-@model Chirp.Web.Pages.PublicModel
+@model Chirp.Web.Pages.PopularTimelineModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
@@ -18,20 +18,21 @@
 
 <div xmlns="http://www.w3.org/1999/html">
     <div class="timeline-header">
-        <h2> Public Timeline </h2>
+        <h2> Popular Cheeps Timeline </h2>
     </div>
     @await Html.PartialAsync("_CheepSorting")
-    @if(User.Identity != null && User.Identity.IsAuthenticated){ 
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
         @* Render the Share Form Partial View *@
         {
             ViewData["pageNumber"] = pageNumber;
         }
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
-    
+
     @if (Model.Cheeps.Any())
     {
-        <ul id="messagelist" class="cheeps"> 
+        <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
                 <li>
@@ -39,24 +40,25 @@
                         <strong>
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
-    
-                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
+
+                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        {
                             <form style="display: flex;" method="post">
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                                 {
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
                                 else
                                 {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
                                 }
                             </form>
                         }
-    
+
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
                     <br>
@@ -68,7 +70,7 @@
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                                 <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
                             </form>
-                            
+
                             <p>@cheep.LikesCount</p>
                             <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
@@ -91,12 +93,12 @@
             <div style="width: 80px; display: flex; justify-content: flex-start;">
                 @if (@pageNumber != 1)
                 {
-                <a href="/?page=1" style="text-decoration: none; margin-right: 5px;">
-                    <button style="display: inline-block; margin: 0;">&lt;&lt;</button>
-                </a>
-                <a href="/?page=@(pageNumber - 1)" style="text-decoration: none;">
-                    <button style="display: inline-block; margin: 0;">&lt;</button>
-                </a>
+                    <a href="/popular?page=1" style="text-decoration: none; margin-right: 5px;">
+                        <button style="display: inline-block; margin: 0;">&lt;&lt;</button>
+                    </a>
+                    <a href="/popular?page=@(pageNumber - 1)" style="text-decoration: none;">
+                        <button style="display: inline-block; margin: 0;">&lt;</button>
+                    </a>
                 }
             </div>
 
@@ -105,12 +107,12 @@
             <div style="width: 80px; display: flex; justify-content: flex-end;">
                 @if (@pageNumber != @totalPages)
                 {
-                <a href="/?page=@(pageNumber + 1)" style="text-decoration: none; margin-right: 5px;">
-                    <button style="display: inline-block; margin: 0;">&gt;</button>
-                </a>
-                <a href="/?page=@totalPages" style="text-decoration: none;">
-                    <button style="display: inline-block; margin: 0;">&gt;&gt;</button>
-                </a>
+                    <a href="/popular?page=@(pageNumber + 1)" style="text-decoration: none; margin-right: 5px;">
+                        <button style="display: inline-block; margin: 0;">&gt;</button>
+                    </a>
+                    <a href="/popular?page=@totalPages" style="text-decoration: none;">
+                        <button style="display: inline-block; margin: 0;">&gt;&gt;</button>
+                    </a>
                 }
             </div>
         </div>

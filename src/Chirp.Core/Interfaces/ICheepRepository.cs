@@ -11,4 +11,6 @@ public interface ICheepRepository
     Task<int> GetTotalPages(string authorName);
     Task DeleteCheep(int cheepId);
     Task DeleteUserCheeps(AuthorDTO author);
+    public Task<List<CheepDTO>> GetPopularCheeps(int page);
+    Task<int> GetTotalPageNumberForPopular();
 }

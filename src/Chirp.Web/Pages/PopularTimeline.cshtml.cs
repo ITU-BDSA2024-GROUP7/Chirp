@@ -12,7 +12,7 @@ using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
 
-public class PublicModel : PageModel
+public class PopularTimelineModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
@@ -23,7 +23,7 @@ public class PublicModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
-    public PublicModel(CheepService service)
+    public PopularTimelineModel(CheepService service)
     {
         _service = service;
     }
@@ -40,8 +40,8 @@ public class PublicModel : PageModel
         }
 
         PageNumber = page;
-        Cheeps = await _service.GetCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumber();
+        Cheeps = await _service.GetPopularCheeps(page);
+        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
 
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -70,7 +70,7 @@ public class PublicModel : PageModel
             // Ensure Cheeps and other required properties are populated
             Cheeps = await _service.GetCheeps(PageNumber);
             
-            TotalPageNumber = await _service.GetTotalPageNumber();
+            TotalPageNumber = await _service.GetTotalPageNumberForPopular();
             
             var currentUserName = User.Identity.Name;
             UserAuthor = await _service.FindAuthorByName(currentUserName);
@@ -101,7 +101,7 @@ public class PublicModel : PageModel
             }
         }
 
-        return RedirectToPage("Public", new { page = 1 });
+        return RedirectToPage("popular", new { page = 1 });
     }
     
     /// <summary>
@@ -118,7 +118,7 @@ public class PublicModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
 
     /// <summary>
@@ -135,22 +135,38 @@ public class PublicModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId)
     {
         await _service.HandleLike(User.Identity.Name, cheepId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId)
     {
         await _service.HandleDislike(User.Identity.Name, cheepId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
-    
+
+    public async Task<IActionResult> OnPostShowPopularCheeps(int pageNumber)
+    {
+        PageNumber = pageNumber;
+        ShowPopularCheeps = true;
+
+        Cheeps = await _service.GetPopularCheeps(pageNumber);
+        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+
+        return Page();
+    }
 
 }

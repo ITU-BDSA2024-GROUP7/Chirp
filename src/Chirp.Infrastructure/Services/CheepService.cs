@@ -22,7 +22,6 @@ public interface ICheepService
     public Task HandleLike(string authorName, int cheepId);
     public Task HandleDislike(string authorName, int cheepId);
 
-   
 }
 public class CheepService : ICheepService
 {

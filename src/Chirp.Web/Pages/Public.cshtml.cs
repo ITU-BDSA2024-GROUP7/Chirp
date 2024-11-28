@@ -18,6 +18,7 @@ public class PublicModel : PageModel
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public AuthorDTO UserAuthor { get; set; }
+    public bool ShowPopularCheeps { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
@@ -149,6 +150,23 @@ public class PublicModel : PageModel
         await _service.HandleDislike(User.Identity.Name, cheepId);
         
         return Redirect($"/?page={PageNumber}");
+    }
+
+    public async Task<IActionResult> OnPostShowPopularCheeps(int pageNumber)
+    {
+        PageNumber = pageNumber;
+        ShowPopularCheeps = true;
+
+        Cheeps = await _service.GetPopularCheeps(pageNumber);
+        TotalPageNumber = await _service.GetTotalPageNumber();
+
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var currentUserName = User.Identity.Name;
+            UserAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+
+        return Page();
     }
 
 }

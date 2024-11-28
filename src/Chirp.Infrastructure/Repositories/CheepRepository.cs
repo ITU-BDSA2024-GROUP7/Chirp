@@ -372,5 +372,33 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<CheepDTO>> GetPopularCheeps(int page)
+        {
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author)
+                .Where(cheep => cheep.Likes.Count > 0)
+                .OrderByDescending(cheep => cheep.Likes.Count)
+                .Skip((page - 1) * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    CheepId = cheep.CheepId,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
+                });
+
+            return await query.ToListAsync();
+        }
     }
 }

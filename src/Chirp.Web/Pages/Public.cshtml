@@ -20,6 +20,12 @@
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
+    <div class="PopularCheeps">
+        <form method="post" asp-page-handler="ShowPopularCheeps">
+            <input type="hidden" name="pageNumber" value="@pageNumber"/>
+            <button type="submit">What's Popular?</button>
+        </form>
+    </div>
     @if(User.Identity != null && User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
         {

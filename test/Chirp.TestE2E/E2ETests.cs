@@ -30,7 +30,6 @@ public class E2ETests : PageTest
         _page = await _context.NewPageAsync();
 
         if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
     }
 
     [OneTimeSetUp]
@@ -985,5 +984,4 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
-    
 }

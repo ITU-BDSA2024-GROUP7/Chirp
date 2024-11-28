@@ -299,7 +299,6 @@ namespace Chirp.Infrastructure.Repositories
             _dbContext.Likes.Remove(existingLike);
 
             // Save changes to the database
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task HandleDislike(string authorName, int cheepId)

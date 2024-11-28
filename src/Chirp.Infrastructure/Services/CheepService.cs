@@ -21,7 +21,6 @@ public interface ICheepService
     public Task <List<string>>GetFollowedAuthors(string userName);
     public Task HandleLike(string authorName, int cheepId);
     public Task HandleDislike(string authorName, int cheepId);
-
 }
 public class CheepService : ICheepService
 {

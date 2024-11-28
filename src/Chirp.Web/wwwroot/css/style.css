@@ -559,3 +559,17 @@ ul.nav li a:hover {
     border-radius: 50px;
     background-color: #cc6e6e;
 }
+.Delete button {
+    background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
+    background-size: contain; /* Ensure the image fits within the button */
+    background-position: right; /* Center the image within the button */
+    background-repeat: no-repeat;
+    border: none;
+    width: 25px; 
+    height: 25px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    background-color: rgba(255, 255, 255, 0); 
+}

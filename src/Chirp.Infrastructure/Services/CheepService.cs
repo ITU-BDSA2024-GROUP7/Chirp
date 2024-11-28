@@ -113,11 +113,13 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.HandleLike(authorName, cheepId);
     }
+
     public async Task HandleDislike(string authorName, int cheepId)
     {
         await _cheepRepository.HandleDislike(authorName, cheepId);
 
-    
+    }
+
     /// <summary>
     /// Returns the list of authors that follows a user
     /// </summary>

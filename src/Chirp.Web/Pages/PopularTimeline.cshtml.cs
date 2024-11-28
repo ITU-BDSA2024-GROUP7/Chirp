@@ -41,7 +41,7 @@ public class PopularTimelineModel : PageModel
 
         PageNumber = page;
         Cheeps = await _service.GetPopularCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumber();
+        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
 
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -70,7 +70,7 @@ public class PopularTimelineModel : PageModel
             // Ensure Cheeps and other required properties are populated
             Cheeps = await _service.GetCheeps(PageNumber);
             
-            TotalPageNumber = await _service.GetTotalPageNumber();
+            TotalPageNumber = await _service.GetTotalPageNumberForPopular();
             
             var currentUserName = User.Identity.Name;
             UserAuthor = await _service.FindAuthorByName(currentUserName);
@@ -101,7 +101,7 @@ public class PopularTimelineModel : PageModel
             }
         }
 
-        return RedirectToPage("Public", new { page = 1 });
+        return RedirectToPage("popular", new { page = 1 });
     }
     
     /// <summary>
@@ -118,7 +118,7 @@ public class PopularTimelineModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
 
     /// <summary>
@@ -135,21 +135,21 @@ public class PopularTimelineModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId)
     {
         await _service.HandleLike(User.Identity.Name, cheepId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId)
     {
         await _service.HandleDislike(User.Identity.Name, cheepId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect($"/popular?page={PageNumber}");
     }
 
     public async Task<IActionResult> OnPostShowPopularCheeps(int pageNumber)
@@ -158,7 +158,7 @@ public class PopularTimelineModel : PageModel
         ShowPopularCheeps = true;
 
         Cheeps = await _service.GetPopularCheeps(pageNumber);
-        TotalPageNumber = await _service.GetTotalPageNumber();
+        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {

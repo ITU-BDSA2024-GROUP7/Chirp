@@ -54,7 +54,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 
             // Retrieve authors that the user follows
             var authorDTO = await _service.FindAuthorByName(user.UserName);
-            FollowList = authorDTO.AuthorsFollowed as List<string>;
+            // FollowList = authorDTO.AuthorsFollowed as List<string>;
+            FollowList = await _service.GetFollowedAuthors(user.UserName);
+
             userAuthor = authorDTO;
 
             var personalDataProps = typeof(IdentityUser).GetProperties().Where(

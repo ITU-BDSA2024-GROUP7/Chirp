@@ -108,6 +108,7 @@ public class CheepService : ICheepService
         return await _authorRepository.GetFollowedAuthors(userName);
     }
 
+
     public async Task HandleLike(string authorName, int cheepId)
     {
         await _cheepRepository.HandleLike(authorName, cheepId);
@@ -115,5 +116,15 @@ public class CheepService : ICheepService
     public async Task HandleDislike(string authorName, int cheepId)
     {
         await _cheepRepository.HandleDislike(authorName, cheepId);
+
+    
+    /// <summary>
+    /// Returns the list of authors that follows a user
+    /// </summary>
+    /// <param name="userName">The username from the url</param>
+    /// <returns></returns>
+    public async Task<List<string>> GetFollowingAuthors(string userName)
+    {
+        return await _authorRepository.GetFollowingAuthors(userName);
     }
 }

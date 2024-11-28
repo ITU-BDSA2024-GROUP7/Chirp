@@ -19,9 +19,6 @@
 <div xmlns="http://www.w3.org/1999/html">
     <div class="timeline-header">
         <h2> Public Timeline </h2>
-        <div class="cheep-sorting-container">
-            @await Html.PartialAsync("_CheepSorting")
-        </div>
     </div>
     
     @if(User.Identity != null && User.Identity.IsAuthenticated){ 
@@ -31,6 +28,8 @@
         }
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
+    
+    @await Html.PartialAsync("_CheepSorting")
     
     @if (Model.Cheeps.Any())
     {

@@ -136,11 +136,6 @@ div.page h2 {
     width: 100%;
 }
 
-.cheep-sorting-container {
-    position: absolute;
-    left: 0; /* Position the dropdown on the far left */
-}
-
 .timeline-button {
     position: absolute;
     left: 0; /* Position the button to the left of the container */
@@ -564,4 +559,60 @@ ul.nav li a:hover {
     height: auto;
     border-radius: 50px;
     background-color: #cc6e6e;
+}
+
+.modern-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background-color: #cc6e6e;
+    color: white;
+    padding: 8px 12px; /* Smaller padding */
+    font-size: 14px;   /* Smaller font size */
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-btn:hover {
+    background-color: #b05c5c; /* Darker shade on hover */
+}
+
+#selectedOption {
+    margin-right: 8px; /* Adjust space between text and arrow */
+}
+
+.arrow {
+    font-size: 10px;  /* Smaller arrow */
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0);
+    min-width: 160px;
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown-item {
+    padding: 10px 14px; /* Smaller padding for items */
+    cursor: pointer;
+    background-color: #ffd2d2;
+    color: black; /* Set text color to match the scheme */
+    border-radius: 5px;
+    border: 1px solid #b05c5c;
+}
+
+.dropdown-item:hover {
+    background-color: #783f3f; /* Hover background */
+    color: white; /* Change text color on hover to white */
+}
+
+.show {
+    display: block;
 }

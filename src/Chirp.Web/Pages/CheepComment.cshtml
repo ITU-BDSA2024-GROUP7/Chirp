@@ -56,7 +56,7 @@
             </form>
         }
         <br/>
-        <small>@Model.OriginalCheep.FormattedTimeStamp</small>
+        <small>@Model.GetFormattedTimeStamp(Model.OriginalCheep.FormattedTimeStamp)</small>
         <p>@Model.OriginalCheep.Text</p>
     </div>
 }
@@ -90,7 +90,7 @@
                         </form>
                     }
                 </div>
-                <small>@comment.FormattedTimeStamp</small>
+                <small>@Model.GetFormattedTimeStamp(comment.FormattedTimeStamp)</small>
                 <p>@comment.Text</p>
             </li>
         }

@@ -88,6 +88,11 @@ public class CheepService : ICheepService
         await _cheepRepository.DeleteCheep(cheepId);
     }
 
+    public async Task DeleteComment(int commentId)
+    {
+        await _cheepRepository.DeleteComment(commentId);
+    }
+
     public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
     {
         await _authorRepository.FollowAuthor(userAuthorName, followedAuthorName);

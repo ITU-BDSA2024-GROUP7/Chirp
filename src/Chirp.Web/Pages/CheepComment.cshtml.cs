@@ -213,4 +213,11 @@ public class CheepCommentModel : PageModel
 
         return Redirect(Request.Headers["Referer"].ToString());
     }
+    public async Task<IActionResult> OnPostDeleteMethod(int CommentId)
+    {
+        Console.WriteLine("Comment ID: " + CommentId);
+        await _service.DeleteComment(CommentId);
+        
+        return Redirect(Request.Headers["Referer"].ToString());
+    }
 }

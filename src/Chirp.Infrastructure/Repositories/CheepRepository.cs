@@ -442,6 +442,7 @@ namespace Chirp.Infrastructure.Repositories
                         Email = comment.Author.Email,
                         AuthorsFollowed = comment.Author.AuthorsFollowed
                     },
+                    CommentId = comment.CommentId,
                     CheepId = comment.CheepId,
                     Text = comment.Text,
                     FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -456,6 +457,7 @@ namespace Chirp.Infrastructure.Repositories
             {
                 Comment comment = new Comment
                 {
+                    CommentId = 0,
                     CheepId = cheepDto.CheepId,
                     Author = await _authorRepository.FindAuthorByName(author),
                     Text = Text,
@@ -493,6 +495,15 @@ namespace Chirp.Infrastructure.Repositories
                 }).FirstOrDefaultAsync();
 
             return cheep;
+        }
+        public async Task DeleteComment(int commentId)
+        {
+            var comment = await _dbContext.Comment.FindAsync(commentId);
+            if (comment != null)
+            {
+                _dbContext.Comment.Remove(comment);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

@@ -89,6 +89,15 @@
                             }
                         </form>
                     }
+                    <div class="Delete">
+                        @if (User.Identity.IsAuthenticated && comment.Author.Name == User.Identity.Name)
+                        {
+                            <form method="post">
+                                <input type="hidden" name="CommentId" value="@comment.CommentId"/>
+                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                            </form>
+                        }
+                    </div>
                 </div>
                 <small>@Model.GetFormattedTimeStamp(comment.FormattedTimeStamp)</small>
                 <p>@comment.Text</p>

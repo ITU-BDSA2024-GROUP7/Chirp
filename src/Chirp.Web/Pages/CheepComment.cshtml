@@ -25,7 +25,7 @@
     <div class="CommentForm">
         @if (User.Identity.IsAuthenticated)
         {
-            <form method="post" style="display: flex; flex-direction: column; margin-bottom: 20px;">
+            <form method="post" style="display: flex; align-items: center;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
                 <textarea name="Text" placeholder="Write a comment..." style="width: 100%; margin-bottom: 10px;" required></textarea>
                 <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
@@ -110,28 +110,5 @@ else
     <em>There are no comments on this cheep so far.</em>
     <br/>
 }
-    <div style="text-align: center;">
-        <div style="display: inline-block;">
-            @if (@pageNumber != 1)
-            {
-                <a href="/@CheepId?page=1" style="text-decoration: none;">
-                    <button style="display: inline; margin: 0;">&lt;&lt;</button>
-                </a>
-                <a href="/@CheepId?page=@(pageNumber - 1)" style="text-decoration: none; margin-right: 15px;">
-                    <button style="display: inline; margin: 0;">&lt;</button>
-                </a>
-            }
-            <p style="display: inline; margin: 0; margin-right: 15px;">Page @pageNumber / @totalPages</p>
-            @if (@pageNumber != @totalPages)
-            {
-                <a href="/@CheepId?page=@(pageNumber + 1)" style="text-decoration: none;">
-                    <button style="display: inline; margin: 0;">&gt;</button>
-                </a>
-                <a href="/@CheepId?page=@totalPages" style="text-decoration: none;">
-                    <button style="display: inline; margin: 0;">&gt;&gt;</button>
-                </a>
-            }
-            
-        </div>
-    </div>
+    
 </div>

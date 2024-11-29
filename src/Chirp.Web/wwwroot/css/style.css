@@ -671,4 +671,30 @@ ul.nav li a:hover {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
 }
+.CommentForm {
+    margin: 10px 0;
+    padding: 5px;
+    gap: 5px; /* Space between elements */
+    
+}
+.CommentForm input[type="text"] {
+    width: 100%; /* Fill the remaining space */
+    padding: 5px; /* Add padding for better input size */
+    border: 1px solid #e6c0bf;
+    border-radius: 2px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+}
+.CommentForm button {
+    background: #571010;
+    border: 1px solid #3b0707;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 12px; /* Adjust font size to match input */
+    font-weight: bold;
+    border-radius: 2px;
+    color: white;
+    padding: 5px 10px; /* Add padding for better button size */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
+
 

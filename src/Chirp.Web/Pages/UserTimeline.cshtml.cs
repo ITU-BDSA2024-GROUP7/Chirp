@@ -20,6 +20,8 @@ public class UserTimelineModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; }
     public required List<String>? FollowingList { get; set; } 
     public required List<String>? FollowingMeList { get; set; }
+    public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
+
     public string CurrentAuthor { get; set; } = string.Empty;
     public AuthorDTO userAuthor { get; set; }
 
@@ -214,14 +216,14 @@ public class UserTimelineModel : PageModel
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string emoji)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
         await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string emoji)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
         await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
         

@@ -21,6 +21,8 @@ public class PopularTimelineModel : PageModel
     public bool ShowPopularCheeps { get; set; }
 
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
+    public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
+
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
     public PopularTimelineModel(CheepService service)
@@ -138,14 +140,14 @@ public class PopularTimelineModel : PageModel
         return Redirect($"/popular?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string emoji)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
         await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string emoji)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
         await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
         

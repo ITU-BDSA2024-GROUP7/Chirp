@@ -635,6 +635,7 @@ ul.nav li a:hover {
 
 .show {
     display: block;
+}
 
 .Delete button {
     background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */

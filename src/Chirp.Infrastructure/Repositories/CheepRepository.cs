@@ -617,6 +617,9 @@ namespace Chirp.Infrastructure.Repositories
                 reaction.Emoji = emoji;
                 _dbContext.Reaction.Update(reaction);
                 await _dbContext.SaveChangesAsync();
+            } else if (reaction == null)
+            {
+                await AddReaction(cheepId, authorName, emoji);
             }
         }
         public async Task<string> HandleImageUpload(IFormFile image)

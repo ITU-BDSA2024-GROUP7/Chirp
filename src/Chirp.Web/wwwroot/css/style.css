@@ -171,13 +171,12 @@ div.page ul.cheeps {
 
 div.page ul.cheeps li {
     margin: 10px 0;
-    padding: 5px;
+    padding: 10px;
     background: #F0FAF9;
     border: 1px solid #DBF3F1;
-    border-radius: 2px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    min-height: 48px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 div.page ul.cheeps p {
@@ -187,8 +186,13 @@ div.page ul.cheeps p {
 }
 
 div.page ul.cheeps li img {
+    display: block; /* Ensures it takes its own line */
+    margin: 0 auto; /* Centers the image horizontally */
+    max-width: 100%; /* Ensures the image doesn't overflow the cheep container */
+    height: auto; /* Maintains aspect ratio */
+    border-radius: 5px; /* Optional: adds rounded corners */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
     float: left;
-    padding: 0 10px 0 0;
 }
 
 div.page ul.cheeps li small {
@@ -366,6 +370,15 @@ ul.nav li a:hover {
 
 .cheep-container > form:has(#unfollowButton) > button {
     background-color: #cc6e6e;
+}
+
+div.page ul.cheeps li img {
+    display: block; /* Ensure the image appears on its own line */
+    max-width: 100%; /* Prevent the image from exceeding the container's width */
+    height: auto; /* Maintain aspect ratio */
+    margin: 10px auto; /* Add space above and below the image, center it horizontally */
+    border-radius: 5px; /* Optional: Add rounded corners for a polished look */
+    border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
 }
 
 .providerImg {

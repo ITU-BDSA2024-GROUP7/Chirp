@@ -453,29 +453,5 @@ namespace Chirp.Infrastructure.Repositories
             return base64;
         }
         
-        /*public static IFormFile DecodeBase64ToImage(string base64)
-        {
-            // Convert base64 to IFormFile
-            if (string.IsNullOrEmpty(base64))
-            {
-                return null;
-            }
-
-            // Convert base64 to byte array
-            var imageBytes = Convert.FromBase64String(base64);
-
-            // Create a memory stream from the byte array
-            var ms = new MemoryStream(imageBytes);
-
-            // Create a file from the memory stream
-            var formFile = new FormFile(ms, 0, ms.Length, "file", "image.jpg") // You can specify any filename and content type
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = "image/png" // You can adjust the content type depending on the image format
-            };
-
-            return formFile;
-        }*/
-        
     }
 }

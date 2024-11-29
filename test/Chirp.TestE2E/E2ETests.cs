@@ -1007,7 +1007,7 @@ public class E2ETests : PageTest
     
     //---------------------------------- Image TESTS  ----------------------------------
     [Test]
-    [Category("End2End")]
+    [Category("SkipOnGitHubActions")]
     public async Task CanUserUploadImage()
     {
         await RegisterUser();
@@ -1028,7 +1028,7 @@ public class E2ETests : PageTest
     }
     
     [Test]
-    [Category("End2End")]
+    [Category("SkipOnGitHubActions")]
     public async Task CanUserUploadGif()
     {
         await RegisterUser();

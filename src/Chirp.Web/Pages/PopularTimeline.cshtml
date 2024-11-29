@@ -63,7 +63,7 @@
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
                     <br>
-                    <p>@cheep.Text</p>
+                    <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p>
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {

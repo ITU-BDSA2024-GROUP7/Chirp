@@ -441,6 +441,12 @@ namespace Chirp.Infrastructure.Repositories
 
         public async Task<string> HandleImageUpload(IFormFile image)
         {
+            // Check if the file is a GIF
+            if(image.ContentType == "image/gif")
+            {
+                return await EncodeToBase64(image);
+            }
+            
             // Compress the image and get the byte array
             var compressedImageBytes = await CompressImage(image);
     

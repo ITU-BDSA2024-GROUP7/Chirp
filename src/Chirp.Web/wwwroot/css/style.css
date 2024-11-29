@@ -743,3 +743,46 @@ ul.nav li a:hover {
     opacity: 1;
     visibility: visible;
 }
+
+.TopReactions {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e6c0bf;
+    border-radius: 25px;
+    padding: 4px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin: 5px 0;
+}
+
+.TopReactions p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.emoji-container {
+    display: inline-flex;
+}
+
+.TopReactions span {
+    position: relative;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.TopReactions span:not(:first-child) {
+    margin-left: -12px;
+}
+
+/* Z-index for stacking */
+.TopReactions span:nth-child(1) { z-index: 3; }
+.TopReactions span:nth-child(2) { z-index: 2; }
+.TopReactions span:nth-child(3) { z-index: 1; }
+
+/* Individual emoji hover effect */
+.TopReactions span:hover {
+    transform: translateY(-4px) scale(1.2);
+    z-index: 4; /* Ensure hovered emoji always appears on top */
+}

@@ -113,10 +113,12 @@
                         <p>Top Reactions:</p>
                         @if (Model.TopReactions.ContainsKey(cheep.CheepId))
                         {
-                            @foreach (var reaction in Model.TopReactions[cheep.CheepId])
-                            {
-                                <span>@reaction</span>
-                            }
+                            <div class="emoji-container">
+                                @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                {
+                                    <span>@reaction</span>
+                                }
+                            </div>
                         }
                     </div>
                     <div class="Comment">

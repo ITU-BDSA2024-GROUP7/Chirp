@@ -8,26 +8,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="Migrations\**\*.*" CopyToPublishDirectory="PreserveNewest"/>
+        <Content Include="Migrations\**\*.*" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-rc.2.24474.1"/>
+        <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-rc.2.24474.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-rc.2.24474.1">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj"/>
+        <ProjectReference Include="..\Chirp.Core\Chirp.Core.csproj" />
     </ItemGroup>
 
 </Project>

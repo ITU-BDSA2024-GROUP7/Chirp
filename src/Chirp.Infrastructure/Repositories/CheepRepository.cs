@@ -3,6 +3,9 @@ using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Infrastructure.Repositories
@@ -438,9 +441,16 @@ namespace Chirp.Infrastructure.Repositories
 
         public async Task<string> HandleImageUpload(IFormFile image)
         {
-            // Compress image
-            
-            // Convert to base64
+            // Compress the image and get the byte array
+            var compressedImageBytes = await CompressImage(image);
+    
+            // Convert the byte array to base64 string
+            var base64String = Convert.ToBase64String(compressedImageBytes);
+            return base64String;
+        }
+
+        public async Task<string> EncodeToBase64(IFormFile image)
+        {
             var base64 = "";
             
             if (image != null && image.Length > 0)
@@ -453,5 +463,41 @@ namespace Chirp.Infrastructure.Repositories
             return base64;
         }
         
+        public async Task<byte[]> CompressImage(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return null; // Or throw an exception if you want to handle this case
+            }
+
+            // Step 1: Convert IFormFile to MemoryStream
+            using var inputStream = new MemoryStream();
+            await image.CopyToAsync(inputStream);
+            inputStream.Position = 0; // Reset the position to the start of the stream after copying
+
+            // Step 2: Load the image using ImageSharp
+            using var img = Image.Load(inputStream);
+
+            // Step 3: Resize the image (max width/height) and compress it
+            img.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Mode = ResizeMode.Max,
+                Size = new SixLabors.ImageSharp.Size(1024, 1024) // Max size (width x height)
+            }));
+
+            // Step 4: Save the processed image to a memory stream (compressed with quality)
+            using var outputStream = new MemoryStream();
+            img.Save(outputStream, new JpegEncoder
+            {
+                Quality = 75  // Adjust quality as needed (0-100 scale)
+            });
+
+            outputStream.Position = 0; // Reset position to the start of the stream
+
+            // Step 5: Return the byte array of the compressed image
+            return outputStream.ToArray();
+        }
+
+            
     }
 }

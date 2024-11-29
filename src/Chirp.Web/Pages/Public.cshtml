@@ -108,18 +108,18 @@
                             </form>
                             <p>@cheep.DislikesCount</p>
                         }
-                    </div>
-                    <div class="TopReactions">
-                        <p>Top Reactions:</p>
-                        @if (Model.TopReactions.ContainsKey(cheep.CheepId))
-                        {
-                            <div class="emoji-container">
-                                @foreach (var reaction in Model.TopReactions[cheep.CheepId])
-                                {
-                                    <span>@reaction</span>
-                                }
-                            </div>
-                        }
+                        <div class="TopReactions">
+                            <p>Top Reactions:</p>
+                            @if (Model.TopReactions.ContainsKey(cheep.CheepId))
+                            {
+                                <div class="emoji-container">
+                                    @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                    {
+                                        <span>@reaction</span>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                     <div class="Comment">
                         <form style="display: flex;" method="post">

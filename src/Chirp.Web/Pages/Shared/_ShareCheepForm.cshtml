@@ -27,8 +27,8 @@
         <input type="text" asp-for="CheepText" style="flex: 1; margin-right: 5px;">
         <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
         <input type="submit" value="Share">
-        <span asp-validation-for="CheepText" class="text-danger" style="margin-left: 10px;"></span>
         <input value="Upload Image" type="file" asp-for="CheepImage" accept="image/*,.gif" style="margin-top: 10px; flex-basis: 100%;">
+        <span asp-validation-for="CheepText" class="text-danger" style="margin-left: 10px;"></span>
         <span asp-validation-for="CheepImage" class="text-danger" style="margin-left: 10px;"></span>
     </form>
 

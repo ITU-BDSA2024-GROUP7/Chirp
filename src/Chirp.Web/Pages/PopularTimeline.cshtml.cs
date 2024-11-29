@@ -60,7 +60,7 @@ public class PopularTimelineModel : PageModel
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
     [BindProperty]
-    public IFormFile CheepImage { get; set; }
+    public IFormFile? CheepImage { get; set; }
     public async Task<IActionResult> OnPost()
     {
         

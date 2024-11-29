@@ -108,6 +108,9 @@ public class PublicModel : PageModel
         
         return Page();
     }
+    [BindProperty]
+    public IFormFile? CheepImage { get; set; }
+    
     
     [BindProperty]
     public int pageNumber { get; set; }
@@ -116,8 +119,7 @@ public class PublicModel : PageModel
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
 
-    [BindProperty]
-    public IFormFile CheepImage { get; set; }
+    
 
     // Add constraint to check for file not image or gif.
     public async Task<IActionResult> OnPost()

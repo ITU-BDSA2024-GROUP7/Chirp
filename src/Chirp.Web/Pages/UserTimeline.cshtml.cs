@@ -126,7 +126,7 @@ public class UserTimelineModel : PageModel
     [StringLength(160, ErrorMessage = "Maximum length is {1}")]
     public string CheepText { get; set; } = string.Empty; 
     [BindProperty]
-    public IFormFile CheepImage { get; set; }
+    public IFormFile? CheepImage { get; set; }
     public async Task<IActionResult> OnPost()
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
@@ -139,6 +139,7 @@ public class UserTimelineModel : PageModel
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
+            
             // Ensure Cheeps and other required properties are populated
             if (User.Identity != null && User.Identity.Name == CurrentAuthor) 
             {

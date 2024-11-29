@@ -30,7 +30,10 @@
     }
     
     @await Html.PartialAsync("_CheepSorting")
-    
+    <p>her</p>
+    <img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+        9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps"> 
@@ -71,6 +74,13 @@
                     <small>@cheep.FormattedTimeStamp</small>
                     <br>
                     <p>@cheep.Text</p>
+                    
+                    @* If image reference is not null then make an image element *@
+                    @if (cheep.ImageReference != null)
+                    {
+                        <img src="data:image/png;base64, @cheep.ImageReference" alt="Cheep Image" style="max-width: 100%;"/>
+                    }
+                    
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {

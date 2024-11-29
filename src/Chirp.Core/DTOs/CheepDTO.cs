@@ -1,4 +1,6 @@
-﻿namespace Chirp.Core.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Chirp.Core.DTOs;
 
 public class CheepDTO
 {

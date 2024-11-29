@@ -90,9 +90,10 @@ public class PublicModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                
                 // Handle potential image upload
                 string imageBase64 = null;
-                if (CheepImage.Length > 0)
+                if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);
                 }

@@ -521,12 +521,25 @@ namespace Chirp.Infrastructure.Repositories
             using var gifCollection = new MagickImageCollection(inputStream);
 
             // Step 2: Optimize the GIF frames
+            var resize = false;
+            if (gifCollection[0].Width >= 1024 || gifCollection[0].Height >= 1024)
+            {
+                resize = true;
+            } 
             foreach (var frame in gifCollection)
             {
-                frame.Resize(1024, 1024); // Resize to max dimensions
+                if (resize)
+                {
+                    frame.Resize(1024, 1024); // Resize to max dimensions
+                }
                 frame.Strip(); // Remove unnecessary metadata
+                frame.Quantize(new QuantizeSettings
+                {
+                    Colors = 128 // Limit the number of colors to control size
+                });
             }
-
+            
+            
             // Reduce file size by optimizing color palette and frames
             gifCollection.Optimize();
 

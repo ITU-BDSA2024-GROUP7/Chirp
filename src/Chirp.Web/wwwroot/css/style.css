@@ -375,6 +375,7 @@ ul.nav li a:hover {
 div.page ul.cheeps li img {
     display: block; /* Ensure the image appears on its own line */
     max-width: 100%; /* Prevent the image from exceeding the container's width */
+    max-height: 200px;
     height: auto; /* Maintain aspect ratio */
     margin: 10px auto; /* Add space above and below the image, center it horizontally */
     border-radius: 5px; /* Optional: Add rounded corners for a polished look */

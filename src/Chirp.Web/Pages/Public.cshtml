@@ -73,7 +73,9 @@
                         @* If image reference is not null then make an image element *@
                         @if (cheep.ImageReference != null)
                         {
-                            <img src="data:image/png;base64, @cheep.ImageReference" alt="Cheep Image"/>
+                            <a href="data:image/png;base64,@cheep.ImageReference" style="cursor: pointer;">
+                                <img src="data:image/png;base64, @cheep.ImageReference" alt="Cheep Image"/>
+                            </a>
                         }
                     </div>
                     

@@ -15,6 +15,7 @@ public class UserTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    public int AuthorKarma { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
     public required List<String>? FollowingList { get; set; } 
@@ -90,9 +91,10 @@ public class UserTimelineModel : PageModel
         {
             page = 1;
         }
-
+    
         CurrentAuthor = author;
         PageNumber = page;
+        AuthorKarma = await _service.GetKarmaForAuthor(author);
         
         if (User.Identity != null && User.Identity.Name == author) 
         {

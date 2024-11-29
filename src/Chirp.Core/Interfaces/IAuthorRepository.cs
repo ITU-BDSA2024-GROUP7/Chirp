@@ -12,4 +12,5 @@ public interface IAuthorRepository
     Task UnfollowAuthor(string userAuthor, string authorToBeRemoved);
     Task RemovedAuthorFromFollowingList(string authorName);
     Task<List<string>> GetFollowedAuthors(string userName);
+    Task<int> GetKarmaForAuthor(string authorName);
 }

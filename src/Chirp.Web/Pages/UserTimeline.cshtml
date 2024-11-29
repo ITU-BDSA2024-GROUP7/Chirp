@@ -11,6 +11,7 @@
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
+    int authorKarma = Model.AuthorKarma;
 }
 
 <div>
@@ -19,6 +20,9 @@
             <button >Back</button>
         </a>
         <h2> @authorName's Timeline </h2>
+    </div>
+    <div style="text-align: center;">
+        <p>karma @authorKarma</p>
     </div>
     <div class="stat-container">
         <div class="border">

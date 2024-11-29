@@ -58,7 +58,15 @@
                                 }
                             </form>
                         }
-    
+                        <div class="Delete">
+                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            {
+                                <form method="post">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                                </form>
+                            }
+                        </div>
                     </div>
                     <small>@cheep.FormattedTimeStamp</small>
                     <br>

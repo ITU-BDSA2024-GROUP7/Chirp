@@ -151,6 +151,9 @@ namespace Chirp.Infrastructure.Repositories
         {
             var author = await FindAuthorByName(authorName);
 
+            // Check for if author is null
+            if (author == null) return 0;
+            
             var cheepIds = await _dbContext.Cheeps
                 .Where(cheep => cheep.AuthorId == author.AuthorId)
                 .Select(cheep => cheep.CheepId)

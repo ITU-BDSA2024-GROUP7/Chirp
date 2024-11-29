@@ -1004,4 +1004,47 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
+    
+    //---------------------------------- Image TESTS  ----------------------------------
+    [Test]
+    [Category("SkipOnGitHubActions")]
+    public async Task CanUserUploadImage()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "icon1.png");
+        
+        await _page.Locator("#CheepImage").ClickAsync();
+        await _page.Locator("#CheepImage").SetInputFilesAsync(new[] { imagePath });
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Hej");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Img, new() { Name = "Cheep Image" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("SkipOnGitHubActions")]
+    public async Task CanUserUploadGif()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "TESTGIF.gif");
+        
+        await _page.Locator("#CheepImage").ClickAsync();
+        await _page.Locator("#CheepImage").SetInputFilesAsync(new[] { imagePath});
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Hej");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Img, new() { Name = "Cheep Image" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
 }

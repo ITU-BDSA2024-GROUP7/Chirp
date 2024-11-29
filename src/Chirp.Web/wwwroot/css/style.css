@@ -171,13 +171,12 @@ div.page ul.cheeps {
 
 div.page ul.cheeps li {
     margin: 10px 0;
-    padding: 5px;
+    padding: 10px;
     background: #F0FAF9;
     border: 1px solid #DBF3F1;
-    border-radius: 2px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    min-height: 48px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 div.page ul.cheeps p {
@@ -187,8 +186,13 @@ div.page ul.cheeps p {
 }
 
 div.page ul.cheeps li img {
+    display: block; /* Ensures it takes its own line */
+    margin: 0 auto; /* Centers the image horizontally */
+    max-width: 100%; /* Ensures the image doesn't overflow the cheep container */
+    height: auto; /* Maintains aspect ratio */
+    border-radius: 5px; /* Optional: adds rounded corners */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
     float: left;
-    padding: 0 10px 0 0;
 }
 
 div.page ul.cheeps li small {
@@ -366,6 +370,16 @@ ul.nav li a:hover {
 
 .cheep-container > form:has(#unfollowButton) > button {
     background-color: #cc6e6e;
+}
+
+div.page ul.cheeps li img {
+    display: block; /* Ensure the image appears on its own line */
+    max-width: 100%; /* Prevent the image from exceeding the container's width */
+    max-height: 200px;
+    height: auto; /* Maintain aspect ratio */
+    margin: 10px auto; /* Add space above and below the image, center it horizontally */
+    border-radius: 5px; /* Optional: Add rounded corners for a polished look */
+    border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
 }
 
 .providerImg {
@@ -635,20 +649,18 @@ ul.nav li a:hover {
     display: block;
 }
 
-.Delete button {
-    background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
-    background-size: contain; /* Ensure the image fits within the button */
-    background-position: right; /* Center the image within the button */
-    background-repeat: no-repeat;
-    border: none;
-    width: 25px; 
-    height: 25px; 
-    cursor: pointer; 
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    background-color: rgba(255, 255, 255, 0); 
+.Delete form button {
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;  /* Make sure the button doesn't have a border */
 }
+
+.Delete form button i {
+    color: dimgrey;  /* Change the color to something visible */
+    font-size: 18px;
+    margin-left: 6px;
+}   
 .Comment button {
     background-color: rgba(52, 137, 243, 0);
     border: none;

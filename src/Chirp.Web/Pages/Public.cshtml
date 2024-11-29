@@ -30,7 +30,6 @@
     }
     
     @await Html.PartialAsync("_CheepSorting")
-    
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps"> 
@@ -61,16 +60,30 @@
                         <div class="Delete">
                             @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
                             {
-                                <form method="post">
-                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
-                                </form>
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                             }
                         </div>
+
                     </div>
+
                     <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
-                    <br>
-                    <p>@cheep.Text</p>
+                    <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
+                    <div>
+                        @* If image reference is not null then make an image element *@
+                        @if (cheep.ImageReference != null)
+                        {
+                            // (R0lGODlh) Is what all base64 encoded GIFs start with
+                            string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
+                            <a href="data:@mimeType;base64,@cheep.ImageReference" style="cursor: pointer;">
+                                <img src="data:@mimeType;base64,@cheep.ImageReference" alt="Cheep Image"/>
+                            </a>
+                        }
+                    </div>
                     
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
@@ -79,7 +92,6 @@
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                                 <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
                             </form>
-                            
                             <p>@cheep.LikesCount</p>
                             <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>

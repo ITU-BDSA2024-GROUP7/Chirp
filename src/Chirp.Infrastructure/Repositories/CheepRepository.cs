@@ -1,7 +1,12 @@
 using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
+using ImageMagick;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Infrastructure.Repositories
@@ -36,6 +41,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -61,6 +67,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -88,6 +95,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -127,6 +135,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -207,6 +216,7 @@ namespace Chirp.Infrastructure.Repositories
                 {
                     Text = cheepDTO.Text,
                     Author = author,
+                    ImageReference = cheepDTO.ImageReference,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
@@ -420,6 +430,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -429,6 +440,107 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<string> HandleImageUpload(IFormFile image)
+        {
+            // Check if the file is a GIF
+            if(image.ContentType == "image/gif")
+            {
+                var compressedGIF = await CompressGIF(image);
+                return Convert.ToBase64String(compressedGIF);
+            }
+            
+            // Compress the image and get the byte array
+            var compressedImageBytes = await CompressImage(image);
+    
+            // Convert the byte array to base64 string
+            var base64String = Convert.ToBase64String(compressedImageBytes);
+            return base64String;
+        }
+        
+        public async Task<byte[]> CompressImage(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return null; // Or throw an exception if you want to handle this case
+            }
+
+            // Step 1: Convert IFormFile to MemoryStream
+            using var inputStream = new MemoryStream();
+            await image.CopyToAsync(inputStream);
+            inputStream.Position = 0; // Reset the position to the start of the stream after copying
+
+            // Step 2: Load the image using ImageSharp
+            using var img = Image.Load(inputStream);
+
+            // Step 3: Resize the image (max width/height) and compress it
+            img.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Mode = ResizeMode.Max,
+                Size = new SixLabors.ImageSharp.Size(1024, 1024) // Max size (width x height)
+            }));
+
+            // Step 4: Save the processed image to a memory stream (compressed with quality)
+            using var outputStream = new MemoryStream();
+            img.Save(outputStream, new JpegEncoder
+            {
+                Quality = 75  // Adjust quality as needed (0-100 scale)
+            });
+
+            outputStream.Position = 0; // Reset position to the start of the stream
+
+            // Step 5: Return the byte array of the compressed image
+            return outputStream.ToArray();
+        }
+        
+        public async Task<byte[]> CompressGIF(IFormFile gif)
+        {
+            if (gif == null || gif.Length == 0)
+            {
+                return null; // Or throw an exception
+            }
+
+            using var inputStream = new MemoryStream();
+            await gif.CopyToAsync(inputStream);
+            inputStream.Position = 0; // Reset the stream position
+
+            // Step 1: Load the GIF using MagickImageCollection for animations
+            using var gifCollection = new MagickImageCollection(inputStream);
+
+            // Step 2: Optimize the GIF frames
+            var resize = false;
+            if (gifCollection[0].Width >= 1024 || gifCollection[0].Height >= 1024)
+            {
+                resize = true;
+            } 
+            foreach (var frame in gifCollection)
+            {
+                if (resize)
+                {
+                    frame.Resize(1024, 1024); // Resize to max dimensions
+                }
+                frame.Strip(); // Remove unnecessary metadata
+                frame.Quantize(new QuantizeSettings
+                {
+                    Colors = 128 // Limit the number of colors to control size
+                });
+            }
+            
+            
+            // Reduce file size by optimizing color palette and frames
+            gifCollection.Optimize();
+
+            // Step 3: Write the optimized GIF to a memory stream
+            using var outputStream = new MemoryStream();
+            gifCollection.Write(outputStream);
+
+            // Step 4: Return the byte array of the compressed GIF
+            return outputStream.ToArray();
+        }
+        
+        
+
+            
         public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
         {
             var query = _dbContext.Comment

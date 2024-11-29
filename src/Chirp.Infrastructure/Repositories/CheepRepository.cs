@@ -1,6 +1,7 @@
 using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
+using ImageMagick;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
@@ -444,7 +445,8 @@ namespace Chirp.Infrastructure.Repositories
             // Check if the file is a GIF
             if(image.ContentType == "image/gif")
             {
-                return await EncodeToBase64(image);
+                var compressedGIF = await CompressGIF(image);
+                return Convert.ToBase64String(compressedGIF);
             }
             
             // Compress the image and get the byte array
@@ -503,6 +505,40 @@ namespace Chirp.Infrastructure.Repositories
             // Step 5: Return the byte array of the compressed image
             return outputStream.ToArray();
         }
+        
+        public async Task<byte[]> CompressGIF(IFormFile gif)
+        {
+            if (gif == null || gif.Length == 0)
+            {
+                return null; // Or throw an exception
+            }
+
+            using var inputStream = new MemoryStream();
+            await gif.CopyToAsync(inputStream);
+            inputStream.Position = 0; // Reset the stream position
+
+            // Step 1: Load the GIF using MagickImageCollection for animations
+            using var gifCollection = new MagickImageCollection(inputStream);
+
+            // Step 2: Optimize the GIF frames
+            foreach (var frame in gifCollection)
+            {
+                frame.Resize(1024, 1024); // Resize to max dimensions
+                frame.Strip(); // Remove unnecessary metadata
+            }
+
+            // Reduce file size by optimizing color palette and frames
+            gifCollection.Optimize();
+
+            // Step 3: Write the optimized GIF to a memory stream
+            using var outputStream = new MemoryStream();
+            gifCollection.Write(outputStream);
+
+            // Step 4: Return the byte array of the compressed GIF
+            return outputStream.ToArray();
+        }
+        
+        
 
             
     }

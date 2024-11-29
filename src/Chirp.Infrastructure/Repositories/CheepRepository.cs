@@ -21,7 +21,7 @@ namespace Chirp.Infrastructure.Repositories
         public async Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page)
         {
             var query = _dbContext.Cheeps
-                .Include(c => c.Author) 
+                .Include(c => c.Author)
                 .Where(cheep => cheep.Author.Name == userName)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((page - 1) * 32)
@@ -49,7 +49,7 @@ namespace Chirp.Infrastructure.Repositories
         public async Task<List<CheepDTO>> RetrieveAllCheepsFromAnAuthor(string Username)
         {
             var query = _dbContext.Cheeps
-                .Include(c => c.Author) 
+                .Include(c => c.Author)
                 .Where(cheep => cheep.Author.Name == Username)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
@@ -67,14 +67,14 @@ namespace Chirp.Infrastructure.Repositories
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });
-            
+
             return await query.ToListAsync();
         }
 
         public async Task<List<CheepDTO>> ReadAllCheeps(int page)
         {
             var query = _dbContext.Cheeps
-                .Include(c => c.Author) 
+                .Include(c => c.Author)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((page - 1) * 32)
                 .Take(32)
@@ -107,12 +107,12 @@ namespace Chirp.Infrastructure.Repositories
                 // Return an empty list if the user is not found
                 return new List<CheepDTO>();
             }
-            
+
             // Get the list of authors followed by the user
             var followedAuthors = userAuthor.AuthorsFollowed;
-            
+
             var query = _dbContext.Cheeps
-                .Include(c => c.Author) 
+                .Include(c => c.Author)
                 .Where(cheep => followedAuthors.Contains(cheep.Author.Name) || cheep.Author.Name == userName)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((page - 1) * 32)
@@ -136,11 +136,12 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
         // get total count of pages 
         public async Task<int> GetTotalPages(string authorName = "")
         {
             var query = _dbContext.Cheeps.AsQueryable();
-            
+
             // Apply the where clause if there is a valid authorName.
             if (!string.IsNullOrEmpty(authorName))
             {
@@ -153,7 +154,7 @@ namespace Chirp.Infrastructure.Repositories
                 {
                     // Get all cheeps from the author and the authors they follow
                     query = query
-                        .Where(cheep => cheep.Author.Name == authorName 
+                        .Where(cheep => cheep.Author.Name == authorName
                                         || author.AuthorsFollowed.Contains(cheep.Author.Name));
                 }
             }
@@ -165,7 +166,6 @@ namespace Chirp.Infrastructure.Repositories
 
         public async Task<int> GetTotalPageNumberForPopular()
         {
-            
             var query = _dbContext.Cheeps
                 .Include(c => c.Author)
                 .Where(cheep => cheep.Likes.Count > 0)
@@ -186,20 +186,19 @@ namespace Chirp.Infrastructure.Repositories
                     LikesCount = cheep.Likes.Count,
                     DislikesCount = cheep.Dislikes.Count
                 });
-            
-            
+
 
             var totalCheeps = await query.CountAsync();
 
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
-        
+
         // Create a new message
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
             var author = await _authorRepository.FindAuthorByName(cheepDTO.Author.Name);
-            
+
             // Create a new Cheep 
             if (author != null)
             {
@@ -223,7 +222,7 @@ namespace Chirp.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
-        
+
         public async Task DeleteCheep(int cheepId)
         {
             var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
@@ -233,7 +232,7 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        
+
         public async Task DeleteUserCheeps(AuthorDTO Author)
         {
             var cheeps = await _dbContext.Cheeps
@@ -246,11 +245,11 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        
+
         public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()
         {
             var query = _dbContext.Cheeps
-                .Include(c => c.Author) 
+                .Include(c => c.Author)
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
                 {
@@ -285,22 +284,24 @@ namespace Chirp.Infrastructure.Repositories
                 // Handle case where cheep is not found
                 throw new Exception("Cheep not found");
             }
-            
+
             // Check if the author has disliked this cheep
             var existingDislike = await _dbContext.Dislikes
                 .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
-            
+
             // Check if the author has already liked this cheep
             var existingLike = await _dbContext.Likes
                 .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
 
-            
+
             if (existingLike != null) // if the user has already liked the cheep
             {
                 if (emoji != null)
                 {
                     await UpdateReaction(cheepId, authorName, emoji);
-                } else {
+                }
+                else
+                {
                     await UnlikeCheep(existingLike);
                     await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
                 }
@@ -313,12 +314,15 @@ namespace Chirp.Infrastructure.Repositories
                     await UnDislikeCheep(existingDislike);
                     await RemoveReaction(cheepId, authorName); // Remove the dislike reaction when unliking
                 }
-                
+
                 await LikeCheep(authorId, cheepId);
-                await AddReaction(cheepId, authorName, emoji); // Add like reaction when liking
+                if (emoji != null)
+                {
+                    await AddReaction(cheepId, authorName, emoji); // Add reaction when liking
+                }
             }
         }
-        
+
         public async Task LikeCheep(int authorId, int cheepId)
         {
             // Create a new Like record
@@ -362,10 +366,11 @@ namespace Chirp.Infrastructure.Repositories
                 // Handle case where cheep is not found
                 throw new Exception("Cheep not found");
             }
+
             // Check if the author has already liked this cheep
             var existingLike = await _dbContext.Likes
                 .FirstOrDefaultAsync(l => l.CheepId == cheepId && l.AuthorId == authorId);
-            
+
             // Check if the author has already disliked this cheep
             var existingDislike = await _dbContext.Dislikes
                 .FirstOrDefaultAsync(dl => dl.CheepId == cheepId && dl.AuthorId == authorId);
@@ -375,7 +380,9 @@ namespace Chirp.Infrastructure.Repositories
                 if (emoji != null)
                 {
                     await UpdateReaction(cheepId, authorName, emoji);
-                } else {
+                }
+                else
+                {
                     await UnDislikeCheep(existingDislike);
                     await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
                 }
@@ -387,12 +394,16 @@ namespace Chirp.Infrastructure.Repositories
                     await UnlikeCheep(existingLike);
                     await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
                 }
+
                 // if the user has not disliked the cheep
                 await DislikeCheep(authorId, cheepId);
-                await AddReaction(cheepId, authorName, emoji); // Add reaction when liking
+                if (emoji != null)
+                {
+                    await AddReaction(cheepId, authorName, emoji); // Add reaction when disliking
+                }
             }
         }
-        
+
         public async Task DislikeCheep(int authorId, int cheepId)
         {
             // Create a new Dislike record
@@ -445,6 +456,7 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+
         public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
         {
             var query = _dbContext.Comment
@@ -463,10 +475,11 @@ namespace Chirp.Infrastructure.Repositories
                     Text = comment.Text,
                     FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                 });
-            
+
             return await query.ToListAsync();
         }
-        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author )
+
+        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author)
         {
             // Create a new Cheep 
             if (cheepDto != null)
@@ -479,9 +492,8 @@ namespace Chirp.Infrastructure.Repositories
                     Text = Text,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-                    
                 };
-                
+
                 // Add the new Cheep to the DbContext
                 await _dbContext.Comment.AddAsync(comment);
             }
@@ -501,7 +513,7 @@ namespace Chirp.Infrastructure.Repositories
                         Name = a.Author.Name,
                         Email = a.Author.Email,
                         AuthorsFollowed = a.Author.AuthorsFollowed
-                    }, 
+                    },
                     Text = a.Text,
                     FormattedTimeStamp = a.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = a.Likes,
@@ -512,6 +524,7 @@ namespace Chirp.Infrastructure.Repositories
 
             return cheep;
         }
+
         public async Task DeleteComment(int commentId)
         {
             var comment = await _dbContext.Comment.FindAsync(commentId);
@@ -521,7 +534,7 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        
+
         public async Task AddReaction(int cheepId, string authorName, string emoji)
         {
             // Find the author by Id (or by name if needed)
@@ -532,18 +545,18 @@ namespace Chirp.Infrastructure.Repositories
                 // Handle case where author is not found
                 throw new Exception("Author not found");
             }
-            
+
             var reaction = new Reaction
             {
                 CheepId = cheepId,
                 AuthorId = authorId,
                 Emoji = emoji
             };
-        
+
             await _dbContext.Reaction.AddAsync(reaction);
             await _dbContext.SaveChangesAsync();
         }
-        
+
         public async Task RemoveReaction(int cheepId, string authorName)
         {
             // Find the author by Id (or by name if needed)
@@ -554,16 +567,17 @@ namespace Chirp.Infrastructure.Repositories
                 // Handle case where author is not found
                 throw new Exception("Author not found");
             }
-            
+
             var reaction = await _dbContext.Reaction
                 .FirstOrDefaultAsync(r => r.CheepId == cheepId && r.AuthorId == authorId);
-        
+
             if (reaction != null)
             {
                 _dbContext.Reaction.Remove(reaction);
                 await _dbContext.SaveChangesAsync();
             }
         }
+
         public async Task<List<String>> GetTopReactions(int cheepId, int topN = 3)
         {
             return await _dbContext.Reaction
@@ -574,7 +588,7 @@ namespace Chirp.Infrastructure.Repositories
                 .Select(g => g.First().Emoji)
                 .ToListAsync();
         }
-        
+
         public async Task UpdateReaction(int cheepId, string authorName, string emoji)
         {
             var author = await _authorRepository.FindAuthorByName(authorName);
@@ -595,5 +609,4 @@ namespace Chirp.Infrastructure.Repositories
             }
         }
     }
-    
 }

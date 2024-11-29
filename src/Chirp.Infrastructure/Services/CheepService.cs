@@ -171,10 +171,6 @@ public class CheepService : ICheepService
         return await _authorRepository.GetKarmaForAuthor(authorName);
     }
     
-    public async Task AddReaction(string authorName, int cheepId, string emoji)
-    {
-        await _cheepRepository.AddReaction(cheepId, authorName, emoji);
-    }
     public async Task<List<String>> GetTopReactions (int cheepId)
     {
         return await _cheepRepository.GetTopReactions(cheepId);

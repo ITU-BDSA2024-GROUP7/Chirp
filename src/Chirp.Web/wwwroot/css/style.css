@@ -645,7 +645,7 @@ ul.nav li a:hover {
 }
 
 .Delete form button i {
-    color: #000;  /* Change the color to something visible */
+    color: dimgrey;  /* Change the color to something visible */
     font-size: 18px;
     margin-left: 6px;
-}
+}   

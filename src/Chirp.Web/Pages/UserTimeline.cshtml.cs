@@ -126,6 +126,8 @@ public class UserTimelineModel : PageModel
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1}")]
     public string CheepText { get; set; } = string.Empty; 
+    [BindProperty]
+    public IFormFile? CheepImage { get; set; }
     public async Task<IActionResult> OnPost()
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
@@ -138,6 +140,7 @@ public class UserTimelineModel : PageModel
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
+            
             // Ensure Cheeps and other required properties are populated
             if (User.Identity != null && User.Identity.Name == CurrentAuthor) 
             {
@@ -155,6 +158,12 @@ public class UserTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                string imageBase64 = null;
+                if (CheepImage != null && CheepImage.Length > 0)
+                {
+                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                }
+                
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -164,6 +173,7 @@ public class UserTimelineModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
+                    ImageReference = imageBase64!,
                     FormattedTimeStamp =
                         DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };

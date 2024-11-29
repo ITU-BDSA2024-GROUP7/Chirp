@@ -1,6 +1,7 @@
 using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace Chirp.Infrastructure.Services;
 public interface ICheepService
@@ -23,7 +24,7 @@ public interface ICheepService
     public Task HandleDislike(string authorName, int cheepId);
     public Task<List<CheepDTO>> GetPopularCheeps(int page);
     public Task<int> GetTotalPageNumberForPopular();
-
+    public Task<string> HandleImageUpload(IFormFile image);
 }
 public class CheepService : ICheepService
 {
@@ -141,6 +142,11 @@ public class CheepService : ICheepService
         return await _cheepRepository.GetTotalPageNumberForPopular();
     }
 
+
+    public async Task<string> HandleImageUpload(IFormFile image)
+    {
+        return await _cheepRepository.HandleImageUpload(image);
+    }
     public async Task<int> GetKarmaForAuthor(string authorName)
     {
         return await _authorRepository.GetKarmaForAuthor(authorName);

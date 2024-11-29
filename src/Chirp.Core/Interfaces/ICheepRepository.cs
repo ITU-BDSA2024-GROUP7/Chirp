@@ -1,4 +1,5 @@
 ﻿using Chirp.Core.DTOs;
+using Microsoft.AspNetCore.Http;
 
 namespace Chirp.Core.Interfaces;
 
@@ -13,4 +14,5 @@ public interface ICheepRepository
     Task DeleteUserCheeps(AuthorDTO author);
     public Task<List<CheepDTO>> GetPopularCheeps(int page);
     Task<int> GetTotalPageNumberForPopular();
+    Task<string> HandleImageUpload(IFormFile image);
 }

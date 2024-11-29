@@ -8,4 +8,5 @@ public class SharedChirpViewModel
 {
     // public string FormAction { get; set; }
     public string CheepText { get; set; } = string.Empty;
+    public IFormFile? CheepImage { get; set; }
 }

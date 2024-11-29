@@ -60,6 +60,8 @@ public class PopularTimelineModel : PageModel
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
+    [BindProperty]
+    public IFormFile? CheepImage { get; set; }
     public async Task<IActionResult> OnPost()
     {
         
@@ -86,6 +88,12 @@ public class PopularTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                string imageBase64 = null;
+                if (CheepImage != null && CheepImage.Length > 0)
+                {
+                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                }
+                
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -95,6 +103,7 @@ public class PopularTimelineModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
+                    ImageReference = imageBase64!,
                     FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
 

@@ -21,20 +21,22 @@
         </a>
         <h2> @authorName's Timeline </h2>
     </div>
-    <div style="text-align: center;">
-        <p>karma @authorKarma</p>
-    </div>
     <div class="stat-container">
         <div class="border">
-            <div>
-                <a class="button" href="#popup1">
-                    <h3>Followers: @Model.FollowingMeList.Count</h3>
-                </a>
+            <div class="karma-counter-container">
+                <h3>Karma: @authorKarma</h3>
             </div>
-            <div>
-                <a class="button" href="#popup2">
-                    <h3>Following: @Model.FollowingList.Count</h3>
-                </a>
+            <div class="followcontainer">
+                <div>
+                    <a class="button" href="#popup1">
+                        <h3>Followers: @Model.FollowingMeList.Count</h3>
+                    </a>
+                </div>
+                <div>
+                    <a class="button" href="#popup2">
+                        <h3>Following: @Model.FollowingList.Count</h3>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

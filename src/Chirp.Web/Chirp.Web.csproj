@@ -50,4 +50,8 @@
       <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml" />
     </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="wwwroot/images/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
 </Project>

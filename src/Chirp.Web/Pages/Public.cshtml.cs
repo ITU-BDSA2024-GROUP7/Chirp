@@ -59,6 +59,11 @@ public class PublicModel : PageModel
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
+
+    [BindProperty]
+    public IFormFile CheepImage { get; set; }
+
+    // Add constraint to check for file not image or gif.
     public async Task<IActionResult> OnPost()
     {
         
@@ -85,6 +90,13 @@ public class PublicModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                // Handle potential image upload
+                string imageBase64 = null;
+                if (CheepImage.Length > 0)
+                {
+                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                }
+                    
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -94,9 +106,10 @@ public class PublicModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
+                    ImageReference = imageBase64!,
                     FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
-
+    
                 await _service.CreateCheep(cheepDTO);
             }
         }

@@ -1,6 +1,7 @@
 using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
@@ -207,6 +208,7 @@ namespace Chirp.Infrastructure.Repositories
                 {
                     Text = cheepDTO.Text,
                     Author = author,
+                    ImageReference = cheepDTO.ImageReference,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
@@ -429,7 +431,23 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-        
+
+        public async Task<string> HandleImageUpload(IFormFile image)
+        {
+            // Compress image
+            
+            // Convert to base64
+            var base64 = "";
+            
+            if (image != null && image.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                image.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+                base64 = Convert.ToBase64String(fileBytes);
+            }
+            return base64;
+        }
         
     }
 }

@@ -69,7 +69,7 @@
                     </div>
 
                     <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
-                    <p>@cheep.Text</p><br/>
+                    <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
                         @if (cheep.ImageReference != null)
@@ -82,7 +82,6 @@
                         }
                     </div>
                     
-
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -90,7 +89,6 @@
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                                 <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
                             </form>
-                            
                             <p>@cheep.LikesCount</p>
                             <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>

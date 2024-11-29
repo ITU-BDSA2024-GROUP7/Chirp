@@ -64,4 +64,12 @@
         width: auto;
         height: 60px;
     }
+
+    /* Center the dropdown container */
+    .cheep-sorting-container {
+        display: flex;
+        justify-content: center; /* Aligns the content horizontally in the center */
+        margin-top: 20px; /* Optional: Adjust spacing from top */
+    }
+    
 }

@@ -9,9 +9,8 @@
 
     var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
-    int totalPages = Model.TotalPageNumber;
+    int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
-    
 }
 
 <div>
@@ -150,6 +149,15 @@
                                 }
                             </form>
                         }
+                        <div class="Delete">
+                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            {
+                                <form method="post">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                                </form>
+                            }
+                        </div>
                     </div>
                     <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                     <br><br>

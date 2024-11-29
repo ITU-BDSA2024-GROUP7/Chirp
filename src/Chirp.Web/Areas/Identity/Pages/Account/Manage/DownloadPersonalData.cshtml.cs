@@ -96,7 +96,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 // personalData.Add($"Cheep_{j}", cheep.Text);
                 // personalData.Add($"Cheep Author_{j}", cheep.Author.Name);
                 // personalData.Add($"Cheep TimeStamp_{j}", cheep.FormattedTimeStamp);
-                csvContent.AppendLine($"Cheep {j}: cheep.Text, Author: {cheep.Author.Name}, Cheep TimeStamp: {cheep.FormattedTimeStamp}");
+                csvContent.AppendLine($"Cheep {j}: cheep.Text {cheep.Text}, Author: {cheep.Author.Name}, Cheep TimeStamp: {cheep.FormattedTimeStamp}");
                 j++;
             }
 

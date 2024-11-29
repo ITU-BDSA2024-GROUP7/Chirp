@@ -208,5 +208,12 @@ public class PublicModel : PageModel
         return Redirect($"/?page={PageNumber}");
     }
     
+    public async Task<IActionResult> OnPostDeleteMethod(int cheepId)
+    {
+        await _service.DeleteCheep(cheepId);
+        
+        return Redirect($"/?page={PageNumber}");
+    }
+    
 
 }

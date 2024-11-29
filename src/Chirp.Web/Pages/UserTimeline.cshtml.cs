@@ -225,4 +225,11 @@ public class UserTimelineModel : PageModel
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
+    
+    public async Task<IActionResult> OnPostDeleteMethod(int cheepId, string currentAuthorPageName)
+    {
+        await _service.DeleteCheep(cheepId);
+        
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
+    }
 }

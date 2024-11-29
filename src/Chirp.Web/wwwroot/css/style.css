@@ -637,17 +637,15 @@ ul.nav li a:hover {
     display: block;
 }
 
-.Delete button {
-    background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
-    background-size: contain; /* Ensure the image fits within the button */
-    background-position: right; /* Center the image within the button */
-    background-repeat: no-repeat;
-    border: none;
-    width: 25px; 
-    height: 25px; 
-    cursor: pointer; 
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    background-color: rgba(255, 255, 255, 0); 
+.Delete form button {
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;  /* Make sure the button doesn't have a border */
+}
+
+.Delete form button i {
+    color: #000;  /* Change the color to something visible */
+    font-size: 18px;
+    margin-left: 6px;
 }

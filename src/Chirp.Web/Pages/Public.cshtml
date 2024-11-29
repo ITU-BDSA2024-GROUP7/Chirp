@@ -30,7 +30,6 @@
     }
     
     @await Html.PartialAsync("_CheepSorting")
-    
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps"> 
@@ -61,12 +60,15 @@
                         <div class="Delete">
                             @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
                             {
-                                <form method="post">
-                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
-                                </form>
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <button type="submit" asp-page-handler="DeleteMethod">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                             }
                         </div>
+
                     </div>
                     <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                     <br>

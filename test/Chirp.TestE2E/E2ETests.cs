@@ -30,7 +30,6 @@ public class E2ETests : PageTest
         _page = await _context.NewPageAsync();
 
         if (_page == null) throw new InvalidOperationException("Page is not initialized");
-        
     }
 
     [OneTimeSetUp]
@@ -102,19 +101,19 @@ public class E2ETests : PageTest
     
     //---------------------------------- HELPER METHODS ----------------------------------
     // Register
-    private async Task RegisterUser()
+    private async Task RegisterUser(String? userCount="")
     {
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Register");
 
         // Arrived at register page, and put in email and password
         await _page.GetByPlaceholder("Username").ClickAsync();
-        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername+userCount);
         await _page.GetByPlaceholder("name@example.com").ClickAsync();
-        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail);
+        await _page.GetByPlaceholder("name@example.com").FillAsync(TestUserEmail+userCount);
         await _page.GetByPlaceholder("Password", new() { Exact = true }).ClickAsync();
-        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Password", new() { Exact = true }).FillAsync(TestUserPassword+userCount);
         await _page.GetByPlaceholder("Confirm password").ClickAsync();
-        await _page.GetByPlaceholder("Confirm password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("Confirm password").FillAsync(TestUserPassword+userCount);
 
         
         
@@ -123,27 +122,26 @@ public class E2ETests : PageTest
     }
 
     // Login
-    private async Task LoginUser()
+    private async Task LoginUser(String? userCount="")
     {
         // Goes to login page
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
 
         // Fills in information
         await _page.GetByPlaceholder("Username").ClickAsync();
-        await _page.GetByPlaceholder("Username").FillAsync(TestUsername);
+        await _page.GetByPlaceholder("Username").FillAsync(TestUsername+userCount);
         await _page.GetByPlaceholder("password").ClickAsync();
-        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword);
+        await _page.GetByPlaceholder("password").FillAsync(TestUserPassword+userCount);
 
         // Clicks on log in button
         await _page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
     }
 
     // Logout
-    /*private async Task LogoutUser()
+    private async Task LogoutUser()
     {
-        await _page!.GotoAsync($"{AppUrl}/Identity/Account/Logout");
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout" }).ClickAsync();
-    }*/
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
+    }
 
     // Delete 
     private async Task DeleteUser()
@@ -867,10 +865,141 @@ public class E2ETests : PageTest
         
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
         
-        await Expect(_page.Locator("li").Locator("#unfollowButton").First).ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
         
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
         
-        await _page.Locator("li").Locator("#unfollowButton").First.ClickAsync();
+        // Clean up
+        await DeleteUser();
+    }
+
+    /*---------------------------------- FOLLOWING LISTS TESTS ----------------------------------*/
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowListDisplayCorrectAmountFollowers()
+    {
+        // Follows another user and checks if the count for following is 1 and then unfollows the user and checks if the count is 0
+        await RegisterUser("1");
+        await LoginUser("1");
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await LogoutUser();
+        
+        await RegisterUser("2");
+        await LoginUser("2");
+
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Following: 1");
+        
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
+        
+        // Clean up
+        await DeleteUser();
+        await LoginUser("1");
+        await DeleteUser();    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowListDisplayCorrectAmountFollowing()
+    {
+        // Follows another user and checks if the count for followers is 1 and then unfollows the user and checks if the count is 0
+
+        await RegisterUser("1");
+        await LoginUser("1");
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync($"HelloWorld!RasmusMathiasNikolajMarcusErTelos!+{DateTime.Now.ToString("HH:mm:ss")}");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await LogoutUser();
+        
+        await RegisterUser("2");
+        await LoginUser("2");
+        
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Tester1" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 1");
+        
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
+        
+        // Clean up
+        await DeleteUser();
+        await LoginUser("1");
+        await DeleteUser();
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowPopupDisplayCorrectFollowers()
+    {
+        // Follows another user and checks if a user shows up in the follower list popup
+        await RegisterUser("1");
+        await LoginUser("1");
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        await LogoutUser();
+        
+        await RegisterUser("2");
+        await LoginUser("2");
+    
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Following:" }).ClickAsync();
+        await Expect(_page.Locator("#popup2").GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+        await LoginUser("1");
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("End2End")]
+    public async Task DoesFollowPopupDisplayCorrectFollowing()
+    {
+        // Follows another user and checks if a user shows up in the following list popup
+
+        await RegisterUser();
+        await LoginUser();
+    
+        await _page.Locator("li").First.Locator("#followButton").ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Following:" }).ClickAsync();
+        await Expect(_page.Locator("#popup2").GetByRole(AriaRole.Button, new() { Name = "Unfollow" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    // ---------------------------------- Delete TESTS ----------------------------------
+    [Test]
+    [Category("End2End")]
+    // Test that the cheep is being deleted
+    public async Task DoesDeleteButtonLoad()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Testing that this is a deleteable cheep");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Testing that this is a deleteable cheep" }).First).ToBeVisibleAsync();
+        await _page.Locator("#deleteButton").ClickAsync();
+        await Expect(_page.Locator("li").Filter(new() { HasText = "Testing that this is a deleteable cheep" }).First).Not.ToBeVisibleAsync();
         
         // Clean up
         await DeleteUser();

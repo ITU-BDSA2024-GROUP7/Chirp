@@ -12,5 +12,4 @@ public class CheepDTO
     public ICollection<Dislike> Dislikes { get; set; } = new List<Dislike>();
     public int LikesCount { get; set; }
     public int DislikesCount { get; set; }
-    
 }

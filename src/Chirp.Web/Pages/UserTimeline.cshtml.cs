@@ -17,6 +17,8 @@ public class UserTimelineModel : PageModel
     public int TotalPageNumber { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
+    public required List<String>? FollowingList { get; set; } 
+    public required List<String>? FollowingMeList { get; set; }
     public string CurrentAuthor { get; set; } = string.Empty;
     public AuthorDTO userAuthor { get; set; }
 
@@ -49,6 +51,11 @@ public class UserTimelineModel : PageModel
             var currentUserName = User.Identity.Name;
             userAuthor = await _service.FindAuthorByName(currentUserName);
         }
+        
+        // var followAuthorDto = await _service.FindAuthorByName(author);
+        // FollowList = followAuthorDto.AuthorsFollowed as List<string>;
+        FollowingList = await _service.GetFollowedAuthors(author);
+        FollowingMeList = await _service.GetFollowingAuthors(author);
         
         return Page();
     }
@@ -116,8 +123,9 @@ public class UserTimelineModel : PageModel
     /// Follows an author
     /// </summary>
     /// <param name="followedAuthorName"></param>
+    /// <param name="currentAuthorPageName"></param>
     /// <returns></returns>
-    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
+    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName, string currentAuthorPageName)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
@@ -126,15 +134,16 @@ public class UserTimelineModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
 
     /// <summary>
     /// Unfollows an author
     /// </summary>
     /// <param name="followedAuthor"></param>
+    /// <param name="currentAuthorPageName"></param>
     /// <returns></returns>
-    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
+    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor, string currentAuthorPageName)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
@@ -143,7 +152,28 @@ public class UserTimelineModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/{User.Identity.Name}?page={PageNumber}");
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
+    }
+    
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName)
+    {
+        await _service.HandleLike(User.Identity.Name, cheepId);
+        
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
+    }
+    
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName)
+    {
+        await _service.HandleDislike(User.Identity.Name, cheepId);
+        
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
+    }
+    
+    public async Task<IActionResult> OnPostDeleteMethod(int cheepId, string currentAuthorPageName)
+    {
+        await _service.DeleteCheep(cheepId);
+        
+        return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     /// <summary>

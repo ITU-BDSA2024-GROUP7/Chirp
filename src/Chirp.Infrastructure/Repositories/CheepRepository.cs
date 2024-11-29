@@ -162,6 +162,38 @@ namespace Chirp.Infrastructure.Repositories
 
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
+
+        public async Task<int> GetTotalPageNumberForPopular()
+        {
+            
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author)
+                .Where(cheep => cheep.Likes.Count > 0)
+                .OrderByDescending(cheep => cheep.Likes.Count)
+                .Select(cheep => new CheepDTO
+                {
+                    CheepId = cheep.CheepId,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
+                });
+            
+            
+
+            var totalCheeps = await query.CountAsync();
+
+            return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
+        }
+        
         // Create a new message
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
@@ -177,7 +209,6 @@ namespace Chirp.Infrastructure.Repositories
                     Author = author,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-
                 };
 
                 // Add the new Cheep to the DbContext
@@ -266,7 +297,6 @@ namespace Chirp.Infrastructure.Repositories
             
             if (existingLike != null) // if the user has already liked the cheep
             {
-                
                 await UnlikeCheep(existingLike);
             }
             else // if the user has not liked the cheep
@@ -283,7 +313,6 @@ namespace Chirp.Infrastructure.Repositories
         
         public async Task LikeCheep(int authorId, int cheepId)
         {
-            
             // Create a new Like record
             var like = new Like
             {
@@ -305,7 +334,6 @@ namespace Chirp.Infrastructure.Repositories
 
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
-
         }
 
         public async Task HandleDislike(string authorName, int cheepId)
@@ -373,6 +401,36 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<CheepDTO>> GetPopularCheeps(int page)
+        {
+            var query = _dbContext.Cheeps
+                .Include(c => c.Author)
+                .Where(cheep => cheep.Likes.Count > 0)
+                .OrderByDescending(cheep => cheep.Likes.Count)
+                .Skip((page - 1) * 32)
+                .Take(32)
+                .Select(cheep => new CheepDTO
+                {
+                    CheepId = cheep.CheepId,
+                    Author = new AuthorDTO
+                    {
+                        Name = cheep.Author.Name,
+                        Email = cheep.Author.Email,
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                    },
+                    Text = cheep.Text,
+                    FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = cheep.Likes,
+                    Dislikes = cheep.Dislikes,
+                    LikesCount = cheep.Likes.Count,
+                    DislikesCount = cheep.Dislikes.Count
+                });
+
+            return await query.ToListAsync();
+        }
+        
+        
         public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
         {
             var query = _dbContext.Comment

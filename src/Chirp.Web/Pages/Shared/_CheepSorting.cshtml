@@ -1,0 +1,49 @@
+﻿<div id="cheepSortingDropdown" class="modern-dropdown">
+    <button class="dropdown-btn">
+        <span id="selectedOption">Newest Cheeps</span>
+        <span class="arrow">&#9660;</span> <!-- Down arrow -->
+    </button>
+    <div class="dropdown-content">
+        <div class="dropdown-item" data-value="/">Newest Cheeps</div>
+        <div class="dropdown-item" data-value="/popular">Popular Cheeps</div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dropdown = document.getElementById("cheepSortingDropdown");
+        var button = dropdown.querySelector(".dropdown-btn");
+        var selectedOption = dropdown.querySelector("#selectedOption");
+        var items = dropdown.querySelectorAll(".dropdown-item");
+        var content = dropdown.querySelector(".dropdown-content");
+        var currentPath = window.location.pathname;  // Get current path to determine the selected option
+
+        // Set the initial selected option based on the current path
+        if (currentPath === "/popular") {
+            selectedOption.textContent = "Popular Cheeps";
+        } else {
+            selectedOption.textContent = "Newest Cheeps";
+        }
+
+        // Toggle dropdown visibility
+        button.addEventListener("click", function () {
+            content.classList.toggle("show");
+        });
+
+        // Handle item selection
+        items.forEach(function (item) {
+            item.addEventListener("click", function () {
+                var selectedValue = item.getAttribute("data-value");
+                selectedOption.textContent = item.textContent;  // Update selected option text
+                window.location.href = selectedValue;
+            });
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener("click", function (event) {
+            if (!dropdown.contains(event.target)) {
+                content.classList.remove("show");
+            }
+        });
+    });
+</script>

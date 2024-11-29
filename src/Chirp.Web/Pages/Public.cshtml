@@ -20,7 +20,7 @@
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
-    @await Html.PartialAsync("_CheepSorting")
+    
     @if(User.Identity != null && User.Identity.IsAuthenticated){ 
         @* Render the Share Form Partial View *@
         {
@@ -28,6 +28,8 @@
         }
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
+    
+    @await Html.PartialAsync("_CheepSorting")
     
     @if (Model.Cheeps.Any())
     {

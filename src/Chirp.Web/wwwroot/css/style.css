@@ -616,6 +616,7 @@ ul.nav li a:hover {
 
 .show {
     display: block;
+}
 
 .Delete button {
     background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
@@ -643,5 +644,14 @@ ul.nav li a:hover {
 }
 .Comment button:hover {
     color: #003bae;
+}
+.Cheepforcomments {
+    margin: 10px 0;
+    padding: 5px;
+    background: #F0FAF9;
+    border: 1px solid #e29494;
+    border-radius: 2px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 

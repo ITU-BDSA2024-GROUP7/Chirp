@@ -141,4 +141,19 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.GetTotalPageNumberForPopular();
     }
+
+    public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
+    {
+        return await _cheepRepository.GetCommentsByCheepId(cheepId);
+    }
+    public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author)
+    {
+        await _cheepRepository.AddCommentToCheep(cheepDto, Text, author);
+    }
+
+    public async Task<CheepDTO> GetCheepFromId(int cheepId)
+    {
+        return await _cheepRepository.GetCheepFromId(cheepId);
+    }
+
 }

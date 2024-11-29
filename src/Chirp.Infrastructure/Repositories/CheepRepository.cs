@@ -429,8 +429,6 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-        
-        
         public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
         {
             var query = _dbContext.Comment
@@ -451,18 +449,15 @@ namespace Chirp.Infrastructure.Repositories
             
             return await query.ToListAsync();
         }
-        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text )
+        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author )
         {
             // Create a new Cheep 
             if (cheepDto != null)
             {
-                // Find the author by name
-                var author = await _authorRepository.FindAuthorByName(cheepDto.Author.Name);
-
                 Comment comment = new Comment
                 {
                     CheepId = cheepDto.CheepId,
-                    Author = author,
+                    Author = await _authorRepository.FindAuthorByName(author),
                     Text = Text,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
@@ -474,6 +469,30 @@ namespace Chirp.Infrastructure.Repositories
             }
 
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+        }
+
+        public async Task<CheepDTO> GetCheepFromId(int cheepId)
+        {
+            var cheep = await (from a in _dbContext.Cheeps
+                where a.CheepId == cheepId
+                select new CheepDTO()
+                {
+                    CheepId = a.CheepId,
+                    Author = new AuthorDTO
+                    {
+                        Name = a.Author.Name,
+                        Email = a.Author.Email,
+                        AuthorsFollowed = a.Author.AuthorsFollowed
+                    }, 
+                    Text = a.Text,
+                    FormattedTimeStamp = a.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = a.Likes,
+                    Dislikes = a.Dislikes,
+                    LikesCount = a.Likes.Count,
+                    DislikesCount = a.Dislikes.Count
+                }).FirstOrDefaultAsync();
+
+            return cheep;
         }
     }
 }

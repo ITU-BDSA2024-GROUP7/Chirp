@@ -267,7 +267,7 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task HandleLike(string authorName, int cheepId)
+        public async Task HandleLike(string authorName, int cheepId, string? emoji = null)
         {
             // Find the author by Id (or by name if needed)
             var author = await _authorRepository.FindAuthorByName(authorName);
@@ -297,7 +297,13 @@ namespace Chirp.Infrastructure.Repositories
             
             if (existingLike != null) // if the user has already liked the cheep
             {
-                await UnlikeCheep(existingLike);
+                if (emoji != null)
+                {
+                    await UpdateReaction(cheepId, authorName, emoji);
+                } else {
+                    await UnlikeCheep(existingLike);
+                    await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
+                }
             }
             else // if the user has not liked the cheep
             {
@@ -305,9 +311,11 @@ namespace Chirp.Infrastructure.Repositories
                 {
                     // undislike cheep if the user has disliked it
                     await UnDislikeCheep(existingDislike);
+                    await RemoveReaction(cheepId, authorName); // Remove the dislike reaction when unliking
                 }
                 
                 await LikeCheep(authorId, cheepId);
+                await AddReaction(cheepId, authorName, emoji); // Add like reaction when liking
             }
         }
         
@@ -336,7 +344,7 @@ namespace Chirp.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task HandleDislike(string authorName, int cheepId)
+        public async Task HandleDislike(string authorName, int cheepId, string? emoji = null)
         {
             // Find the author by Id (or by name if needed)
             var author = await _authorRepository.FindAuthorByName(authorName);
@@ -364,16 +372,24 @@ namespace Chirp.Infrastructure.Repositories
 
             if (existingDislike != null) // if the user has already disliked the cheep
             {
-                await UnDislikeCheep(existingDislike);
+                if (emoji != null)
+                {
+                    await UpdateReaction(cheepId, authorName, emoji);
+                } else {
+                    await UnDislikeCheep(existingDislike);
+                    await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
+                }
             }
             else // undislike cheep if the user has disliked it
             {
                 if (existingLike != null)
                 {
                     await UnlikeCheep(existingLike);
+                    await RemoveReaction(cheepId, authorName); // Remove the reaction when unliking
                 }
                 // if the user has not disliked the cheep
                 await DislikeCheep(authorId, cheepId);
+                await AddReaction(cheepId, authorName, emoji); // Add reaction when liking
             }
         }
         
@@ -505,5 +521,79 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+        
+        public async Task AddReaction(int cheepId, string authorName, string emoji)
+        {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+            
+            var reaction = new Reaction
+            {
+                CheepId = cheepId,
+                AuthorId = authorId,
+                Emoji = emoji
+            };
+        
+            await _dbContext.Reaction.AddAsync(reaction);
+            await _dbContext.SaveChangesAsync();
+        }
+        
+        public async Task RemoveReaction(int cheepId, string authorName)
+        {
+            // Find the author by Id (or by name if needed)
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                // Handle case where author is not found
+                throw new Exception("Author not found");
+            }
+            
+            var reaction = await _dbContext.Reaction
+                .FirstOrDefaultAsync(r => r.CheepId == cheepId && r.AuthorId == authorId);
+        
+            if (reaction != null)
+            {
+                _dbContext.Reaction.Remove(reaction);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task<List<String>> GetTopReactions(int cheepId, int topN = 3)
+        {
+            return await _dbContext.Reaction
+                .Where(r => r.CheepId == cheepId)
+                .GroupBy(r => r.Emoji)
+                .OrderByDescending(g => g.Count())
+                .Take(topN)
+                .Select(g => g.First().Emoji)
+                .ToListAsync();
+        }
+        
+        public async Task UpdateReaction(int cheepId, string authorName, string emoji)
+        {
+            var author = await _authorRepository.FindAuthorByName(authorName);
+            var authorId = author!.AuthorId;
+            if (author == null)
+            {
+                throw new Exception("Author not found");
+            }
+
+            var reaction = await _dbContext.Reaction
+                .FirstOrDefaultAsync(r => r.CheepId == cheepId && r.AuthorId == authorId);
+
+            if (reaction != null)
+            {
+                reaction.Emoji = emoji;
+                _dbContext.Reaction.Update(reaction);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
+    
 }

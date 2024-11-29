@@ -138,16 +138,16 @@ public class PopularTimelineModel : PageModel
         return Redirect($"/popular?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string emoji)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId);
+        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string emoji)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId);
+        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }

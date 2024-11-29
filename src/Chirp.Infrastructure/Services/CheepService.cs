@@ -19,8 +19,8 @@ public interface ICheepService
     public Task DeleteUserCheeps(AuthorDTO Author);
     
     public Task <List<string>>GetFollowedAuthors(string userName);
-    public Task HandleLike(string authorName, int cheepId);
-    public Task HandleDislike(string authorName, int cheepId);
+    public Task HandleLike(string authorName, int cheepId, string? emoji);
+    public Task HandleDislike(string authorName, int cheepId, string? emoji);
     public Task<List<CheepDTO>> GetPopularCheeps(int page);
     public Task<int> GetTotalPageNumberForPopular();
 
@@ -117,14 +117,14 @@ public class CheepService : ICheepService
     }
 
 
-    public async Task HandleLike(string authorName, int cheepId)
+    public async Task HandleLike(string authorName, int cheepId, string? emoji)
     {
-        await _cheepRepository.HandleLike(authorName, cheepId);
+        await _cheepRepository.HandleLike(authorName, cheepId, emoji);
     }
 
-    public async Task HandleDislike(string authorName, int cheepId)
+    public async Task HandleDislike(string authorName, int cheepId, string? emoji)
     {
-        await _cheepRepository.HandleDislike(authorName, cheepId);
+        await _cheepRepository.HandleDislike(authorName, cheepId, emoji);
 
     }
 
@@ -163,5 +163,14 @@ public class CheepService : ICheepService
     public async Task<int> GetKarmaForAuthor(string authorName)
     {
         return await _authorRepository.GetKarmaForAuthor(authorName);
+    }
+    
+    public async Task AddReaction(string authorName, int cheepId, string emoji)
+    {
+        await _cheepRepository.AddReaction(cheepId, authorName, emoji);
+    }
+    public async Task<List<String>> GetTopReactions (int cheepId)
+    {
+        return await _cheepRepository.GetTopReactions(cheepId);
     }
 }

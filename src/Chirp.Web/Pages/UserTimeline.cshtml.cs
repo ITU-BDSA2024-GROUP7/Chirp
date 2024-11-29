@@ -214,16 +214,16 @@ public class UserTimelineModel : PageModel
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string emoji)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId);
+        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string emoji)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId);
+        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }

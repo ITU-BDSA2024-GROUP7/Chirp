@@ -19,7 +19,8 @@ public class PublicModel : PageModel
     public int TotalPageNumber { get; set; }
     public AuthorDTO UserAuthor { get; set; }
     public bool ShowPopularCheeps { get; set; }
-
+    // Mapping of cheepId to list of reactions
+    public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
@@ -104,6 +105,11 @@ public class PublicModel : PageModel
         {
             var currentUserName = User.Identity.Name;
             UserAuthor = await _service.FindAuthorByName(currentUserName);
+        }
+        
+        foreach (var cheep in Cheeps)
+        {
+            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
         }
         
         return Page();
@@ -194,17 +200,17 @@ public class PublicModel : PageModel
         return Redirect($"/?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId);
+        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId);
-        
+        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
+
         return Redirect($"/?page={PageNumber}");
     }
     

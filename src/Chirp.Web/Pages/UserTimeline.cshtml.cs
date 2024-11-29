@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -127,6 +128,8 @@ public class UserTimelineModel : PageModel
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1}")]
     public string CheepText { get; set; } = string.Empty; 
+    [BindProperty]
+    public IFormFile? CheepImage { get; set; }
     public async Task<IActionResult> OnPost()
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
@@ -139,6 +142,7 @@ public class UserTimelineModel : PageModel
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
+            
             // Ensure Cheeps and other required properties are populated
             if (User.Identity != null && User.Identity.Name == CurrentAuthor) 
             {
@@ -156,6 +160,12 @@ public class UserTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                string imageBase64 = null;
+                if (CheepImage != null && CheepImage.Length > 0)
+                {
+                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                }
+                
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -165,6 +175,7 @@ public class UserTimelineModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
+                    ImageReference = imageBase64!,
                     FormattedTimeStamp =
                         DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
@@ -237,6 +248,7 @@ public class UserTimelineModel : PageModel
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
+
     /// <summary>
     /// Takes the user to the cheep page and allows them to comment on the cheep
     /// </summary>
@@ -245,5 +257,18 @@ public class UserTimelineModel : PageModel
         Console.WriteLine("Commenting on cheep with id: " + cheepId);
         
         return Redirect($"/{cheepId}/comments");
+    }
+
+    public string ConvertLinksToAnchors(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+
+        // Regular expression to detect URLs
+        var regex = new Regex(@"((http|https):\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\S*[^.,\s])?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+
+        // Replace URLs with anchor tags
+        return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
     }
 }

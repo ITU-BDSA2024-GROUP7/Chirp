@@ -1096,7 +1096,7 @@ public class E2ETests : PageTest
         await LoginUser("1");
         await DeleteUser();    
     }
-    
+
     [Test]
     [Category("End2End")]
     public async Task SwitchFromDislikeToLikeReactionTest()
@@ -1104,7 +1104,7 @@ public class E2ETests : PageTest
         // Like reaction another users post and switch to Dislike reaction and check if the corresponding reaction shows up
         await RegisterUser("1");
         await LoginUser("1");
-        
+
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -1112,18 +1112,61 @@ public class E2ETests : PageTest
         await LogoutUser();
         await RegisterUser("2");
         await LoginUser("2");
-        
+
         await _page.Locator("li").First.Locator("#dislikeMethod").HoverAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "👎" }).First.ClickAsync();
         await _page.Locator("li").First.Locator("#likeMethod").HoverAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "👍" }).First.ClickAsync();
-        
+
         await Expect(_page.Locator("span").Filter(new() { HasText = "👍" }).First).ToBeVisibleAsync();
 
 
         // Clean up
         await DeleteUser();
         await LoginUser("1");
-        await DeleteUser();    
+        await DeleteUser();
+    }
+
+//---------------------------------- Image TESTS  ----------------------------------
+    [Test]
+    [Category("SkipOnGitHubActions")]
+    public async Task CanUserUploadImage()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "icon1.png");
+        
+        await _page.Locator("#CheepImage").ClickAsync();
+        await _page.Locator("#CheepImage").SetInputFilesAsync(new[] { imagePath });
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Hej");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Img, new() { Name = "Cheep Image" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    
+    [Test]
+    [Category("SkipOnGitHubActions")]
+    public async Task CanUserUploadGif()
+    {
+        await RegisterUser();
+        await LoginUser();
+        
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+        var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "TESTGIF.gif");
+        
+        await _page.Locator("#CheepImage").ClickAsync();
+        await _page.Locator("#CheepImage").SetInputFilesAsync(new[] { imagePath});
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("Hej");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Img, new() { Name = "Cheep Image" })).ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
     }
 }

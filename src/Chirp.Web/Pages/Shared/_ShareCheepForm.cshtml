@@ -10,10 +10,13 @@
     {
     <h3>What's on your mind?</h3>
     }
-    <form asp-page="SubmitCheep" style="display: flex; align-items: center;">
+    <form asp-page="SubmitCheep" method="post" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; align-items: center;">
         <input type="text" asp-for="CheepText" style="flex: 1; margin-right: 5px;">
         <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
         <input type="submit" value="Share">
+        <input value="Upload Image" type="file" asp-for="CheepImage" accept="image/*,.gif" style="margin-top: 10px; flex-basis: 100%;">
         <span asp-validation-for="CheepText" class="text-danger" style="margin-left: 10px;"></span>
+        <span asp-validation-for="CheepImage" class="text-danger" style="margin-left: 10px;"></span>
     </form>
+
 </div>

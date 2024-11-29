@@ -2,6 +2,7 @@
 using Chirp.Core;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -114,6 +115,9 @@ public class PublicModel : PageModel
         
         return Page();
     }
+    [BindProperty]
+    public IFormFile? CheepImage { get; set; }
+    
     
     [BindProperty]
     public int pageNumber { get; set; }
@@ -121,6 +125,10 @@ public class PublicModel : PageModel
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CheepText { get; set; } = string.Empty;
+
+    
+
+    // Add constraint to check for file not image or gif.
     public async Task<IActionResult> OnPost()
     {
         
@@ -147,6 +155,14 @@ public class PublicModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
+                
+                // Handle potential image upload
+                string imageBase64 = null;
+                if (CheepImage != null && CheepImage.Length > 0)
+                {
+                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                }
+                    
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -156,9 +172,10 @@ public class PublicModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
+                    ImageReference = imageBase64!,
                     FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
-
+    
                 await _service.CreateCheep(cheepDTO);
             }
         }
@@ -229,5 +246,18 @@ public class PublicModel : PageModel
         
         return Redirect($"/{cheepId}/comments");
     }
+    public string ConvertLinksToAnchors(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+
+        // Regular expression to detect URLs
+        var regex = new Regex(@"((http|https):\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\S*[^.,\s])?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+
+        // Replace URLs with anchor tags
+        return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
+    }
+    
 
 }

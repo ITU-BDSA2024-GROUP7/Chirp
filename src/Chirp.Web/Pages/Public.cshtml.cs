@@ -222,7 +222,8 @@ public class PublicModel : PageModel
             return text;
 
         // Regular expression to detect URLs
-        var regex = new Regex(@"((http|https):\/\/|www\.)[^\s]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var regex = new Regex(@"((http|https):\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\S*[^.,\s])?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
 
         // Replace URLs with anchor tags
         return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");

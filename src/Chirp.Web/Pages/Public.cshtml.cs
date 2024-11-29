@@ -2,6 +2,7 @@
 using Chirp.Core;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
@@ -213,6 +214,18 @@ public class PublicModel : PageModel
         await _service.DeleteCheep(cheepId);
         
         return Redirect($"/?page={PageNumber}");
+    }
+    
+    public string ConvertLinksToAnchors(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return text;
+
+        // Regular expression to detect URLs
+        var regex = new Regex(@"((http|https):\/\/|www\.)[^\s]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        // Replace URLs with anchor tags
+        return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
     }
     
 

@@ -8,7 +8,7 @@ public class CheepDTO
     public required AuthorDTO Author { get; set; } // AuthorDTO
     public required string Text { get; set; } // Message text
     public string ImageReference { get; set; } // Message text
-    public required string FormattedTimeStamp { get; set; } // Time stamp as a formatted string
+    public required String FormattedTimeStamp { get; set; } // Time stamp as a formatted string
     public ICollection<CommentDTO> Comments { get; set; } = new List<CommentDTO>(); // List of comments
     public ICollection<Like> Likes { get; set; } = new List<Like>();
     public ICollection<Dislike> Dislikes { get; set; } = new List<Dislike>();

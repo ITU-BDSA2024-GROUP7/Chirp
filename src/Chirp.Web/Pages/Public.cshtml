@@ -67,7 +67,8 @@
                             }
                         </div>
                     </div>
-                    <small>@cheep.FormattedTimeStamp</small>
+
+                    <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                     <p>@cheep.Text</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
@@ -81,6 +82,7 @@
                         }
                     </div>
                     
+
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {

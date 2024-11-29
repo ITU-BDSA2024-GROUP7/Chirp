@@ -121,7 +121,6 @@ public class CheepService : ICheepService
     public async Task HandleDislike(string authorName, int cheepId)
     {
         await _cheepRepository.HandleDislike(authorName, cheepId);
-
     }
 
     /// <summary>
@@ -143,8 +142,13 @@ public class CheepService : ICheepService
         return await _cheepRepository.GetTotalPageNumberForPopular();
     }
 
+
     public async Task<string> HandleImageUpload(IFormFile image)
     {
         return await _cheepRepository.HandleImageUpload(image);
+    }
+    public async Task<int> GetKarmaForAuthor(string authorName)
+    {
+        return await _authorRepository.GetKarmaForAuthor(authorName);
     }
 }

@@ -164,6 +164,17 @@
                     
                     <br><br>
                     <p>@cheep.Text</p>
+                    <div>
+                        @* If image reference is not null then make an image element *@
+                        @if (cheep.ImageReference != null)
+                        {
+                            // (R0lGODlh) Is what all base64 encoded GIFs start with
+                            string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
+                            <a href="data:@mimeType;base64,@cheep.ImageReference" style="cursor: pointer;">
+                                <img src="data:@mimeType;base64,@cheep.ImageReference" alt="Cheep Image"/>
+                            </a>
+                        }
+                    </div>
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {

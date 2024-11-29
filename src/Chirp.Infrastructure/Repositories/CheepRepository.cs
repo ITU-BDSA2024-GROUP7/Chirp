@@ -430,6 +430,7 @@ namespace Chirp.Infrastructure.Repositories
                         AuthorsFollowed = cheep.Author.AuthorsFollowed
                     },
                     Text = cheep.Text,
+                    ImageReference = cheep.ImageReference,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -455,20 +456,6 @@ namespace Chirp.Infrastructure.Repositories
             // Convert the byte array to base64 string
             var base64String = Convert.ToBase64String(compressedImageBytes);
             return base64String;
-        }
-
-        public async Task<string> EncodeToBase64(IFormFile image)
-        {
-            var base64 = "";
-            
-            if (image != null && image.Length > 0)
-            {
-                using var ms = new MemoryStream();
-                image.CopyTo(ms);
-                var fileBytes = ms.ToArray();
-                base64 = Convert.ToBase64String(fileBytes);
-            }
-            return base64;
         }
         
         public async Task<byte[]> CompressImage(IFormFile image)

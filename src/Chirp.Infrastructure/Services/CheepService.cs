@@ -155,5 +155,8 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.GetCheepFromId(cheepId);
     }
-
+    public async Task<int> GetKarmaForAuthor(string authorName)
+    {
+        return await _authorRepository.GetKarmaForAuthor(authorName);
+    }
 }

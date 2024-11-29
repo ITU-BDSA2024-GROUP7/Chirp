@@ -146,5 +146,27 @@ namespace Chirp.Infrastructure.Repositories
 
             return followingAuthors;
         }
+
+        public async Task<int> GetKarmaForAuthor(string authorName)
+        {
+            var author = await FindAuthorByName(authorName);
+
+            // Check for if author is null
+            if (author == null) return 0;
+            
+            var cheepIds = await _dbContext.Cheeps
+                .Where(cheep => cheep.AuthorId == author.AuthorId)
+                .Select(cheep => cheep.CheepId)
+                .ToListAsync();
+
+            var likesCount = await _dbContext.Likes
+                .CountAsync(like => cheepIds.Contains(like.CheepId));
+
+            var dislikesCount = await _dbContext.Dislikes
+                .CountAsync(dislike => cheepIds.Contains(dislike.CheepId));
+
+            var karma = likesCount - dislikesCount;
+            return karma;
+        }
     }    
 }

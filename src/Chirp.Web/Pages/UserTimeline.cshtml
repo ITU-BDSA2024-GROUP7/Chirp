@@ -11,6 +11,7 @@
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
+    int authorKarma = Model.AuthorKarma;
 }
 
 <div>
@@ -22,15 +23,20 @@
     </div>
     <div class="stat-container">
         <div class="border">
-            <div>
-                <a class="button" href="#popup1">
-                    <h3>Followers: @Model.FollowingMeList.Count</h3>
-                </a>
+            <div class="karma-counter-container">
+                <h3>Karma: @authorKarma</h3>
             </div>
-            <div>
-                <a class="button" href="#popup2">
-                    <h3>Following: @Model.FollowingList.Count</h3>
-                </a>
+            <div class="followcontainer">
+                <div>
+                    <a class="button" href="#popup1">
+                        <h3>Followers: @Model.FollowingMeList.Count</h3>
+                    </a>
+                </div>
+                <div>
+                    <a class="button" href="#popup2">
+                        <h3>Following: @Model.FollowingList.Count</h3>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -159,12 +165,29 @@
                             }
                         </div>
                     </div>
-                   
-                    <small>@cheep.FormattedTimeStamp</small>
-                    
+                    <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                     <br><br>
                     
                     <p>@cheep.Text</p>
+                    
+                    <div class="CheepReactions">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
+                            </form>
+                            
+                            <p>@cheep.LikesCount</p>
+                            <form method="post">
+                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                <input type="hidden" name="currentAuthorPageName" value="@authorName"/>
+                                <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")" type="submit" asp-page-handler="DisLikeMethod"><i class="fas fa-thumbs-down fa-2x fareact"></i></button>
+                            </form>
+                            <p>@cheep.DislikesCount</p>
+                        }
+                    </div>
                     <div class="Comment">
                         <form style="display: flex;" method="post">
                             <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
@@ -172,6 +195,7 @@
                             <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments</button>
                         </form>
                     </div>
+
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {

@@ -430,12 +430,29 @@ ul.nav li a:hover {
 
 .stat-container .border {
     margin-top: 10px;
-    display: inline-flex;
-    align-items: center; /* Align items vertically in the center */
     border: 2px solid #cc6e6e;
     border-radius: 15px;
+    display: flex;
+    flex-direction: column; /* Keeps the content stacked vertically */
+    align-items: center; /* Center all children horizontally within the border */
+    justify-content: center; /* Center children vertically */
+    padding: 10px 0;
+}
+.stat-container .followcontainer {
+    display: inline-flex;
+    align-items: center; /* Align items vertically in the center */
 }
 
+.stat-container .karma-counter-container {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.stat-container h3 {
+    color: #cc6e6e;
+    margin: 3px 0!important;
+}
 .stat-container div {
     margin: 0 10px; /* Optional spacing between child divs */
 }

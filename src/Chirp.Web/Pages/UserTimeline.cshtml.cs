@@ -15,6 +15,7 @@ public class UserTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
+    public int AuthorKarma { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
     public required List<String>? FollowingList { get; set; } 
@@ -26,6 +27,63 @@ public class UserTimelineModel : PageModel
     {
         _service = service;
     }
+    
+    public string GetFormattedTimeStamp(string timeStamp)
+    {
+        if (!DateTime.TryParse(timeStamp, out DateTime timeStampDateTime))
+        {
+            return "Invalid date";
+        }
+        // Format the timestamp
+        var CurrentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+        
+        var timeDifference = CurrentTime - timeStampDateTime;
+        
+        if (timeDifference.TotalSeconds < 60)
+        {
+            return "just now";
+        }
+        else if (timeDifference.TotalMinutes < 60)
+        {
+            if ((int)timeDifference.TotalMinutes == 1)
+            {
+                return $"{(int)timeDifference.TotalMinutes} minute ago";
+            }
+            return $"{(int)timeDifference.TotalMinutes} minutes ago";
+        }
+        else if (timeDifference.TotalHours < 24)
+        {
+            if ((int)timeDifference.TotalHours == 1)
+            {
+                return $"{(int)timeDifference.TotalHours} hour ago";
+            }
+            return $"{(int)timeDifference.TotalHours} hours ago";
+        }
+        else if (timeDifference.TotalDays < 30)
+        {
+            if ((int)timeDifference.TotalDays == 1)
+            {
+                return $"{(int)timeDifference.TotalDays} day ago";
+            }
+            return $"{(int)timeDifference.TotalDays} days ago";
+        }
+        else if (timeDifference.TotalDays < 365)
+        {
+            if ((int)(timeDifference.TotalDays / 30) == 1)
+            {
+                return $"{(int)(timeDifference.TotalDays / 30)} month ago";
+            }
+            return $"{(int)(timeDifference.TotalDays / 30)} months ago";
+        }
+        else
+        {
+            if ((int)(timeDifference.TotalDays / 365) == 1)
+            {
+                return $"{(int)(timeDifference.TotalDays / 365)} year ago";
+            }
+            return $"{(int)(timeDifference.TotalDays / 365)} years ago";
+        }
+    }
     // Runs when the site is loaded (Request Method: GET)
     public async Task<IActionResult> OnGet(string author, [FromQuery] int page)
     {
@@ -33,9 +91,10 @@ public class UserTimelineModel : PageModel
         {
             page = 1;
         }
-
+    
         CurrentAuthor = author;
         PageNumber = page;
+        AuthorKarma = await _service.GetKarmaForAuthor(author);
         
         if (User.Identity != null && User.Identity.Name == author) 
         {

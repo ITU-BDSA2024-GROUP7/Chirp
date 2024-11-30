@@ -27,7 +27,7 @@
         {
             <form method="post" style="display: flex; align-items: center;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
-                <textarea name="Text" placeholder="Write a comment..." style="width: 100%; margin-bottom: 10px;" required></textarea>
+                <textarea name="Text" placeholder="Write a comment..." style="width: 100%; margin-bottom: 2px;" required></textarea>
                 <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
             </form>
         }

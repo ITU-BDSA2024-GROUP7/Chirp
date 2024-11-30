@@ -174,4 +174,9 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.GetTopReactions(cheepId);
     }
+    
+    public async Task<List<Core.DTOs.CommentDTO>> RetrieveAllCommentsFromAnAuthor(string authorName)
+    {
+        return await _cheepRepository.RetriveAllCommentsFromAnAuthor(authorName);
+    }
 }

@@ -94,7 +94,9 @@
                         {
                             <form method="post">
                                 <input type="hidden" name="CommentId" value="@comment.CommentId"/>
-                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                         }
                     </div>

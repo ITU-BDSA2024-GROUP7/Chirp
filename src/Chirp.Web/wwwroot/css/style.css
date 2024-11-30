@@ -429,10 +429,15 @@ div.page ul.cheeps li img {
 
 .CheepReactions button .fa-thumbs-up:hover {
     color: #0c770c !important;
+    scale: 1.1;
+    transition: all 0.3s ease;
 }
 
 .CheepReactions button .fa-thumbs-down:hover {
     color: #9a0e0e !important;
+    scale: 1.1;
+    transition: all 0.3s ease;
+
 }
 
 .stat-container {

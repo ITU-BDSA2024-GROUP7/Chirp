@@ -29,7 +29,7 @@
         {
             <form method="post" style="display: flex; align-items: center;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
-                <input type="text" asp-for="CommentText" placeholder=" Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;">
+                <input type="text" asp-for="CommentText" placeholder=" Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;" required>
                 <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
             </form>
         }

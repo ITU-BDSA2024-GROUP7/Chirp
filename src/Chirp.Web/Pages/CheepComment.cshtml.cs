@@ -24,7 +24,7 @@ public class CheepCommentModel : PageModel
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
-    public string CommentText { get; set; }
+    public string CommentText { get; set; } = string.Empty;
 
     public CheepCommentModel(CheepService service)
     {

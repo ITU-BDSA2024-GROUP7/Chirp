@@ -77,6 +77,28 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+        public async Task<List<CommentDTO>> RetriveAllCommentsFromAnAuthor(string Username)
+        {
+            var query = _dbContext.Comment
+                .Include(c => c.Author)
+                .Where(comment => comment.Author.Name == Username)
+                .OrderByDescending(comment => comment.TimeStamp)
+                .Select(comment => new CommentDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = comment.Author.Name,
+                        Email = comment.Author.Email,
+                        AuthorsFollowed = comment.Author.AuthorsFollowed
+                    },
+                    CommentId = comment.CommentId,
+                    CheepId = comment.CheepId,
+                    Text = comment.Text,
+                    FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                });
+
+            return await query.ToListAsync();
+        }
 
         public async Task<List<CheepDTO>> ReadAllCheeps(int page)
         {

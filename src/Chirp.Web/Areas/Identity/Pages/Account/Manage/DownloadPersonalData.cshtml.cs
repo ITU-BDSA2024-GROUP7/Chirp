@@ -100,6 +100,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 j++;
             }
 
+            var k = 0;
+            var ListOfComments = await _service.RetrieveAllCommentsFromAnAuthor(user.UserName);
+            foreach (var Comment in ListOfComments)
+            {
+                csvContent.AppendLine($"Comment {k}: Comment.Text {Comment.Text}, Author: {Comment.Author.Name}, Comment TimeStamp: {Comment.FormattedTimeStamp}");
+                k++;
+            }
+
 
             Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.csv");
             // return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");

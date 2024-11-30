@@ -202,15 +202,24 @@ public class CheepCommentModel : PageModel
         return Redirect(Request.Headers["Referer"].ToString());
     }
     
-    public async Task<IActionResult> OnPostAddCommentToCheep(int cheepId, string text)
+    public async Task<IActionResult> OnPostAddCommentToCheep(int cheepId)
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
 
-            if (authorName != null)
+            if (authorName != null && !string.IsNullOrEmpty(CommentText))
             {
-                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), CommentText, User.Identity.Name);
+                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), CommentText, authorName);
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Comment text cannot be empty.");
+                // Ensure Cheeps and other required properties are populated
+                OriginalCheep = await _service.GetCheepFromId(cheepId);
+                Comments = await _service.GetCommentsByCheepId(cheepId);
+                userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+                return Page(); // Return the page with validation messages
             }
         }
 

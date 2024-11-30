@@ -16,7 +16,7 @@ public class E2ETests : PageTest
 
     readonly BrowserTypeLaunchOptions _browserTypeLaunchOptions = new BrowserTypeLaunchOptions
     {
-        Headless = true
+        Headless = false
     };
 
     [SetUp]
@@ -1058,9 +1058,10 @@ public class E2ETests : PageTest
         await _page.Locator("#CheepText").FillAsync("CreateCheepTest");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.Locator("li").First.Locator("[id='View\\ Comments']").ClickAsync();
-        await _page.GetByPlaceholder("Write a comment...").ClickAsync();
-        await _page.GetByPlaceholder("Write a comment...").FillAsync("CreateCommentTest");
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
+        await _page.GetByPlaceholder("Answer Tester").ClickAsync();
+        await _page.GetByPlaceholder("Answer Tester").FillAsync("CreateCommentTest");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Add Comment" }).ClickAsync();
         await Expect(_page.GetByRole(AriaRole.Listitem)).ToContainTextAsync("CreateCommentTest");
         await _page.Locator("#deleteButton").ClickAsync();
@@ -1081,16 +1082,9 @@ public class E2ETests : PageTest
         await LogoutUser();
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol Timeline" }).ClickAsync();
         
-        var commentButton = _page.Locator("li").Filter(new() { HasText = "Tester just now" }).Locator("[id=\"View\\ Comments\"]");
-        await Expect(commentButton).ToBeVisibleAsync();
-        await commentButton.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Attached });
-        await commentButton.ClickAsync();
-        await Expect(_page.GetByText("Back Comment section")).ToBeVisibleAsync();
-        /*
-        await Expect(_page.Locator("li").Filter(new() { HasText = "Tester just now" }).Locator("[id=\"View\\ Comments\"]")).ToBeVisibleAsync();
-        await _page.Locator("li").Filter(new() { HasText = "Tester just now" }).Locator("[id=\"View\\ Comments\"]").ClickAsync();
-        await Expect(_page.GetByText("Back Comment section")).ToBeVisibleAsync();
-        */
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
+        
         await LoginUser();
         
         // Clean up
@@ -1103,7 +1097,8 @@ public class E2ETests : PageTest
         await RegisterUser();
         await LoginUser();
 
-        _page.GetByRole(AriaRole.Button, new() { Name = "#View Comments" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
         await Expect(_page.GetByText("Back Comment section")).ToBeVisibleAsync();
 
         // Clean up

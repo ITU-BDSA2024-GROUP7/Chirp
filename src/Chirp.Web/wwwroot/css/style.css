@@ -747,7 +747,7 @@ div.page ul.cheeps li img {
 }
 
 .reactions button:hover {
-    transform: scale(1.2);
+    transform: scale(1.5);
 }
 
 /* Show reactions when hovering over the like button */

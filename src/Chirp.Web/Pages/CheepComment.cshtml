@@ -1,4 +1,5 @@
 @page "/{cheepId:int}/comments"
+@using System.ComponentModel.DataAnnotations
 @using Chirp.Core
 @using Chirp.Core.DTOs
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -11,6 +12,7 @@
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
+   
 }
 
 <div>
@@ -27,7 +29,7 @@
         {
             <form method="post" style="display: flex; align-items: center;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
-                <textarea name="Text" placeholder="Answer @Model.OriginalCheep.Author.Name" style="width: 100%; margin-bottom: 2px;" required></textarea>
+                <input type="text" asp-for="CommentText" placeholder=" Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;">
                 <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
             </form>
         }

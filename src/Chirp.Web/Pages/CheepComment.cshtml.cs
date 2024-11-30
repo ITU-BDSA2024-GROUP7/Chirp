@@ -20,8 +20,11 @@ public class CheepCommentModel : PageModel
     public int CheepId { get; set; }
     public AuthorDTO userAuthor { get; set; }
     public CheepDTO OriginalCheep { get; set; }
-
-    public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
+    
+    [BindProperty]
+    [Required(ErrorMessage = "At least write something before you click me....")]
+    [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
+    public string CommentText { get; set; }
 
     public CheepCommentModel(CheepService service)
     {
@@ -207,7 +210,7 @@ public class CheepCommentModel : PageModel
 
             if (authorName != null)
             {
-                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), text, User.Identity.Name);
+                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), CommentText, User.Identity.Name);
             }
         }
 

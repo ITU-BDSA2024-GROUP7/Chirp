@@ -429,10 +429,15 @@ div.page ul.cheeps li img {
 
 .CheepReactions button .fa-thumbs-up:hover {
     color: #0c770c !important;
+    scale: 1.1;
+    transition: all 0.3s ease;
 }
 
 .CheepReactions button .fa-thumbs-down:hover {
     color: #9a0e0e !important;
+    scale: 1.1;
+    transition: all 0.3s ease;
+
 }
 
 .stat-container {
@@ -649,6 +654,156 @@ div.page ul.cheeps li img {
     display: block;
 }
 
+.Delete button {
+    background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
+    background-size: contain; /* Ensure the image fits within the button */
+    background-position: right; /* Center the image within the button */
+    background-repeat: no-repeat;
+    border: none;
+    width: 25px; 
+    height: 25px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    background-color: rgba(255, 255, 255, 0); 
+}
+.Comment button {
+    background-color: rgba(52, 137, 243, 0);
+    border: none;
+    color: #486dfa;
+    padding: 4px 0px;  
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+}
+.Comment button:hover {
+    color: #003bae;
+}
+.Cheepforcomments {
+    margin: 10px 0;
+    padding: 5px;
+    background: #F0FAF9;
+    border: 1px solid #e29494;
+    border-radius: 2px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.CommentForm {
+    margin: 10px 0;
+    padding: 5px;
+    gap: 5px; /* Space between elements */
+    
+}
+.CommentForm input[type="text"] {
+    width: 100%; /* Fill the remaining space */
+    padding: 5px; /* Add padding for better input size */
+    border: 1px solid #e6c0bf;
+    border-radius: 2px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+}
+.CommentForm button {
+    background: #571010;
+    border: 1px solid #3b0707;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 12px; /* Adjust font size to match input */
+    font-weight: bold;
+    border-radius: 2px;
+    color: white;
+    padding: 5px 10px; /* Add padding for better button size */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
+
+
+/* Container for the reaction buttons */
+.reactions-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* The reaction buttons (hidden by default) */
+.reactions {
+    display: flex;
+    position: absolute;
+    bottom: 50px; /* Adjust depending on desired placement */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10;
+}
+
+/* Reaction button styling */
+.reactions button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: transform 0.2s ease;
+}
+
+.reactions button:hover {
+    transform: scale(1.5);
+}
+
+/* Show reactions when hovering over the like button */
+#likeMethod:hover + .reactions,
+#dislikeMethod:hover + .reactions,
+.reactions:hover {
+    opacity: 1;
+    visibility: visible;
+}
+
+.TopReactions {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 25px;
+    padding: 2px 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin: 5px 0;
+}
+
+.TopReactions p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.emoji-container {
+    display: inline-flex;
+}
+
+.TopReactions span {
+    position: relative;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.TopReactions span:not(:first-child) {
+    margin-left: -12px;
+}
+
+/* Z-index for stacking */
+.TopReactions span:nth-child(1) { z-index: 3; }
+.TopReactions span:nth-child(2) { z-index: 2; }
+.TopReactions span:nth-child(3) { z-index: 1; }
+
+/* Individual emoji hover effect */
+.TopReactions span:hover {
+    transform: translateY(-4px) scale(1.2);
+    z-index: 4; /* Ensure hovered emoji always appears on top */
+}
+
 .Delete form button {
     padding: 0;
     cursor: pointer;
@@ -708,5 +863,6 @@ div.page ul.cheeps li img {
     padding: 5px 10px; /* Add padding for better button size */
     cursor: pointer; /* Add pointer cursor on hover */
 }
+
 
 

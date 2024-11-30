@@ -15,6 +15,7 @@ public class CheepDBContext : IdentityDbContext<ApplicationUser>
     public DbSet<Comment> Comment { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Dislike> Dislikes { get; set; }
+    public DbSet<Reaction> Reaction { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,7 +55,12 @@ public class CheepDBContext : IdentityDbContext<ApplicationUser>
             .HasOne(c => c.Cheep)
             .WithMany(c => c.Comments)
             .HasForeignKey(c => c.CheepId);
-             
+        
+        // Configure the many-to-many relationship between Cheeps and Authors through Reactions
+        modelBuilder.Entity<Reaction>()
+            .HasOne(r => r.Cheep)
+            .WithMany(c => c.Reactions)
+            .HasForeignKey(r => r.CheepId);
         
     }
 }

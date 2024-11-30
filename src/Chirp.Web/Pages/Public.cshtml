@@ -9,30 +9,31 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    
+
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.UserAuthor;
-
 }
 
 <div xmlns="http://www.w3.org/1999/html">
     <div class="timeline-header">
         <h2> Public Timeline </h2>
     </div>
-    
-    @if(User.Identity != null && User.Identity.IsAuthenticated){ 
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
         @* Render the Share Form Partial View *@
         {
             ViewData["pageNumber"] = pageNumber;
         }
         @await Html.PartialAsync("_ShareCheepForm", Model.SharedChirpView)
     }
-    
+
     @await Html.PartialAsync("_CheepSorting")
+
     @if (Model.Cheeps.Any())
     {
-        <ul id="messagelist" class="cheeps"> 
+        <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
                 <li>
@@ -40,19 +41,20 @@
                         <strong>
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
-    
-                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name) {
+
+                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        {
                             <form style="display: flex;" method="post">
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                                 {
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
                                 else
                                 {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
                                 }
                             </form>
@@ -68,10 +70,9 @@
                             </form>
                             }
                         </div>
-
                     </div>
-
                     <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
+                    <br>
                     <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
@@ -84,28 +85,59 @@
                             </a>
                         }
                     </div>
-                    
                     <div class="CheepReactions">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <form method="post">
-                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")" type="submit" asp-page-handler="LikeMethod"><i class="fas fa-thumbs-up fa-2x fareact"></i></button>
+                                <div class="reactions-container">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")"
+                                            type="submit" asp-page-handler="LikeMethod">
+                                        <i class="fas fa-thumbs-up fa-2x fareact"></i>
+                                    </button>
+                                    <div class="reactions">
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="👍">👍</button>
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="❤️">❤️</button>
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="😂">😂</button>
+                                    </div>
+                                </div>
                             </form>
                             <p>@cheep.LikesCount</p>
                             <form method="post">
-                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")" type="submit" asp-page-handler="DisLikeMethod"><i class="fas fa-thumbs-down fa-2x fareact"></i></button>
+                                <div class="reactions-container">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")"
+                                            type="submit" asp-page-handler="DisLikeMethod">
+                                        <i class="fas fa-thumbs-down fa-2x fareact"></i>
+                                    </button>
+                                    <div class="reactions">
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="👎">👎</button>
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="😡">😡</button>
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="💀">💀</button>
+                                    </div>
+                                </div>
                             </form>
                             <p>@cheep.DislikesCount</p>
 
                             
                         }
+                        <div class="TopReactions">
+                            <p>Top Reactions:</p>
+                            @if (Model.TopReactions.ContainsKey(cheep.CheepId))
+                            {
+                                <div class="emoji-container">
+                                    @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                    {
+                                        <span>@reaction</span>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                     <div class="Comment">
                         <form style="display: flex;" method="post">
                             <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                             <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments</button>
                         </form>
                     </div>
@@ -123,12 +155,12 @@
             <div style="width: 80px; display: flex; justify-content: flex-start;">
                 @if (@pageNumber != 1)
                 {
-                <a href="/?page=1" style="text-decoration: none; margin-right: 5px;">
-                    <button style="display: inline-block; margin: 0;">&lt;&lt;</button>
-                </a>
-                <a href="/?page=@(pageNumber - 1)" style="text-decoration: none;">
-                    <button style="display: inline-block; margin: 0;">&lt;</button>
-                </a>
+                    <a href="/?page=1" style="text-decoration: none; margin-right: 5px;">
+                        <button style="display: inline-block; margin: 0;">&lt;&lt;</button>
+                    </a>
+                    <a href="/?page=@(pageNumber - 1)" style="text-decoration: none;">
+                        <button style="display: inline-block; margin: 0;">&lt;</button>
+                    </a>
                 }
             </div>
 
@@ -137,12 +169,12 @@
             <div style="width: 80px; display: flex; justify-content: flex-end;">
                 @if (@pageNumber != @totalPages)
                 {
-                <a href="/?page=@(pageNumber + 1)" style="text-decoration: none; margin-right: 5px;">
-                    <button style="display: inline-block; margin: 0;">&gt;</button>
-                </a>
-                <a href="/?page=@totalPages" style="text-decoration: none;">
-                    <button style="display: inline-block; margin: 0;">&gt;&gt;</button>
-                </a>
+                    <a href="/?page=@(pageNumber + 1)" style="text-decoration: none; margin-right: 5px;">
+                        <button style="display: inline-block; margin: 0;">&gt;</button>
+                    </a>
+                    <a href="/?page=@totalPages" style="text-decoration: none;">
+                        <button style="display: inline-block; margin: 0;">&gt;&gt;</button>
+                    </a>
                 }
             </div>
         </div>

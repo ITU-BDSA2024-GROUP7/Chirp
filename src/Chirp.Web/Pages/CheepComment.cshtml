@@ -1,0 +1,114 @@
+@page "/{cheepId:int}/comments"
+@using Chirp.Core
+@using Chirp.Core.DTOs
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Chirp.Web.Pages.CheepCommentModel
+@{
+    ViewData["Title"] = "Chirp!";
+    Layout = "Shared/_Layout";
+    
+    var CheepId = HttpContext.GetRouteValue("cheepId");
+    int pageNumber = Model.PageNumber;
+    int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
+    AuthorDTO userAuthor = Model.userAuthor;
+}
+
+<div>
+    <div class="timeline-header">
+        <a class="timeline-button" href="/">
+            <button >Back</button>
+        </a>
+        <h2> Comment section </h2>
+    </div>
+       @if (Model.OriginalCheep != null)
+{
+    <div class="CommentForm">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form method="post" style="display: flex; align-items: center;">
+                <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
+                <textarea name="Text" placeholder="Write a comment..." style="width: 100%; margin-bottom: 10px;" required></textarea>
+                <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
+            </form>
+        }
+    </div>
+    
+    <div class="Cheepforcomments">
+        <strong>
+            <a href="/@Model.OriginalCheep.Author.Name">@Model.OriginalCheep.Author.Name</a>
+        </strong>
+        
+        @if (User.Identity.IsAuthenticated && Model.OriginalCheep.Author.Name != User.Identity.Name)
+        {
+            <form style="display: inline-block; margin-left: 2px;" method="post">
+                @if (!Model.userAuthor.AuthorsFollowed.Contains(Model.OriginalCheep.Author.Name))
+                {
+                    <input type="hidden" name="followedAuthorName" value="@Model.OriginalCheep.Author.Name"/>
+                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                }
+                else
+                {
+                    <input type="hidden" name="followedAuthor" value="@Model.OriginalCheep.Author.Name"/>
+                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                }
+            </form>
+        }
+        <br/>
+        <small>@Model.GetFormattedTimeStamp(Model.OriginalCheep.FormattedTimeStamp)</small>
+        <p>@Model.OriginalCheep.Text</p>
+    </div>
+}
+
+@if (Model.Comments != null && Model.Comments.Any())
+{
+    <ul id="messagelist" class="Comments">
+        @foreach (var comment in Model.Comments)
+        {
+            <li>
+                <div class="cheep-container">
+                    <strong>
+                        <a href="/@comment.Author.Name">@comment.Author.Name</a>
+                    </strong>
+
+                    @if (User.Identity.IsAuthenticated && comment.Author.Name != User.Identity.Name)
+                    {
+                        <form style="display: flex;" method="post">
+                            @if (!Model.userAuthor.AuthorsFollowed.Contains(comment.Author.Name))
+                            {
+                                <input type="hidden" name="followedAuthorName" value="@comment.Author.Name"/>
+                                <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                            }
+                            else
+                            {
+                                <input type="hidden" name="followedAuthor" value="@comment.Author.Name"/>
+                                <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]" />
+                                <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                            }
+                        </form>
+                    }
+                    <div class="Delete">
+                        @if (User.Identity.IsAuthenticated && comment.Author.Name == User.Identity.Name)
+                        {
+                            <form method="post">
+                                <input type="hidden" name="CommentId" value="@comment.CommentId"/>
+                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                            </form>
+                        }
+                    </div>
+                </div>
+                <small>@Model.GetFormattedTimeStamp(comment.FormattedTimeStamp)</small>
+                <p>@comment.Text</p>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <em>There are no comments on this cheep so far.</em>
+    <br/>
+}
+    
+</div>

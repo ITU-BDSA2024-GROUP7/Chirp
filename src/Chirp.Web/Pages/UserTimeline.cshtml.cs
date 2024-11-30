@@ -21,6 +21,8 @@ public class UserTimelineModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; }
     public required List<String>? FollowingList { get; set; } 
     public required List<String>? FollowingMeList { get; set; }
+    public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
+
     public string CurrentAuthor { get; set; } = string.Empty;
     public AuthorDTO userAuthor { get; set; }
 
@@ -225,16 +227,16 @@ public class UserTimelineModel : PageModel
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName)
+    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId);
+        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName)
+    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId);
+        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
@@ -246,6 +248,17 @@ public class UserTimelineModel : PageModel
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
+
+    /// <summary>
+    /// Takes the user to the cheep page and allows them to comment on the cheep
+    /// </summary>
+    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
+    {
+        Console.WriteLine("Commenting on cheep with id: " + cheepId);
+        
+        return Redirect($"/{cheepId}/comments");
+    }
+
     public string ConvertLinksToAnchors(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -258,5 +271,4 @@ public class UserTimelineModel : PageModel
         // Replace URLs with anchor tags
         return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
     }
-
 }

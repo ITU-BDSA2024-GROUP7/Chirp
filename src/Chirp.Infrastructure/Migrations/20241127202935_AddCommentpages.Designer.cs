@@ -3,6 +3,7 @@ using System;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Infrastructure.Migrations
 {
     [DbContext(typeof(CheepDBContext))]
-    partial class CheepDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241127202935_AddCommentpages")]
+    partial class AddCommentpages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0-rc.2.24474.1");
@@ -136,31 +139,6 @@ namespace Chirp.Infrastructure.Migrations
                     b.HasIndex("CheepId");
 
                     b.ToTable("Likes");
-                });
-
-            modelBuilder.Entity("Chirp.Core.Reaction", b =>
-                {
-                    b.Property<int>("ReactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CheepId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Emoji")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ReactionId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CheepId");
-
-                    b.ToTable("Reaction");
                 });
 
             modelBuilder.Entity("Chirp.Infrastructure.Data.ApplicationUser", b =>
@@ -427,25 +405,6 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Cheep");
                 });
 
-            modelBuilder.Entity("Chirp.Core.Reaction", b =>
-                {
-                    b.HasOne("Chirp.Core.Author", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Chirp.Core.Cheep", "Cheep")
-                        .WithMany("Reactions")
-                        .HasForeignKey("CheepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Cheep");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -513,8 +472,6 @@ namespace Chirp.Infrastructure.Migrations
                     b.Navigation("Dislikes");
 
                     b.Navigation("Likes");
-
-                    b.Navigation("Reactions");
                 });
 #pragma warning restore 612, 618
         }

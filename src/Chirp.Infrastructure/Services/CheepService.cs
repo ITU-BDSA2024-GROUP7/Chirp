@@ -20,8 +20,8 @@ public interface ICheepService
     public Task DeleteUserCheeps(AuthorDTO Author);
     
     public Task <List<string>>GetFollowedAuthors(string userName);
-    public Task HandleLike(string authorName, int cheepId);
-    public Task HandleDislike(string authorName, int cheepId);
+    public Task HandleLike(string authorName, int cheepId, string? emoji);
+    public Task HandleDislike(string authorName, int cheepId, string? emoji);
     public Task<List<CheepDTO>> GetPopularCheeps(int page);
     public Task<int> GetTotalPageNumberForPopular();
     public Task<string> HandleImageUpload(IFormFile image);
@@ -89,6 +89,11 @@ public class CheepService : ICheepService
         await _cheepRepository.DeleteCheep(cheepId);
     }
 
+    public async Task DeleteComment(int commentId)
+    {
+        await _cheepRepository.DeleteComment(commentId);
+    }
+
     public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
     {
         await _authorRepository.FollowAuthor(userAuthorName, followedAuthorName);
@@ -113,14 +118,15 @@ public class CheepService : ICheepService
     }
 
 
-    public async Task HandleLike(string authorName, int cheepId)
+    public async Task HandleLike(string authorName, int cheepId, string? emoji)
     {
-        await _cheepRepository.HandleLike(authorName, cheepId);
+        await _cheepRepository.HandleLike(authorName, cheepId, emoji);
     }
 
-    public async Task HandleDislike(string authorName, int cheepId)
+    public async Task HandleDislike(string authorName, int cheepId, string? emoji)
     {
-        await _cheepRepository.HandleDislike(authorName, cheepId);
+        await _cheepRepository.HandleDislike(authorName, cheepId, emoji);
+
     }
 
     /// <summary>
@@ -142,6 +148,19 @@ public class CheepService : ICheepService
         return await _cheepRepository.GetTotalPageNumberForPopular();
     }
 
+    public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
+    {
+        return await _cheepRepository.GetCommentsByCheepId(cheepId);
+    }
+    public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author)
+    {
+        await _cheepRepository.AddCommentToCheep(cheepDto, Text, author);
+    }
+
+    public async Task<CheepDTO> GetCheepFromId(int cheepId)
+    {
+        return await _cheepRepository.GetCheepFromId(cheepId);
+    }
 
     public async Task<string> HandleImageUpload(IFormFile image)
     {
@@ -150,5 +169,10 @@ public class CheepService : ICheepService
     public async Task<int> GetKarmaForAuthor(string authorName)
     {
         return await _authorRepository.GetKarmaForAuthor(authorName);
+    }
+    
+    public async Task<List<String>> GetTopReactions (int cheepId)
+    {
+        return await _cheepRepository.GetTopReactions(cheepId);
     }
 }

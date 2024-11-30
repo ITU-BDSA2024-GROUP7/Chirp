@@ -11,8 +11,11 @@ public class CheepDBContext : IdentityDbContext<ApplicationUser>
     
     public  DbSet<Cheep> Cheeps { get; set; }
     public DbSet<Author> Authors { get; set; }
+    
+    public DbSet<Comment> Comment { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Dislike> Dislikes { get; set; }
+    public DbSet<Reaction> Reaction { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,5 +43,24 @@ public class CheepDBContext : IdentityDbContext<ApplicationUser>
             .HasOne(l => l.Author)
             .WithMany(a => a.Dislikes)
             .HasForeignKey(l => l.AuthorId);
+        
+        // Configure the one-to-many relationship between Cheeps and Authors
+        modelBuilder.Entity<Cheep>()
+            .HasOne(c => c.Author)
+            .WithMany(a => a.Cheeps)
+            .HasForeignKey(c => c.AuthorId);
+        
+        // Configure the one-to-many relationship between Comments and Authors
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.Cheep)
+            .WithMany(c => c.Comments)
+            .HasForeignKey(c => c.CheepId);
+        
+        // Configure the many-to-many relationship between Cheeps and Authors through Reactions
+        modelBuilder.Entity<Reaction>()
+            .HasOne(r => r.Cheep)
+            .WithMany(c => c.Reactions)
+            .HasForeignKey(r => r.CheepId);
+        
     }
 }

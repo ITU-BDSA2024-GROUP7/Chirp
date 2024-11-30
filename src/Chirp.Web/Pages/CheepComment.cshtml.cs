@@ -1,31 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Chirp.Core;
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Caching.Distributed;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
 
-public class PublicModel : PageModel
+public class CheepCommentModel : PageModel
 {
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    public AuthorDTO UserAuthor { get; set; }
-    public bool ShowPopularCheeps { get; set; }
-    // Mapping of cheepId to list of reactions
-    public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
-    public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
+    public required List<CommentDTO> Comments { get; set; }
+    public string CurrentAuthor { get; set; } = string.Empty;
+    public int CheepId { get; set; }
+    public AuthorDTO userAuthor { get; set; }
+    public CheepDTO OriginalCheep { get; set; }
+
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
-    public PublicModel(CheepService service)
+    public CheepCommentModel(CheepService service)
     {
         _service = service;
     }
@@ -85,69 +83,57 @@ public class PublicModel : PageModel
             return $"{(int)(timeDifference.TotalDays / 365)} years ago";
         }
     }
-    
-    /// <summary>
-    /// Gets cheeps and stores them in a list when the page is loaded.
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IActionResult> OnGet([FromQuery] int page)
+    // Runs when the site is loaded (Request Method: GET)
+    public async Task<IActionResult> OnGet(int cheepId, [FromQuery] int page)
     {
         if (page <= 0)
         {
             page = 1;
         }
 
+        CheepId = cheepId;
         PageNumber = page;
-        Cheeps = await _service.GetCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumber();
-
-
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
-        }
         
-        foreach (var cheep in Cheeps)
-        {
-            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
-        }
+        // get list of comments from cheep
+
+        //TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
         
+        OriginalCheep = await _service.GetCheepFromId(cheepId);
+        if (OriginalCheep == null)
+        {
+            return NotFound();
+        }
+        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        Comments = await _service.GetCommentsByCheepId(cheepId);
+        PageNumber = pageNumber;
+        
+
         return Page();
     }
-    [BindProperty]
-    public IFormFile? CheepImage { get; set; }
-    
     
     [BindProperty]
     public int pageNumber { get; set; }
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
-    [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
-    public string CheepText { get; set; } = string.Empty;
-
-    
-
-    // Add constraint to check for file not image or gif.
+    [StringLength(160, ErrorMessage = "Maximum length is {1}")]
+    public string CheepText { get; set; } = string.Empty; 
     public async Task<IActionResult> OnPost()
     {
+        string? currentAuthor = RouteData.Values["author"]?.ToString();
+        CurrentAuthor = currentAuthor;
+        
+        PageNumber = pageNumber;
+        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
-            // Gets current page number
-            PageNumber = pageNumber;
-            
             // Ensure Cheeps and other required properties are populated
-            Cheeps = await _service.GetCheeps(PageNumber);
-            
-            TotalPageNumber = await _service.GetTotalPageNumber();
-            
-            var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
-            
+            OriginalCheep = await _service.GetCheepFromId(CheepId);
+            Comments = await _service.GetCommentsByCheepId(CheepId);
+            userAuthor = await _service.FindAuthorByName(User.Identity.Name);
             return Page(); // Return the page with validation messages
         }
-
+        
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
@@ -155,14 +141,6 @@ public class PublicModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
-                
-                // Handle potential image upload
-                string imageBase64 = null;
-                if (CheepImage != null && CheepImage.Length > 0)
-                {
-                    imageBase64 = await _service.HandleImageUpload(CheepImage);
-                }
-                    
                 // Create the new CheepDTO
                 var cheepDTO = new CheepDTO
                 {
@@ -172,15 +150,19 @@ public class PublicModel : PageModel
                         Email = authorEmail
                     },
                     Text = CheepText,
-                    ImageReference = imageBase64!,
-                    FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
+                    FormattedTimeStamp =
+                        DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
-    
+
                 await _service.CreateCheep(cheepDTO);
             }
         }
 
-        return RedirectToPage("Public", new { page = 1 });
+        // Returns to the authors timeline
+        // return RedirectToPage("UserTimeline", new { author = currentAuthor, page = 1 });
+        
+        // Returns to the users timeline
+        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
     }
     
     /// <summary>
@@ -197,7 +179,7 @@ public class PublicModel : PageModel
             await _service.FollowAuthor(userAuthor, followedAuthorName);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect(Request.Headers["Referer"].ToString());
     }
 
     /// <summary>
@@ -214,50 +196,28 @@ public class PublicModel : PageModel
             await _service.UnfollowAuthor(userAuthor, followedAuthor);
             
         }
-        return Redirect($"/?page={PageNumber}");
+        return Redirect(Request.Headers["Referer"].ToString());
     }
     
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
+    public async Task<IActionResult> OnPostAddCommentToCheep(int cheepId, string text)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var authorName = User.Identity.Name;
+
+            if (authorName != null)
+            {
+                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), text, User.Identity.Name);
+            }
+        }
+
+        return Redirect(Request.Headers["Referer"].ToString());
+    }
+    public async Task<IActionResult> OnPostDeleteMethod(int CommentId)
+    {
+        Console.WriteLine("Comment ID: " + CommentId);
+        await _service.DeleteComment(CommentId);
         
-        return Redirect($"/?page={PageNumber}");
+        return Redirect(Request.Headers["Referer"].ToString());
     }
-    
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
-    {
-        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
-
-        return Redirect($"/?page={PageNumber}");
-    }
-    
-    
-    public async Task<IActionResult> OnPostDeleteMethod(int cheepId)
-    {
-        await _service.DeleteCheep(cheepId);
-        
-        return Redirect($"/?page={PageNumber}");
-    }
-    
-    
-    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
-    {
-        Console.WriteLine("Commenting on cheep with id: " + cheepId);
-        
-        return Redirect($"/{cheepId}/comments");
-    }
-    public string ConvertLinksToAnchors(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-            return text;
-
-        // Regular expression to detect URLs
-        var regex = new Regex(@"((http|https):\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\S*[^.,\s])?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-
-        // Replace URLs with anchor tags
-        return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
-    }
-    
-
 }

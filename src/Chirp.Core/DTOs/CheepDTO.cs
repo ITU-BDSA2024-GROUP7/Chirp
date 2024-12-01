@@ -15,4 +15,5 @@ public class CheepDTO
     public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>(); // List of reactions
     public int LikesCount { get; set; }
     public int DislikesCount { get; set; }
+    public int CommentsCount { get; set; }
 }

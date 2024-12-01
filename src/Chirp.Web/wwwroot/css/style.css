@@ -185,15 +185,6 @@ div.page ul.cheeps p {
     overflow-wrap: break-word;
 }
 
-div.page ul.cheeps li img {
-    display: block; /* Ensures it takes its own line */
-    margin: 0 auto; /* Centers the image horizontally */
-    max-width: 100%; /* Ensures the image doesn't overflow the cheep container */
-    height: auto; /* Maintains aspect ratio */
-    border-radius: 5px; /* Optional: adds rounded corners */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
-    float: left;
-}
 
 div.page ul.cheeps li small {
     font-size: 0.9em;
@@ -380,6 +371,7 @@ div.page ul.cheeps li img {
     margin: 10px auto; /* Add space above and below the image, center it horizontally */
     border-radius: 5px; /* Optional: Add rounded corners for a polished look */
     border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
+    float: left;
 }
 
 .providerImg {
@@ -655,19 +647,16 @@ div.page ul.cheeps li img {
 }
 
 .Delete button {
-    background-image: url("../images/trash-can-svgrepo-com.svg"); /* Path to your image */
-    background-size: contain; /* Ensure the image fits within the button */
-    background-position: right; /* Center the image within the button */
-    background-repeat: no-repeat;
-    border: none;
-    width: 25px; 
-    height: 25px; 
-    cursor: pointer; 
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    background-color: rgba(255, 255, 255, 0); 
+    background-color: transparent;
+    border: none;  /* Make sure the button doesn't have a border */
 }
+
+.Delete form button i {
+    color: dimgrey;  /* Change the color to something visible */
+    font-size: 18px;
+    margin-left: 6px;
+}
+
 .Comment button {
     background-color: rgba(52, 137, 243, 0);
     border: none;
@@ -680,15 +669,6 @@ div.page ul.cheeps li img {
 }
 .Comment button:hover {
     color: #003bae;
-}
-.Cheepforcomments {
-    margin: 10px 0;
-    padding: 5px;
-    background: #F0FAF9;
-    border: 1px solid #e29494;
-    border-radius: 2px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
 }
 .CommentForm {
     margin: 10px 0;
@@ -816,4 +796,62 @@ div.page ul.cheeps li img {
     font-size: 18px;
     margin-left: 6px;
 }   
+.Comment button {
+    background-color: rgba(52, 137, 243, 0);
+    border: none;
+    color: #486dfa;
+    padding: 4px 0px;  
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font-weight: bold;
+}
+.Comment button:hover {
+    color: #003bae;
+}
+.Cheepforcomments {
+    margin: 10px 0;
+    padding: 5px;
+    background: #F0FAF9;
+    border: 1px solid #e29494;
+    border-radius: 2px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.Cheepforcomments p {
+    margin-bottom: 0px;
+}
+.Cheepforcomments img {
+    max-width: 100%; /* Prevent the image from exceeding the container's width */
+    max-height: 200px;
+    height: auto; /* Maintain aspect ratio */
+    margin: 10px auto; /* Add space above and below the image, center it horizontally */
+    border-radius: 5px; /* Optional: Add rounded corners for a polished look */
+    border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
+}
+.CommentForm {
+    margin: 10px 0;
+    padding: 5px;
+    gap: 5px; /* Space between elements */
+    
+}
+.CommentForm input[type="text"] {
+    width: 100%; /* Fill the remaining space */
+    padding: 5px; /* Add padding for better input size */
+    border: 1px solid #e6c0bf;
+    border-radius: 2px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+}
+.CommentForm button {
+    background: #571010;
+    border: 1px solid #3b0707;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 12px; /* Adjust font size to match input */
+    font-weight: bold;
+    border-radius: 2px;
+    color: white;
+    padding: 5px 10px; /* Add padding for better button size */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
 

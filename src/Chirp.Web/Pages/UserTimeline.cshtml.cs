@@ -247,17 +247,6 @@ public class UserTimelineModel : PageModel
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
-    
-
-    /// <summary>
-    /// Takes the user to the cheep page and allows them to comment on the cheep
-    /// </summary>
-    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
-    {
-        Console.WriteLine("Commenting on cheep with id: " + cheepId);
-        
-        return Redirect($"/{cheepId}/comments");
-    }
 
     public string ConvertLinksToAnchors(string text)
     {

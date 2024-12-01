@@ -727,7 +727,7 @@ div.page ul.cheeps li img {
 .reactions {
     display: flex;
     position: absolute;
-    bottom: 50px; /* Adjust depending on desired placement */
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     background: #fff;

@@ -734,7 +734,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = a.Likes,
                     Dislikes = a.Dislikes,
                     LikesCount = a.Likes.Count,
-                    DislikesCount = a.Dislikes.Count
+                    DislikesCount = a.Dislikes.Count,
+                    ImageReference = a.ImageReference
                 }).FirstOrDefaultAsync();
 
             return cheep;

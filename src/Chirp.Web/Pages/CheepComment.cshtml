@@ -62,7 +62,18 @@
         }
         <br/>
         <small>@Model.GetFormattedTimeStamp(Model.OriginalCheep.FormattedTimeStamp)</small>
-        <p>@Model.OriginalCheep.Text</p>
+        <p>@Html.Raw(Model.ConvertLinksToAnchors(Model.OriginalCheep.Text))</p>
+        <div>
+            @* If image reference is not null then make an image element *@
+            @if (Model.OriginalCheep.ImageReference != null)
+            {
+            // (R0lGODlh) Is what all base64 encoded GIFs start with
+            string mimeType = Model.OriginalCheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
+            <a href="data:@mimeType;base64,@Model.OriginalCheep.ImageReference" style="cursor: pointer;">
+                <img src="data:@mimeType;base64,@Model.OriginalCheep.ImageReference" alt="Cheep Image"/>
+            </a>
+            }
+        </div>
     </div>
 }
 

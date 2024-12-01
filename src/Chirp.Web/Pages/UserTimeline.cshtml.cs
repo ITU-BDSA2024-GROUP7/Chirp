@@ -119,6 +119,11 @@ public class UserTimelineModel : PageModel
         FollowingList = await _service.GetFollowedAuthors(author);
         FollowingMeList = await _service.GetFollowingAuthors(author);
         
+        foreach (var cheep in Cheeps)
+        {
+            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
+        }
+        
         return Page();
     }
     
@@ -246,17 +251,6 @@ public class UserTimelineModel : PageModel
         await _service.DeleteCheep(cheepId);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
-    }
-    
-
-    /// <summary>
-    /// Takes the user to the cheep page and allows them to comment on the cheep
-    /// </summary>
-    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
-    {
-        Console.WriteLine("Commenting on cheep with id: " + cheepId);
-        
-        return Redirect($"/{cheepId}/comments");
     }
 
     public string ConvertLinksToAnchors(string text)

@@ -53,6 +53,11 @@ public class PopularTimelineModel : PageModel
             UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
         
+        foreach (var cheep in Cheeps)
+        {
+            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
+        }
+        
         return Page();
     }
     

@@ -1,4 +1,5 @@
 @page "/{cheepId:int}/comments"
+@using System.ComponentModel.DataAnnotations
 @using Chirp.Core
 @using Chirp.Core.DTOs
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -11,6 +12,7 @@
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
+   
 }
 
 <div>
@@ -25,10 +27,13 @@
     <div class="CommentForm">
         @if (User.Identity.IsAuthenticated)
         {
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" style="display: flex; flex-direction: column; align-items: flex-start;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
-                <textarea name="Text" placeholder="Write a comment..." style="width: 100%; margin-bottom: 10px;" required></textarea>
-                <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
+                <div style="display: flex; align-items: center; width: 100%;">
+                    <input type="text" asp-for="CommentText" placeholder="Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;" />
+                    <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
+                </div>
+                <span asp-validation-for="CommentText" class="text-danger" style="margin-top: 5px;"></span>
             </form>
         }
     </div>
@@ -57,7 +62,18 @@
         }
         <br/>
         <small>@Model.GetFormattedTimeStamp(Model.OriginalCheep.FormattedTimeStamp)</small>
-        <p>@Model.OriginalCheep.Text</p>
+        <p>@Html.Raw(Model.ConvertLinksToAnchors(Model.OriginalCheep.Text))</p>
+        <div>
+            @* If image reference is not null then make an image element *@
+            @if (Model.OriginalCheep.ImageReference != null)
+            {
+            // (R0lGODlh) Is what all base64 encoded GIFs start with
+            string mimeType = Model.OriginalCheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
+            <a href="data:@mimeType;base64,@Model.OriginalCheep.ImageReference" style="cursor: pointer;">
+                <img src="data:@mimeType;base64,@Model.OriginalCheep.ImageReference" alt="Cheep Image"/>
+            </a>
+            }
+        </div>
     </div>
 }
 
@@ -94,7 +110,9 @@
                         {
                             <form method="post">
                                 <input type="hidden" name="CommentId" value="@comment.CommentId"/>
-                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod"></button>
+                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                         }
                     </div>

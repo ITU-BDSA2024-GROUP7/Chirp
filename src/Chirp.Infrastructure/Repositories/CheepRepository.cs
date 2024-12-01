@@ -46,7 +46,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -72,7 +73,30 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
+                });
+
+            return await query.ToListAsync();
+        }
+        public async Task<List<CommentDTO>> RetriveAllCommentsFromAnAuthor(string Username)
+        {
+            var query = _dbContext.Comment
+                .Include(c => c.Author)
+                .Where(comment => comment.Author.Name == Username)
+                .OrderByDescending(comment => comment.TimeStamp)
+                .Select(comment => new CommentDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = comment.Author.Name,
+                        Email = comment.Author.Email,
+                        AuthorsFollowed = comment.Author.AuthorsFollowed
+                    },
+                    CommentId = comment.CommentId,
+                    CheepId = comment.CheepId,
+                    Text = comment.Text,
+                    FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                 });
 
             return await query.ToListAsync();
@@ -100,7 +124,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -140,7 +165,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -193,7 +219,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
 
@@ -462,89 +489,13 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
-                });
-
-            return await query.ToListAsync();
-        }
-        
-        public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
-        {
-            var query = _dbContext.Comment
-                .Where(comment => comment.CheepId == cheepId)
-                .OrderByDescending(comment => comment.TimeStamp)
-                .Select(comment => new CommentDTO
-                {
-                    Author = new AuthorDTO
-                    {
-                        Name = comment.Author.Name,
-                        Email = comment.Author.Email,
-                        AuthorsFollowed = comment.Author.AuthorsFollowed
-                    },
-                    CommentId = comment.CommentId,
-                    CheepId = comment.CheepId,
-                    Text = comment.Text,
-                    FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
         }
 
-        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author)
-        {
-            // Create a new Cheep 
-            if (cheepDto != null)
-            {
-                Comment comment = new Comment
-                {
-                    CommentId = 0,
-                    CheepId = cheepDto.CheepId,
-                    Author = await _authorRepository.FindAuthorByName(author),
-                    Text = Text,
-                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
-                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-                };
-
-                // Add the new Cheep to the DbContext
-                await _dbContext.Comment.AddAsync(comment);
-            }
-
-            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
-        }
-
-        public async Task<CheepDTO> GetCheepFromId(int cheepId)
-        {
-            var cheep = await (from a in _dbContext.Cheeps
-                where a.CheepId == cheepId
-                select new CheepDTO()
-                {
-                    CheepId = a.CheepId,
-                    Author = new AuthorDTO
-                    {
-                        Name = a.Author.Name,
-                        Email = a.Author.Email,
-                        AuthorsFollowed = a.Author.AuthorsFollowed
-                    },
-                    Text = a.Text,
-                    FormattedTimeStamp = a.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
-                    Likes = a.Likes,
-                    Dislikes = a.Dislikes,
-                    LikesCount = a.Likes.Count,
-                    DislikesCount = a.Dislikes.Count
-                }).FirstOrDefaultAsync();
-
-            return cheep;
-        }
-
-        public async Task DeleteComment(int commentId)
-        {
-            var comment = await _dbContext.Comment.FindAsync(commentId);
-            if (comment != null)
-            {
-                _dbContext.Comment.Remove(comment);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
 
         public async Task AddReaction(int cheepId, string authorName, string emoji)
         {
@@ -720,5 +671,83 @@ namespace Chirp.Infrastructure.Repositories
         }
 
             
+        public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
+        {
+            var query = _dbContext.Comment
+                .Where(comment => comment.CheepId == cheepId)
+                .OrderByDescending(comment => comment.TimeStamp)
+                .Select(comment => new CommentDTO
+                {
+                    Author = new AuthorDTO
+                    {
+                        Name = comment.Author.Name,
+                        Email = comment.Author.Email,
+                        AuthorsFollowed = comment.Author.AuthorsFollowed
+                    },
+                    CommentId = comment.CommentId,
+                    CheepId = comment.CheepId,
+                    Text = comment.Text,
+                    FormattedTimeStamp = comment.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                });
+            
+            return await query.ToListAsync();
+        }
+        
+        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author )
+        {
+            // Create a new Cheep 
+            if (cheepDto != null)
+            {
+                Comment comment = new Comment
+                {
+                    CommentId = 0,
+                    CheepId = cheepDto.CheepId,
+                    Author = await _authorRepository.FindAuthorByName(author),
+                    Text = Text,
+                    TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    
+                };
+                
+                // Add the new Cheep to the DbContext
+                await _dbContext.Comment.AddAsync(comment);
+            }
+
+            await _dbContext.SaveChangesAsync(); // Persist the changes to the database
+        }
+
+        public async Task<CheepDTO> GetCheepFromId(int cheepId)
+        {
+            var cheep = await (from a in _dbContext.Cheeps
+                where a.CheepId == cheepId
+                select new CheepDTO()
+                {
+                    CheepId = a.CheepId,
+                    Author = new AuthorDTO
+                    {
+                        Name = a.Author.Name,
+                        Email = a.Author.Email,
+                        AuthorsFollowed = a.Author.AuthorsFollowed
+                    }, 
+                    Text = a.Text,
+                    FormattedTimeStamp = a.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Likes = a.Likes,
+                    Dislikes = a.Dislikes,
+                    LikesCount = a.Likes.Count,
+                    DislikesCount = a.Dislikes.Count,
+                    ImageReference = a.ImageReference
+                }).FirstOrDefaultAsync();
+
+            return cheep;
+        }
+        public async Task DeleteComment(int commentId)
+        {
+            var comment = await _dbContext.Comment.FindAsync(commentId);
+            if (comment != null)
+            {
+                _dbContext.Comment.Remove(comment);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

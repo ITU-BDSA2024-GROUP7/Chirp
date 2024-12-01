@@ -222,7 +222,7 @@ public class E2ETests : PageTest
     {
         await _page!.GotoAsync($"{AppUrl}");
 
-        var firstMessageLink = _page.Locator("#messagelist > li:first-child a");
+        var firstMessageLink = _page.Locator("#messagelist > li:first-child a").Nth(0);
 
         var name = await firstMessageLink.InnerTextAsync();
 
@@ -355,8 +355,7 @@ public class E2ETests : PageTest
 
         // Person has correctly registered if logout button is visible
         await Expect(_page.GetByRole(AriaRole.Link, new() { Name = $"Logout" })).ToBeVisibleAsync();
-
-
+        
         // Clean up
         await LoginUser();
         await DeleteUser();
@@ -1169,4 +1168,65 @@ public class E2ETests : PageTest
         // Clean up
         await DeleteUser();
     }
+    
+    // ---------------------------------- Comment TESTS ----------------------------------
+    [Test]
+    [Category("End2End")]
+    public async Task CreateAndDeleteComment()
+    {
+        await RegisterUser();
+        await LoginUser();
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("CreateCheepTest");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
+        await _page.GetByPlaceholder("Answer Tester").ClickAsync();
+        await _page.GetByPlaceholder("Answer Tester").FillAsync("CreateCommentTest");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Add Comment" }).ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "" })).ToBeVisibleAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "" }).First.ClickAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "" })).Not.ToBeVisibleAsync();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task CommentPublicAvalable()
+    {
+        await RegisterUser();
+        await LoginUser();
+        await _page.Locator("#CheepText").ClickAsync();
+        await _page.Locator("#CheepText").FillAsync("TestCreateCheep");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await LogoutUser();
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol Timeline" }).ClickAsync();
+        
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
+        
+        await LoginUser();
+        
+        // Clean up
+        await DeleteUser();
+    }
+    [Test]
+    [Category("End2End")]
+    public async Task CommentTestLocator()
+    {
+        await RegisterUser();
+        await LoginUser();
+
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
+        await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();
+        await Expect(_page.GetByText("Back Comment section")).ToBeVisibleAsync();
+
+        // Clean up
+        await DeleteUser();
+    }
+    
+    
+    
 }

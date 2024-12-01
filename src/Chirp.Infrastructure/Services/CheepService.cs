@@ -148,6 +148,10 @@ public class CheepService : ICheepService
         return await _cheepRepository.GetTotalPageNumberForPopular();
     }
 
+    public async Task<string> HandleImageUpload(IFormFile image)
+    {
+        return await _cheepRepository.HandleImageUpload(image);
+    }
     public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
     {
         return await _cheepRepository.GetCommentsByCheepId(cheepId);
@@ -161,11 +165,6 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.GetCheepFromId(cheepId);
     }
-
-    public async Task<string> HandleImageUpload(IFormFile image)
-    {
-        return await _cheepRepository.HandleImageUpload(image);
-    }
     public async Task<int> GetKarmaForAuthor(string authorName)
     {
         return await _authorRepository.GetKarmaForAuthor(authorName);
@@ -174,5 +173,10 @@ public class CheepService : ICheepService
     public async Task<List<String>> GetTopReactions (int cheepId)
     {
         return await _cheepRepository.GetTopReactions(cheepId);
+    }
+    
+    public async Task<List<Core.DTOs.CommentDTO>> RetrieveAllCommentsFromAnAuthor(string authorName)
+    {
+        return await _cheepRepository.RetriveAllCommentsFromAnAuthor(authorName);
     }
 }

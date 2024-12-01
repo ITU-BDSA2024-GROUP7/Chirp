@@ -27,10 +27,13 @@
     <div class="CommentForm">
         @if (User.Identity.IsAuthenticated)
         {
-            <form method="post" style="display: flex; align-items: center;">
+            <form method="post" style="display: flex; flex-direction: column; align-items: flex-start;">
                 <input type="hidden" name="cheepId" value="@Model.OriginalCheep.CheepId" />
-                <input type="text" asp-for="CommentText" placeholder="Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;" maxlength="160" required />
-                <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
+                <div style="display: flex; align-items: center; width: 100%;">
+                    <input type="text" asp-for="CommentText" placeholder="Answer @Model.OriginalCheep.Author.Name" style="flex: 1; margin-right: 5px;" />
+                    <button id="addCommentButton" type="submit" asp-page-handler="AddCommentToCheep">Add Comment</button>
+                </div>
+                <span asp-validation-for="CommentText" class="text-danger" style="margin-top: 5px;"></span>
             </form>
         }
     </div>

@@ -116,58 +116,7 @@ public class CheepCommentModel : PageModel
     
     [BindProperty]
     public int pageNumber { get; set; }
-    [BindProperty]
-    [Required(ErrorMessage = "At least write something before you click me....")]
-    [StringLength(160, ErrorMessage = "Maximum length is {1}")]
-    public string CheepText { get; set; } = string.Empty; 
-    public async Task<IActionResult> OnPost()
-    {
-        string? currentAuthor = RouteData.Values["author"]?.ToString();
-        CurrentAuthor = currentAuthor;
-        
-        PageNumber = pageNumber;
-        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
-        
-        if (!ModelState.IsValid) // Check if the model state is invalid
-        {
-            // Ensure Cheeps and other required properties are populated
-            OriginalCheep = await _service.GetCheepFromId(CheepId);
-            Comments = await _service.GetCommentsByCheepId(CheepId);
-            userAuthor = await _service.FindAuthorByName(User.Identity.Name);
-            return Page(); // Return the page with validation messages
-        }
-        
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var authorName = User.Identity.Name;
-            var authorEmail = User.Identity.Name;
 
-            if (authorName != null && authorEmail != null)
-            {
-                // Create the new CheepDTO
-                var cheepDTO = new CheepDTO
-                {
-                    Author = new AuthorDTO
-                    {
-                        Name = authorName, // this needs to be changed to user names going forward
-                        Email = authorEmail
-                    },
-                    Text = CheepText,
-                    FormattedTimeStamp =
-                        DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
-                };
-
-                await _service.CreateCheep(cheepDTO);
-            }
-        }
-
-        // Returns to the authors timeline
-        // return RedirectToPage("UserTimeline", new { author = currentAuthor, page = 1 });
-        
-        // Returns to the users timeline
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
-    }
-    
     /// <summary>
     /// Follows an author
     /// </summary>

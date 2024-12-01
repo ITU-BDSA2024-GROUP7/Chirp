@@ -79,29 +79,18 @@
     }
 
     .reactions {
-        display: flex;
-        position: absolute;
-        bottom: 50px; /* Adjust depending on desired placement */
         left: 50%;
         transform: translateX(-50%);
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        z-index: 10;
+        /* Make sure the width is fully calculated and it doesn't overflow */
+        max-width: calc(100% - 40px); /* Adjust according to padding and button width */
+        box-sizing: border-box;
+        width: auto; /* Adjust the width */
     }
 
+    /* Adjust button size for mobile */
     .reactions button {
-        background: none;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-        margin: 0 5px;
-        transition: transform 0.2s ease;
+        font-size: 16px; /* Smaller font size */
+        padding: 5px;    /* Adjust padding */
     }
 
 }

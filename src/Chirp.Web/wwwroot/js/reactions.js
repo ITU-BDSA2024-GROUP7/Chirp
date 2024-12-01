@@ -6,68 +6,55 @@
         let reactionsVisible = false;
         let selectedEmoji = null;
         let isLongPress = false;
-        
-        // Normal tap handling
-        container.querySelector('button').addEventListener('click', function(e) {
-            if (!isLongPress) {
-                // Allow normal tap behavior
-                return true;
-            }
-            e.preventDefault();
-        });
 
-        container.addEventListener('touchstart', function (e) {
-            isLongPress = false;
-            touchTimeout = setTimeout(() => {
-                isLongPress = true;
-                showReactions(container);
-                reactionsVisible = true;
-                e.preventDefault(); // Only prevent default on long press
-            }, 500);
-        });
+        // Loop through each reaction button in the container
+        const reactionButtons = container.querySelectorAll('.reactions button');
 
-        container.addEventListener('touchmove', function (e) {
-            if (reactionsVisible) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const reactionButtons = container.querySelectorAll('.reactions button');
-                
-                // Reset all buttons scale
-                reactionButtons.forEach(button => {
-                    button.style.transform = 'scale(1)';
-                });
-
-                // Find hovered emoji
-                reactionButtons.forEach(button => {
-                    const rect = button.getBoundingClientRect();
-                    if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-                        touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                        button.style.transform = 'scale(1.5)';
-                        selectedEmoji = button;
-                    }
-                });
-            }
-        });
-
-        container.addEventListener('touchend', function (e) {
-            clearTimeout(touchTimeout);
-            if (reactionsVisible) {
-                e.preventDefault();
-                if (selectedEmoji) {
-                    selectedEmoji.click();
+        // Handle normal click on the reactions (immediate select)
+        reactionButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                if (!isLongPress) {
+                    // Immediate click behavior after long press
+                    return true;
                 }
-                hideReactions(container);
-                reactionsVisible = false;
-                selectedEmoji = null;
-            }
-            // Reset long press flag
-            isLongPress = false;
+                e.preventDefault();  // Prevent default action during long press
+            });
         });
 
-        // Cancel reaction selection if touch is canceled
-        container.addEventListener('touchcancel', function (e) {
-            clearTimeout(touchTimeout);
-            if (reactionsVisible) {
+        // Show reactions container on long press of any reaction
+        reactionButtons.forEach(button => {
+            button.addEventListener('touchstart', function (e) {
+                isLongPress = false;
+                touchTimeout = setTimeout(() => {
+                    isLongPress = true;
+                    selectedEmoji = button;  // Mark the emoji as selected
+                    button.style.transform = 'scale(1.5)';  // Enlarge the emoji on long press
+                    e.preventDefault(); // Prevent default action during long press
+                }, 500);  // 500ms for long press
+            });
+
+            button.addEventListener('touchend', function (e) {
+                clearTimeout(touchTimeout);
+                if (isLongPress) {
+                    // Long press has been detected, but only if selectedEmoji is set
+                    selectedEmoji.click();  // Trigger the click event immediately
+                }
+                // Reset the long press flag and button styles
+                button.style.transform = 'scale(1)';  // Reset the size
+                isLongPress = false;
+            });
+
+            // Cancel reaction selection if touch is canceled
+            button.addEventListener('touchcancel', function (e) {
+                clearTimeout(touchTimeout);
+                button.style.transform = 'scale(1)';  // Reset the size
+                isLongPress = false;
+            });
+        });
+
+        // Close reactions when clicking anywhere outside the container
+        document.addEventListener('click', function (e) {
+            if (!container.contains(e.target)) {
                 hideReactions(container);
                 reactionsVisible = false;
                 selectedEmoji = null;

@@ -239,11 +239,6 @@ public class PublicModel : PageModel
         return Redirect($"/?page={PageNumber}");
     }
     
-    
-    public async Task<IActionResult> OnPostViewCommentsMethod(int cheepId, string commentText)
-    {
-        return Redirect($"/{cheepId}/comments");
-    }
     public string ConvertLinksToAnchors(string text)
     {
         if (string.IsNullOrEmpty(text))

@@ -222,7 +222,7 @@ public class E2ETests : PageTest
     {
         await _page!.GotoAsync($"{AppUrl}");
 
-        var firstMessageLink = _page.Locator("#messagelist > li:first-child a");
+        var firstMessageLink = _page.Locator("#messagelist > li:first-child a").Nth(0);
 
         var name = await firstMessageLink.InnerTextAsync();
 

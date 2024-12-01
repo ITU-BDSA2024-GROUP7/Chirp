@@ -46,7 +46,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -72,7 +73,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -122,7 +124,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -162,7 +165,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -215,7 +219,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
 
@@ -484,7 +489,8 @@ namespace Chirp.Infrastructure.Repositories
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
                     LikesCount = cheep.Likes.Count,
-                    DislikesCount = cheep.Dislikes.Count
+                    DislikesCount = cheep.Dislikes.Count,
+                    CommentsCount = cheep.Comments.Count
                 });
 
             return await query.ToListAsync();
@@ -686,6 +692,7 @@ namespace Chirp.Infrastructure.Repositories
             
             return await query.ToListAsync();
         }
+        
         public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author )
         {
             // Create a new Cheep 

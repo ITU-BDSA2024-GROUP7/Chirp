@@ -138,7 +138,7 @@
                         <form style="display: flex;" method="post">
                             <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
                             <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                            <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments</button>
+                            <button id="View Comments" type="submit" asp-page-handler="ViewCommentsMethod">View Comments (@cheep.CommentsCount)</button>
                         </form>
                     </div>
                 </li>

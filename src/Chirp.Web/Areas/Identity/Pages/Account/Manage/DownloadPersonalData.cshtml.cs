@@ -4,6 +4,7 @@
 #nullable disable
 
 
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using Chirp.Infrastructure.Data;
@@ -11,6 +12,7 @@ using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 
@@ -49,7 +51,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 _userManager.GetUserId(User));
 
             StringBuilder csvContent = new StringBuilder();
-
+            List<(string fileName, byte[] fileContent)> imageFiles = new List<(string fileName, byte[] fileContent)>();
             // Only include personal data for download
             // var personalData = new Dictionary<string, string>();
             var personalDataProps = typeof(IdentityUser).GetProperties().Where(
@@ -97,6 +99,12 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 // personalData.Add($"Cheep Author_{j}", cheep.Author.Name);
                 // personalData.Add($"Cheep TimeStamp_{j}", cheep.FormattedTimeStamp);
                 csvContent.AppendLine($"Cheep {j}: cheep.Text {cheep.Text}, Author: {cheep.Author.Name}, Cheep TimeStamp: {cheep.FormattedTimeStamp}");
+                if(!string.IsNullOrEmpty(cheep.ImageReference))
+                {
+                    var imageBytes = Convert.FromBase64String(cheep.ImageReference);
+                    imageFiles.Add(($"cheep_image_{j}.png", imageBytes));
+                    
+                }
                 j++;
             }
 
@@ -109,9 +117,32 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             }
 
 
-            Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.csv");
-            // return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
-            return new FileContentResult( Encoding.UTF8.GetBytes(csvContent.ToString()), "application/csv");
+            // Create ZIP in memory
+            using var memoryStream = new MemoryStream(); 
+            using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true)) 
+            {
+                // Add CSV file
+                var csvEntry = zipArchive.CreateEntry("PersonalData.csv"); 
+                using (var entryStream = csvEntry.Open()) 
+                using (var streamWriter = new StreamWriter(entryStream)) 
+                {
+                    streamWriter.Write(csvContent.ToString()); 
+                }
+
+                // Add image files
+                foreach (var (fileName, fileContent) in imageFiles) 
+                {
+                    var imageEntry = zipArchive.CreateEntry(fileName); 
+                    using (var entryStream = imageEntry.Open()) 
+                    {
+                        entryStream.Write(fileContent, 0, fileContent.Length); 
+                    }
+                }
+            }
+
+            memoryStream.Seek(0, SeekOrigin.Begin); 
+            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.zip"); 
+            return File(memoryStream.ToArray(), "application/zip"); 
         }
     }
 }

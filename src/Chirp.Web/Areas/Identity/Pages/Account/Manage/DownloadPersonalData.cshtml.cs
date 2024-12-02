@@ -4,6 +4,7 @@
 #nullable disable
 
 
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using Chirp.Infrastructure.Data;
@@ -11,6 +12,7 @@ using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 
@@ -49,15 +51,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 _userManager.GetUserId(User));
 
             StringBuilder csvContent = new StringBuilder();
-
+            List<(string fileName, byte[] fileContent)> imageFiles = new List<(string fileName, byte[] fileContent)>();
             // Only include personal data for download
-            // var personalData = new Dictionary<string, string>();
             var personalDataProps = typeof(IdentityUser).GetProperties().Where(
                 prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
 
             foreach (var p in personalDataProps)
             {
-                // personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
                 if (p.GetValue(user) != null)
                 {
                     csvContent.AppendLine($"{p.Name}: {p.GetValue(user)?.ToString()}");
@@ -69,12 +69,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             {
                 if (l.ProviderKey != null)
                 {
-                    // personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
                     csvContent.AppendLine($"{l.LoginProvider} external login provider key: {l.ProviderKey}");
                 }
             }
-
-            // personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
             var authenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user) != null;
             if (authenticatorKey) csvContent.AppendLine("Authenticator Key: " + authenticatorKey);
             
@@ -83,7 +80,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             var i = 0;
             foreach (var author in followedAuthors.AuthorsFollowed)
             {
-                // personalData.Add($"Follows_{i}", author);
                 csvContent.AppendLine("Follows: " + author);
                 i++;
             }
@@ -91,13 +87,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             var j = 0;
             // Retrieve cheeps that the user has made
             var ListOfCheeps = await _service.RetrieveAllCheepsFromAnAuthor(user.UserName);
-            foreach (var cheep in ListOfCheeps)
+            
+            int pictureCounter = 0; // Counter for images and GIFs
+            foreach (var cheep in ListOfCheeps) 
             {
-                // personalData.Add($"Cheep_{j}", cheep.Text);
-                // personalData.Add($"Cheep Author_{j}", cheep.Author.Name);
-                // personalData.Add($"Cheep TimeStamp_{j}", cheep.FormattedTimeStamp);
-                csvContent.AppendLine($"Cheep {j}: cheep.Text {cheep.Text}, Author: {cheep.Author.Name}, Cheep TimeStamp: {cheep.FormattedTimeStamp}");
-                j++;
+                csvContent.AppendLine($"Cheep: {cheep.Text}, Author: {cheep.Author.Name}, TimeStamp: {cheep.FormattedTimeStamp}"); 
+                if (!string.IsNullOrEmpty(cheep.ImageReference))
+                {
+                    // Identify the MIME type based on the beginning of the Base64 string (GIFs start with "R0lGODlh)"
+                    string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png"; 
+                    string fileExtension = mimeType == "image/gif" ? ".gif" : ".png"; 
+
+                    var imageBytes = Convert.FromBase64String(cheep.ImageReference); // Decode the Base64 string
+                    imageFiles.Add(($"cheep_media_{pictureCounter + 1}{fileExtension}", imageBytes)); 
+                    pictureCounter++; // Increment picture counter
+                }
             }
 
             var k = 0;
@@ -109,9 +113,32 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             }
 
 
-            Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.csv");
-            // return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
-            return new FileContentResult( Encoding.UTF8.GetBytes(csvContent.ToString()), "application/csv");
+            // Create ZIP in memory
+            using var memoryStream = new MemoryStream(); 
+            using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true)) 
+            {
+                // Add CSV file
+                var csvEntry = zipArchive.CreateEntry("PersonalData.csv"); 
+                using (var entryStream = csvEntry.Open()) 
+                using (var streamWriter = new StreamWriter(entryStream)) 
+                {
+                    streamWriter.Write(csvContent.ToString()); 
+                }
+
+                // Add image files
+                foreach (var (fileName, fileContent) in imageFiles) 
+                {
+                    var imageEntry = zipArchive.CreateEntry(fileName); 
+                    using (var entryStream = imageEntry.Open()) 
+                    {
+                        entryStream.Write(fileContent, 0, fileContent.Length); 
+                    }
+                }
+            }
+
+            memoryStream.Seek(0, SeekOrigin.Begin); 
+            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.zip"); 
+            return File(memoryStream.ToArray(), "application/zip"); 
         }
     }
 }

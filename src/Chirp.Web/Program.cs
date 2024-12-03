@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Repositories;
 using Chirp.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,7 +76,8 @@ namespace Chirp.Web
                     options.ClientSecret = clientSecret;
                     options.CallbackPath = new PathString("/signin-github");
                     options.Scope.Add("user:email");
-                    options.Scope.Add("user:email");
+                    options.ClaimActions.MapJsonKey("urn:github:avatar_url", "avatar_url");
+
 
                     options.Events.OnCreatingTicket = context =>
                     {

@@ -107,7 +107,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var name = info.Principal.FindFirstValue(ClaimTypes.Name);
-            
+                // Get claimtypes image
+                
+                var profilePicture = info.Principal.FindFirstValue("urn:github:avatar_url");
                 await _userStore.SetUserNameAsync(user, name, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, email, CancellationToken.None);
                 

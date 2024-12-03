@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Build.Framework.Profiler;
 using Microsoft.Extensions.Logging;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account
@@ -119,7 +120,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 
                 if (accountResult.Succeeded) // If the account is successfully created.
                 {
-                    await _service.CreateAuthor(name, email);
+                    await _service.CreateAuthor(name, email, profilePicture);
                     
                     accountResult = await _userManager.AddLoginAsync(user, info); // Add the external login to the user account.
                     if (accountResult.Succeeded) // If the external login is successfully added to the user account.

@@ -864,3 +864,18 @@ div.page ul.cheeps li img {
     cursor: pointer; /* Add pointer cursor on hover */
 }
 
+div.page ul.cheeps li img.Profile-Picture {
+    display: inline-block!important;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 5px 0 0!important;
+}
+
+.Profile-Author-Name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    text-decoration: none;
+}

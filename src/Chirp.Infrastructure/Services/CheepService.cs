@@ -60,9 +60,9 @@ public class CheepService : ICheepService
         return await _cheepRepository.RetrieveAllCheepsForEndPoint();
     }
 
-    public async Task CreateAuthor(string authorName, string authorEmail)
+    public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture = null)
     {
-        await _authorRepository.CreateAuthor(authorName, authorEmail);
+        await _authorRepository.CreateAuthor(authorName, authorEmail, profilePicture);
     }
 
     public async Task<AuthorDTO>? FindAuthorByName(String name)

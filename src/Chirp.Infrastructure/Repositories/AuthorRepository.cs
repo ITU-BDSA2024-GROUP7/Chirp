@@ -38,14 +38,17 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor(string authorName, string authorEmail)
+        public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture)
         {
+            var base64ProfilePicture = await DownloadAndConvertToBase64Async(profilePicture);
+            
             var author = new Author()
             {   
                 Name = authorName,
                 Email = authorEmail,
                 Cheeps = new List<Cheep>(),
-                AuthorsFollowed = new List<string>()
+                AuthorsFollowed = new List<string>(),
+                ProfilePicture = base64ProfilePicture
             };
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
@@ -167,6 +170,26 @@ namespace Chirp.Infrastructure.Repositories
 
             var karma = likesCount - dislikesCount;
             return karma;
+        }
+        
+        public async Task<string> DownloadAndConvertToBase64Async(string imageUrl)
+        {
+            // Create an HTTP client
+            using var httpClient = new HttpClient();
+
+            try
+            {
+                // Download the image as a byte array
+                byte[] imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+                // Convert the byte array to a Base64 string
+                return Convert.ToBase64String(imageBytes);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading or converting image: {ex.Message}");
+                throw;
+            }
         }
     }    
 }

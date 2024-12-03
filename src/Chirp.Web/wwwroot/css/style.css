@@ -910,3 +910,9 @@ div.page ul.cheeps li img.Profile-Picture {
     align-items: flex-start;
     justify-content: center;
 }
+
+.Profile-Picture-Setting img {
+    width: 40%;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

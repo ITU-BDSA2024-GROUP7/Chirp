@@ -179,4 +179,14 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.RetriveAllCommentsFromAnAuthor(authorName);
     }
+    
+    public async Task UpdateProfilePicture(string authorName, IFormFile profilePicture)
+    {
+        await _authorRepository.UpdateProfilePicture(authorName, profilePicture);
+    }
+    
+    public async Task ClearProfilePicture(string authorName, IFormFile profilePicture)
+    {
+        await _authorRepository.ClearProfilePicture(authorName, profilePicture);
+    }
 }

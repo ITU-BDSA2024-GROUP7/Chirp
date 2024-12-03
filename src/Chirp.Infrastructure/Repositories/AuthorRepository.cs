@@ -40,7 +40,11 @@ namespace Chirp.Infrastructure.Repositories
         // Used for creating a new author when the author is not existing
         public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture)
         {
-            var base64ProfilePicture = await DownloadAndConvertToBase64Async(profilePicture);
+            string? base64ProfilePicture = null;
+            if (profilePicture != null)
+            {
+                base64ProfilePicture = await DownloadAndConvertToBase64Async(profilePicture);
+            }
             
             var author = new Author()
             {   

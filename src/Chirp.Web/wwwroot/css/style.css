@@ -185,6 +185,10 @@ div.page ul.cheeps p {
     overflow-wrap: break-word;
 }
 
+div.page ul.cheeps p.cheep-text {
+    font-size: 16px;
+}
+
 div.page ul.cheeps li img {
     display: block; /* Ensures it takes its own line */
     margin: 0 auto!important; /* Centers the image horizontally */
@@ -341,7 +345,8 @@ ul.nav li a:hover {
 
 .cheep-container {
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    margin-bottom: 10px;
 }
 
 .cheep-container form {
@@ -865,7 +870,7 @@ div.page ul.cheeps li img {
 }
 
 div.page ul.cheeps li img.Profile-Picture {
-    display: inline-block!important;
+    object-fit: cover;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -873,9 +878,35 @@ div.page ul.cheeps li img.Profile-Picture {
     margin: 0 5px 0 0!important;
 }
 
+.cheep-details {
+    display: flex;
+    flex-direction: column; /* Stacks the name/buttons and timestamp vertically */
+    flex: 1; /* Makes this section take up the remaining space */
+    justify-content: space-between; /* Ensures spacing between name/buttons and timestamp */
+}
+
+.cheep-header {
+    display: flex;
+    align-items: center; /* Aligns items (name, buttons) vertically */
+    justify-content: space-between; /* Places name on the left and buttons on the right */
+    gap: 10px; /* Adds spacing between elements */
+}
+
+.cheep-actions {
+    display: flex;
+    gap: 5px; /* Space between buttons */
+}
+
 .Profile-Author-Name {
     font-size: 1.2em;
     font-weight: bold;
     margin: 0;
     text-decoration: none;
+}
+
+.Cheep-Details {
+    display: flex;
+    flex-direction: column; /* Stack the children vertically */
+    align-items: flex-start;
+    justify-content: center;
 }

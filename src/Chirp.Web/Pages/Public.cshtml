@@ -40,48 +40,58 @@
                     <div class="cheep-container">
                         @if (cheep.Author.ProfilePicture == null)
                         {
-                        <img class="Profile-Picture" src="images/DefaultUser.png" alt="User profile image"/>
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="images/DefaultUser.png" alt="User profile image"/>
+                        </a>
                         }
                         else
                         {
-                        <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
+                        </a>
                         }
-                        <strong>
-                            <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
-                        </strong>
+                        
+                        <div class="Cheep-Details">
+                            <div style="display: flex; align-items: center;">
+                                
+                                <strong>
+                                    <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                                </strong>
 
-                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
-                        {
-                            <form style="display: flex;" method="post">
-                                @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                                @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
                                 {
-                                    <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                    <form style="display: flex;" method="post">
+                                        @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                                        {
+                                            <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                            <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                        }
+                                        else
+                                        {
+                                            <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                            <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                        }
+                                    </form>
                                 }
-                                else
-                                {
-                                    <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
-                                }
-                            </form>
-                        }
-                        <div class="Delete">
-                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
-                            {
-                                <form method="post">
-                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            }
+                                <div class="Delete">
+                                    @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                                    {
+                                        <form method="post">
+                                            <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                            <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                            <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                         </div>
                     </div>
-                    <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                     <br>
-                    <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
+                    <p class="cheep-text">@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
                         @if (cheep.ImageReference != null)

@@ -99,7 +99,7 @@ jobs:
           GITHUBTESTACCOUNTUSERNAME: ${{ secrets.GITHUBTESTACCOUNTUSERNAME }}
           GITHUBTESTACCOUNTPASSWORD: ${{ secrets.GITHUBTESTACCOUNTPASSWORD }}
         run: |
-          dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --verbosity normal
+          dotnet test test/Chirp.TestE2E/Chirp.TestE2E.csproj --filter "Category=End2End" --verbosity normal
 
   release:
     timeout-minutes: 60

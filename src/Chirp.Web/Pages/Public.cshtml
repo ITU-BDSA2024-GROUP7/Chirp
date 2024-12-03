@@ -1,10 +1,6 @@
 ﻿@page "/"
-@using Chirp.Core
 @using Chirp.Core.DTOs
-@using Chirp.Web.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.EntityFrameworkCore
-@using Microsoft.IdentityModel.Tokens
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -42,7 +38,7 @@
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
 
-                        @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
                         {
                             <form style="display: flex;" method="post">
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
@@ -60,7 +56,7 @@
                             </form>
                         }
                         <div class="Delete">
-                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
                             {
                             <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
@@ -76,7 +72,7 @@
                     <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
-                        @if (cheep.ImageReference != null)
+                        @if (cheep.ImageReference != "")
                         {
                             // (R0lGODlh) Is what all base64 encoded GIFs start with
                             string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
@@ -86,7 +82,7 @@
                         }
                     </div>
                     <div class="CheepReactions">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <form method="post">
                                 <div class="reactions-container">

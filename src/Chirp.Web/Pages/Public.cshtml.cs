@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Chirp.Core;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Caching.Distributed;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
@@ -105,7 +102,7 @@ public class PublicModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
         
         foreach (var cheep in Cheeps)
@@ -143,8 +140,8 @@ public class PublicModel : PageModel
             TotalPageNumber = await _service.GetTotalPageNumber();
             
             var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
-            
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+
             return Page(); // Return the page with validation messages
         }
 
@@ -194,8 +191,7 @@ public class PublicModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.FollowAuthor(userAuthor, followedAuthorName);
-            
+            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect($"/?page={PageNumber}");
     }
@@ -211,8 +207,7 @@ public class PublicModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(userAuthor, followedAuthor);
-            
+            if (userAuthor != null) await _service.UnfollowAuthor(userAuthor, followedAuthor);
         }
         return Redirect($"/?page={PageNumber}");
     }

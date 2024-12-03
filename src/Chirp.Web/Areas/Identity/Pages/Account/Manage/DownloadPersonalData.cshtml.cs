@@ -6,14 +6,12 @@
 
 using System.IO.Compression;
 using System.Text;
-using System.Text.Json;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
+
 
 
 namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
@@ -76,40 +74,49 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             if (authenticatorKey) csvContent.AppendLine("Authenticator Key: " + authenticatorKey);
             
             // Retrieve authors that the user follows
-            var followedAuthors = await _service.FindAuthorByName(user.UserName);
-            var i = 0;
-            foreach (var author in followedAuthors.AuthorsFollowed)
+            if (user.UserName != null)
             {
-                csvContent.AppendLine("Follows: " + author);
-                i++;
+                var followedAuthors = await _service.FindAuthorByName(user.UserName);
+                var i = 0;
+                foreach (var author in followedAuthors.AuthorsFollowed)
+                {
+                    csvContent.AppendLine("Follows: " + author);
+                    i++;
+                }
             }
 
             var j = 0;
             // Retrieve cheeps that the user has made
-            var ListOfCheeps = await _service.RetrieveAllCheepsFromAnAuthor(user.UserName);
-            
-            int pictureCounter = 0; // Counter for images and GIFs
-            foreach (var cheep in ListOfCheeps) 
+            if (user.UserName != null)
             {
-                csvContent.AppendLine($"Cheep: {cheep.Text}, Author: {cheep.Author.Name}, TimeStamp: {cheep.FormattedTimeStamp}"); 
-                if (!string.IsNullOrEmpty(cheep.ImageReference))
+                var ListOfCheeps = await _service.RetrieveAllCheepsFromAnAuthor(user.UserName);
+            
+                int pictureCounter = 0; // Counter for images and GIFs
+                foreach (var cheep in ListOfCheeps) 
                 {
-                    // Identify the MIME type based on the beginning of the Base64 string (GIFs start with "R0lGODlh)"
-                    string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png"; 
-                    string fileExtension = mimeType == "image/gif" ? ".gif" : ".png"; 
+                    csvContent.AppendLine($"Cheep: {cheep.Text}, Author: {cheep.Author.Name}, TimeStamp: {cheep.FormattedTimeStamp}"); 
+                    if (!string.IsNullOrEmpty(cheep.ImageReference))
+                    {
+                        // Identify the MIME type based on the beginning of the Base64 string (GIFs start with "R0lGODlh)"
+                        string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png"; 
+                        string fileExtension = mimeType == "image/gif" ? ".gif" : ".png"; 
 
-                    var imageBytes = Convert.FromBase64String(cheep.ImageReference); // Decode the Base64 string
-                    imageFiles.Add(($"cheep_media_{pictureCounter + 1}{fileExtension}", imageBytes)); 
-                    pictureCounter++; // Increment picture counter
+                        var imageBytes = Convert.FromBase64String(cheep.ImageReference); // Decode the Base64 string
+                        imageFiles.Add(($"cheep_media_{pictureCounter + 1}{fileExtension}", imageBytes)); 
+                        pictureCounter++; // Increment picture counter
+                    }
                 }
             }
 
             var k = 0;
-            var ListOfComments = await _service.RetrieveAllCommentsFromAnAuthor(user.UserName);
-            foreach (var Comment in ListOfComments)
+            if (user.UserName != null)
             {
-                csvContent.AppendLine($"Comment {k}: Comment.Text {Comment.Text}, Author: {Comment.Author.Name}, Comment TimeStamp: {Comment.FormattedTimeStamp}");
-                k++;
+                var ListOfComments = await _service.RetrieveAllCommentsFromAnAuthor(user.UserName);
+                foreach (var Comment in ListOfComments)
+                {
+                    csvContent.AppendLine($"Comment {k}: Comment.Text {Comment.Text}, Author: {Comment.Author.Name}, Comment TimeStamp: {Comment.FormattedTimeStamp}");
+                    k++;
+                }
             }
 
 
@@ -137,7 +144,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             }
 
             memoryStream.Seek(0, SeekOrigin.Begin); 
-            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.zip"); 
+            Response.Headers.Append("Content-Disposition", "attachment; filename=PersonalData.zip"); 
             return File(memoryStream.ToArray(), "application/zip"); 
         }
     }

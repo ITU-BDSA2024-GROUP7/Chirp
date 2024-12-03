@@ -1,4 +1,3 @@
-using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -65,9 +64,9 @@ public class CheepService : ICheepService
         await _authorRepository.CreateAuthor(authorName, authorEmail);
     }
 
-    public async Task<AuthorDTO>? FindAuthorByName(String name)
+    public async Task<AuthorDTO> FindAuthorByName(String name)
     {
-        return await _authorRepository.FindAuthorByNameDTO(name);
+        return await _authorRepository.FindAuthorByNameDTO(name) ?? throw new InvalidOperationException();
     }
     
     public async Task CreateCheep(CheepDTO Cheep)
@@ -161,7 +160,7 @@ public class CheepService : ICheepService
         await _cheepRepository.AddCommentToCheep(cheepDto, Text, author);
     }
 
-    public async Task<CheepDTO> GetCheepFromId(int cheepId)
+    public async Task<CheepDTO?> GetCheepFromId(int cheepId)
     {
         return await _cheepRepository.GetCheepFromId(cheepId);
     }

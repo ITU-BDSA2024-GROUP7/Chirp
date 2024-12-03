@@ -16,6 +16,15 @@ The program will function as a home made twitter system. Called Chirp
 - Reading and viewing cheeps
 - Managing your Account
 - View a public Timeline
+- A Popular Timeline
+- Like, Dislikes and reactions
+- Links, images and gifs
+- download user data
+- Delete messages
+- Comment page, write comments for cheeps
+- Karma points
+- Follower list
+
 
 
 ## The project is hosted in Azure

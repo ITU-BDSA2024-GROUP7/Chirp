@@ -39,6 +39,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public string Username { get; set; }
         
+        [Required(ErrorMessage = "Please upload a profile picture.")]
+        [BindProperty]
         public IFormFile ProfilePictureImage { get; set; }
 
         /// <summary>
@@ -128,6 +130,19 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         
         public async Task<IActionResult> OnPostUploadProfilePicture()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            UserAuthor = await _service.FindAuthorByName(user.UserName);
+            await LoadAsync(user);
+            
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+            
             await _service.UpdateProfilePicture(User.Identity.Name, ProfilePictureImage);
         
             return RedirectToPage();

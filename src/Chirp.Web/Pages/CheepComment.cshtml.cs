@@ -15,17 +15,18 @@ public class CheepCommentModel : PageModel
     public int TotalPageNumber { get; set; }
     public required List<CommentDTO> Comments { get; set; }
     public int CheepId { get; set; }
-    public AuthorDTO UserAuthor { get; set; }
-    public CheepDTO OriginalCheep { get; set; }
+    public AuthorDTO? UserAuthor { get; set; }
+    public CheepDTO? OriginalCheep { get; set; }
     
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CommentText { get; set; } = string.Empty;
-
+    
     public CheepCommentModel(CheepService service)
     {
         _service = service;
+        
     }
     public string GetFormattedTimeStamp(string timeStamp)
     {
@@ -103,7 +104,10 @@ public class CheepCommentModel : PageModel
         {
             return NotFound();
         }
-        UserAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        if (User.Identity.IsAuthenticated)
+        {
+            UserAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        }
         Comments = await _service.GetCommentsByCheepId(cheepId);
         PageNumber = pageNumber;
         

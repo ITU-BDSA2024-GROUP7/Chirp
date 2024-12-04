@@ -9,7 +9,7 @@
     var CheepId = HttpContext.GetRouteValue("cheepId");
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
-    AuthorDTO userAuthor = Model.UserAuthor;
+    AuthorDTO? userAuthor = Model.UserAuthor;
    
 }
 
@@ -63,7 +63,7 @@
         <p>@Html.Raw(Model.ConvertLinksToAnchors(Model.OriginalCheep.Text))</p>
         <div>
             @* If image reference is not null then make an image element *@
-            @if (Model.OriginalCheep.ImageReference != "")
+            @if (!string.IsNullOrEmpty(Model.OriginalCheep?.ImageReference))
             {
             // (R0lGODlh) Is what all base64 encoded GIFs start with
             string mimeType = Model.OriginalCheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";

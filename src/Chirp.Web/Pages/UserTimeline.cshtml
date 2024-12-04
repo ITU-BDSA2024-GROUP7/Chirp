@@ -156,7 +156,7 @@
                             </form>
                         }
                         <div class="Delete">
-                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            @if (User.Identity!.IsAuthenticated && cheep.Author.Name == User.Identity.Name) 
                             {
                             <form method="post">
                                 <input type="hidden" name="cheepId" value="@cheep.CheepId"/>

@@ -85,7 +85,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            var j = 0;
+            
             // Retrieve cheeps that the user has made
             if (user.UserName != null)
             {

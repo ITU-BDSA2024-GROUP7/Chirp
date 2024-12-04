@@ -91,7 +91,7 @@ public class PopularTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
-                string imageBase64 = null;
+                string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);

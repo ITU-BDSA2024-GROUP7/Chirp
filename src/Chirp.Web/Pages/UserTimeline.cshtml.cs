@@ -140,7 +140,7 @@ public class UserTimelineModel : PageModel
         string? currentAuthor = RouteData.Values["author"]?.ToString();
         if (currentAuthor != null) CurrentAuthor = currentAuthor;
 
-        UserAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        UserAuthor = await _service.FindAuthorByName(User.Identity?.Name ?? string.Empty);
         
         PageNumber = pageNumber;
         TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
@@ -165,7 +165,7 @@ public class UserTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
-                string imageBase64 = null;
+                string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);

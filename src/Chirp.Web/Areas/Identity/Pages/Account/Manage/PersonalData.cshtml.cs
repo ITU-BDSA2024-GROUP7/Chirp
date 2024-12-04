@@ -45,7 +45,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            CurrentAuthor = User.Identity.Name;
+            CurrentAuthor = User.Identity?.Name ?? string.Empty;
 
             if (User.Identity != null && User.Identity.Name == CurrentAuthor)
             {
@@ -53,9 +53,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             }
 
             // Retrieve authors that the user follows
-            var authorDTO = await _service.FindAuthorByName(user.UserName);
+            var authorDTO = await _service.FindAuthorByName(user.UserName ?? string.Empty);
             // FollowList = authorDTO.AuthorsFollowed as List<string>;
-            FollowList = await _service.GetFollowedAuthors(user.UserName);
+            FollowList = await _service.GetFollowedAuthors(user.UserName ?? string.Empty);
 
             userAuthor = authorDTO;
 

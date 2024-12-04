@@ -10,7 +10,7 @@
     var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
-    AuthorDTO userAuthor = Model.UserAuthor;
+    AuthorDTO? userAuthor = Model.UserAuthor;
     int authorKarma = Model.AuthorKarma;
 }
 
@@ -51,7 +51,7 @@
                     {
                         <li>
                             <a href="/@author">@author</a>
-                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name && userAuthor != null)
                             {
                                 <form method="post">
                                     @if (!userAuthor.AuthorsFollowed.Contains(author))
@@ -89,7 +89,7 @@
                     {
                         <li>
                             <a href="/@author">@author</a>
-                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name && userAuthor != null)
                             {
                                 <form method="post">
                                     @if (!userAuthor.AuthorsFollowed.Contains(author))
@@ -136,7 +136,7 @@
                             <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
                         </strong>
 
-                        @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name && userAuthor != null)
                         {
                             <form style="display: flex;" method="post">
                                 @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
@@ -182,7 +182,7 @@
                         }
                     </div>
                     <div class="CheepReactions">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity.IsAuthenticated && userAuthor != null)
                         {
                             <form method="post">
                                 <div class="reactions-container">

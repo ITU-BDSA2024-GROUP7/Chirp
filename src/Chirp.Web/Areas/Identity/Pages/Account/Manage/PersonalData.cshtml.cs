@@ -26,7 +26,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         public required List<String> FollowList { get; set; }
         public required List<String> UserData { get; set; } = new List<String>();
         public string CurrentAuthor { get; set; } = string.Empty;
-        public AuthorDTO userAuthor { get; set; }
+        public AuthorDTO? userAuthor { get; set; }
 
         public PersonalDataModel(
             UserManager<ApplicationUser> userManager,

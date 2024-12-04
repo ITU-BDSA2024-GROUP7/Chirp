@@ -15,7 +15,7 @@ public class PublicModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    public AuthorDTO UserAuthor { get; set; }
+    public AuthorDTO? UserAuthor { get; set; } 
     public bool ShowPopularCheeps { get; set; }
     // Mapping of cheepId to list of reactions
     public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();

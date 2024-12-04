@@ -1,6 +1,6 @@
 namespace Chirp.TestE2E;
 
-[Parallelizable(ParallelScope.None)]
+[Parallelizable(ParallelScope.Self)]
 [TestFixture]
 public class E2ETests : PageTest
 {

@@ -167,7 +167,7 @@ public class CheepCommentModel : PageModel
                 // Ensure Cheeps and other required properties are populated
                 OriginalCheep = await _service.GetCheepFromId(cheepId);
                 Comments = await _service.GetCommentsByCheepId(cheepId);
-                UserAuthor = await _service.FindAuthorByName(User.Identity.Name);
+                UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
                 return Page(); // Return the page with validation messages
             }
         }

@@ -139,7 +139,7 @@ public class PublicModel : PageModel
             
             TotalPageNumber = await _service.GetTotalPageNumber();
             
-            var currentUserName = User.Identity.Name;
+            var currentUserName = User.Identity!.Name;
             if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
 
             return Page(); // Return the page with validation messages
@@ -154,7 +154,7 @@ public class PublicModel : PageModel
             {
                 
                 // Handle potential image upload
-                string imageBase64 = null;
+                string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);
@@ -214,14 +214,14 @@ public class PublicModel : PageModel
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
 
         return Redirect($"/?page={PageNumber}");
     }

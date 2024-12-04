@@ -193,7 +193,7 @@ public class UserTimelineModel : PageModel
         // return RedirectToPage("UserTimeline", new { author = currentAuthor, page = 1 });
         
         // Returns to the users timeline
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+        return RedirectToPage("UserTimeline", new { author = User.Identity!.Name, page = 1 });
     }
     
     /// <summary>
@@ -208,7 +208,10 @@ public class UserTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var UserAuthor = User.Identity.Name; // Get the user's name
-            await _service.FollowAuthor(UserAuthor, followedAuthorName);
+            if (UserAuthor != null)
+            {
+                await _service.FollowAuthor(UserAuthor, followedAuthorName);
+            }
             
         }
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
@@ -226,22 +229,25 @@ public class UserTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var UserAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(UserAuthor, followedAuthor);
-            
+
+            if (UserAuthor != null)
+            {
+                await _service.UnfollowAuthor(UserAuthor, followedAuthor);
+            }
         }
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }

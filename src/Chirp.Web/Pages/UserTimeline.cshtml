@@ -12,6 +12,7 @@
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
     AuthorDTO userAuthor = Model.userAuthor;
     int authorKarma = Model.AuthorKarma;
+    AuthorDTO pageAuthor = Model.PageAuthor;
 }
 
 <div>
@@ -20,6 +21,16 @@
             <button >Back</button>
         </a>
         <h2> @authorName's Timeline </h2>
+    </div>
+    <div class="Profile-Picture-Header">
+        @if (pageAuthor.ProfilePicture == null)
+        {
+        <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
+        }
+        else
+        {
+        <img class="Profile-Picture" src="data:jpeg;base64,@pageAuthor.ProfilePicture" alt="User profile image"/>
+        }
     </div>
     <div class="stat-container">
         <div class="border">

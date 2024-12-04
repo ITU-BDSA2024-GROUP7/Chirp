@@ -1,4 +1,5 @@
 ﻿using Chirp.Core;
+using Chirp.Infrastructure;
 using Chirp.Infrastructure.Repositories;
 
 public static class DbInitializer
@@ -7,17 +8,17 @@ public static class DbInitializer
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))
         {
-            var a1 = new Author() { AuthorId = 1, Name = "Darth Vader", Email = "empire.rules@deathstar.gov", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>()};
-            var a2 = new Author() { AuthorId = 2, Name = "Linus Torvalds", Email = "linux-rocks@ku.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a3 = new Author() { AuthorId = 3, Name = "Tony Stark", Email = "ironman@itu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a4 = new Author() { AuthorId = 4, Name = "Jack Sparrow", Email = "captain.jack@ku.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a5 = new Author() { AuthorId = 5, Name = "Deadpool", Email = "chimichanga.lover@dtu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>()};
-            var a6 = new Author() { AuthorId = 6, Name = "Walter White", Email = "heisenberg@gmail.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a7 = new Author() { AuthorId = 7, Name = "Harry Potter", Email = "wizarding.world@hogwarts.edu", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a8 = new Author() { AuthorId = 8, Name = "Superman", Email = "metropolis.hero@dailyplanet.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a9 = new Author() { AuthorId = 9, Name = "James Bond", Email = "007.secret.agent@mi6.co.uk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a10 = new Author() { AuthorId = 10, Name = "Jackie Chan", Email = "action.star@jackiechan.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
-            var a11 = new Author() { AuthorId = 11, Name = "Helge", Email = "ropf@itu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
+            var a1 = new Author() { AuthorId = 1, Name = "Darth Vader", Email = "empire.rules@deathstar.gov", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.DarthVaderPB};
+            var a2 = new Author() { AuthorId = 2, Name = "Linus Torvalds", Email = "linux-rocks@ku.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.LinusPB };
+            var a3 = new Author() { AuthorId = 3, Name = "Tony Stark", Email = "ironman@itu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.TonyStarkPB };
+            var a4 = new Author() { AuthorId = 4, Name = "Jack Sparrow", Email = "captain.jack@ku.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.JackSparrowPB };
+            var a5 = new Author() { AuthorId = 5, Name = "Deadpool", Email = "chimichanga.lover@dtu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.DeadpoolPB };
+            var a6 = new Author() { AuthorId = 6, Name = "Walter White", Email = "heisenberg@gmail.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.WalterWhitePB };
+            var a7 = new Author() { AuthorId = 7, Name = "Harry Potter", Email = "wizarding.world@hogwarts.edu", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.HarryPotterPB };
+            var a8 = new Author() { AuthorId = 8, Name = "Superman", Email = "metropolis.hero@dailyplanet.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.SupermanPB };
+            var a9 = new Author() { AuthorId = 9, Name = "James Bond", Email = "007.secret.agent@mi6.co.uk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.JamesBondPB };
+            var a10 = new Author() { AuthorId = 10, Name = "Jackie Chan", Email = "action.star@jackiechan.com", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.JackieChanPB };
+            var a11 = new Author() { AuthorId = 11, Name = "Helge", Email = "ropf@itu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>(), ProfilePicture = DbInitializerPBs.HelgePB };
             var a12 = new Author() { AuthorId = 12, Name = "Adrian", Email = "adho@itu.dk", Cheeps = new List<Cheep>(), AuthorsFollowed = new List<string>() };
 
             var authors = new List<Author>() { a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 };

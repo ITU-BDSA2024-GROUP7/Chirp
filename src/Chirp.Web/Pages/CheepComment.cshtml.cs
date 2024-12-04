@@ -104,9 +104,9 @@ public class CheepCommentModel : PageModel
         {
             return NotFound();
         }
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity!.IsAuthenticated)
         {
-            UserAuthor = await _service.FindAuthorByName(User.Identity.Name);
+            UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
         }
         Comments = await _service.GetCommentsByCheepId(cheepId);
         PageNumber = pageNumber;
@@ -145,7 +145,7 @@ public class CheepCommentModel : PageModel
         {
             PageNumber = pageNumber;
             var UserAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(UserAuthor, followedAuthor);
+            if (UserAuthor != null) await _service.UnfollowAuthor(UserAuthor, followedAuthor);
             
         }
         return Redirect(Request.Headers["Referer"].ToString());
@@ -156,10 +156,10 @@ public class CheepCommentModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
-
-            if (authorName != null && !string.IsNullOrEmpty(CommentText))
+            var cheepDtoId = await _service.GetCheepFromId(cheepId);
+            if (authorName != null && cheepDtoId != null && !string.IsNullOrEmpty(CommentText))
             {
-                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), CommentText, authorName);
+                await _service.AddCommentToCheep(cheepDtoId, CommentText, authorName);
             }
             else
             {

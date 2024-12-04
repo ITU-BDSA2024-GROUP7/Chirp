@@ -1,6 +1,6 @@
 /*Images for background taken from https://www.spriters-resource.com/mobile/flappybird/sheet/59894/*/
 :root {
-    --day-gradient-height: cover; /* Default value */
+    --day-gradient-height: 100%; /* Default value */
 }
 
 body {

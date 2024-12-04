@@ -11,7 +11,6 @@ function ResizeBackground(){
     dayImage.src = '../images/Day.png';
     dayImage.onload = function() {
         const bodyHeight = document.body.clientHeight;
-        const documentHeight = document.documentElement.clientHeight;
         const dayImageHeight = dayImage.height;
         const remainingHeight = bodyHeight - dayImageHeight;
         const dayImageHeightPercentage = (remainingHeight / bodyHeight) * 100;

@@ -898,6 +898,8 @@ public class E2ETests : PageTest
         
         await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
         
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
         
         // Clean up
@@ -931,6 +933,8 @@ public class E2ETests : PageTest
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 1");
         
         await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Tester1" }).ClickAsync();
         
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
         

@@ -1,7 +1,11 @@
 ﻿using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Infrastructure.Repositories
@@ -24,7 +28,8 @@ namespace Chirp.Infrastructure.Repositories
                     AuthorId = a.AuthorId,
                     Name = a.Name,
                     Email = a.Email,
-                    AuthorsFollowed = a.AuthorsFollowed
+                    AuthorsFollowed = a.AuthorsFollowed,
+                    ProfilePicture = a.ProfilePicture
                 }).FirstOrDefaultAsync();
 
             return author;
@@ -38,14 +43,21 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
-        public async Task CreateAuthor(string authorName, string authorEmail)
+        public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture)
         {
+            string? base64ProfilePicture = null;
+            if (profilePicture != null)
+            {
+                base64ProfilePicture = await DownloadAndConvertToBase64Async(profilePicture);
+            }
+            
             var author = new Author()
             {   
                 Name = authorName,
                 Email = authorEmail,
                 Cheeps = new List<Cheep>(),
-                AuthorsFollowed = new List<string>()
+                AuthorsFollowed = new List<string>(),
+                ProfilePicture = base64ProfilePicture
             };
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
@@ -167,6 +179,84 @@ namespace Chirp.Infrastructure.Repositories
 
             var karma = likesCount - dislikesCount;
             return karma;
+        }
+        
+        public async Task<string> DownloadAndConvertToBase64Async(string imageUrl)
+        {
+            // Create an HTTP client
+            using var httpClient = new HttpClient();
+
+            try
+            {
+                // Download the image as a byte array
+                byte[] imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+                // Convert the byte array to a Base64 string
+                return Convert.ToBase64String(imageBytes);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading or converting image: {ex.Message}");
+                throw;
+            }
+        }
+        
+        public async Task UpdateProfilePicture(string authorName, IFormFile profilePicture)
+        {
+            var author = await FindAuthorByName(authorName);
+            if (author != null)
+            {
+                var compressedImage = await CompressImage(profilePicture);
+                var base64Image = Convert.ToBase64String(compressedImage);
+                author.ProfilePicture = base64Image;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        
+        public async Task<byte[]> CompressImage(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return null;
+            }
+
+            // Step 1: Convert IFormFile to MemoryStream
+            using var inputStream = new MemoryStream();
+            await image.CopyToAsync(inputStream);
+            inputStream.Position = 0; // Reset the position to the start of the stream after copying
+
+            // Step 2: Load the image using ImageSharp
+            using var img = Image.Load(inputStream);
+
+            // Step 3: Resize the image (max width/height) and compress it
+            img.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Mode = ResizeMode.Crop,
+                Size = new Size(500, 500),
+                Position = AnchorPositionMode.Center // Crop from the center
+            }));
+
+            // Step 4: Save the processed image to a memory stream (compressed with quality)
+            using var outputStream = new MemoryStream();
+            img.Save(outputStream, new JpegEncoder
+            {
+                Quality = 30  // Adjust quality as needed (0-100 scale)
+            });
+
+            outputStream.Position = 0; // Reset position to the start of the stream
+
+            // Step 5: Return the byte array of the compressed image
+            return outputStream.ToArray();
+        }
+        
+        public async Task ClearProfilePicture(string authorName, IFormFile profilePicture)
+        {
+            var author = await FindAuthorByName(authorName);
+            if (author != null)
+            {
+                author.ProfilePicture = null;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }    
 }

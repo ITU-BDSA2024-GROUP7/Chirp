@@ -1,6 +1,10 @@
 ﻿@page "/popular"
+@using Chirp.Core
 @using Chirp.Core.DTOs
+@using Chirp.Web.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.IdentityModel.Tokens
 @model Chirp.Web.Pages.PopularTimelineModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -34,9 +38,25 @@
             {
                 <li>
                     <div class="cheep-container">
-                        <strong>
-                            <a href="/@cheep.Author.Name">@cheep.Author.Name</a>
-                        </strong>
+                        @if (cheep.Author.ProfilePicture == null)
+                        {
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
+                        </a>
+                        }
+                        else
+                        {
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
+                        </a>
+                        }
+
+                        <div class="Cheep-Details">
+                            <div style="display: flex; align-items: center;">
+
+                                <strong>
+                                    <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                                </strong>
 
                         @if (User.Identity!.IsAuthenticated && cheep.Author.Name != User.Identity.Name && userAuthor != null)
                         {
@@ -46,28 +66,30 @@
                                     <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
                                     <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
                                     <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
                                     <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                    }
+                                </form>
                                 }
-                            </form>
-                        }
-                        <div class="Delete">
-                            @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
-                            {
-                            <form method="post">
-                                <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                            }
+                                <div class="Delete">
+                                    @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                                    {
+                                    <form method="post">
+                                        <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                        <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    }
+                                </div>
+                            </div>
+                            <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
                         </div>
                     </div>
-                    <small>@cheep.FormattedTimeStamp</small>
                     <br>
                     <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p>
                     <div>

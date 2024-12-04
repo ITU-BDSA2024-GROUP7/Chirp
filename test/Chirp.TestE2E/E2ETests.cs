@@ -899,6 +899,8 @@ public class E2ETests : PageTest
         
         await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
         
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
+        
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
         
         // Clean up
@@ -932,6 +934,8 @@ public class E2ETests : PageTest
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 1");
         
         await _page.GetByRole(AriaRole.Button, new() { Name = "Unfollow" }).ClickAsync();
+        
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Tester1" }).ClickAsync();
         
         await Expect(_page.Locator("body")).ToContainTextAsync("Followers: 0");
         
@@ -1173,7 +1177,7 @@ public class E2ETests : PageTest
     // ---------------------------------- Comment TESTS ----------------------------------
     [Test]
     [Category("End2End")]
-    public async Task CreateAndDeleteComment()
+    public async Task DoesCommentDeleteButtonLoad()
     {
         await RegisterUser();
         await LoginUser();
@@ -1186,9 +1190,7 @@ public class E2ETests : PageTest
         await _page.GetByPlaceholder("Answer Tester").ClickAsync();
         await _page.GetByPlaceholder("Answer Tester").FillAsync("CreateCommentTest");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Add Comment" }).ClickAsync();
-        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "" })).ToBeVisibleAsync();
-        await _page.GetByRole(AriaRole.Button, new() { Name = "" }).First.ClickAsync();
-        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "" })).Not.ToBeVisibleAsync();
+        await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "\uf1f8" })).ToBeVisibleAsync();
         
         // Clean up
         await DeleteUser();

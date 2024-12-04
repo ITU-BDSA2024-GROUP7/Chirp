@@ -6,7 +6,10 @@ using ImageMagick;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
@@ -39,7 +42,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference ?? "",
@@ -66,7 +70,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference ?? "",
@@ -117,7 +122,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference ?? "",
@@ -158,7 +164,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference ?? "",
@@ -213,7 +220,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -295,7 +303,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString(CultureInfo.CurrentCulture)
@@ -482,7 +491,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference ?? "",
@@ -615,60 +625,66 @@ namespace Chirp.Infrastructure.Repositories
 
             // Step 4: Save the processed image to a memory stream (compressed with quality)
             using var outputStream = new MemoryStream();
-            img.Save(outputStream, new JpegEncoder
+            if (image.ContentType == "image/png")
             {
-                Quality = 75  // Adjust quality as needed (0-100 scale)
-            });
+                img.Save(outputStream, new WebpEncoder
+                {
+                    Quality = 30, // Adjust quality as needed (0-100 scale)
+                    FileFormat = WebpFileFormatType.Lossy // Use lossy compression
+                });
+            }
+            else
+            {
+                img.Save(outputStream, new JpegEncoder
+                {
+                    Quality = 30  // Adjust quality as needed (0-100 scale)
+
+
+                });
+            }
 
             outputStream.Position = 0; // Reset position to the start of the stream
 
             // Step 5: Return the byte array of the compressed image
             return outputStream.ToArray();
         }
+
         
-        public async Task<byte[]> CompressGIF(IFormFile gif)
+        public async Task<byte[]> CompressGIF(IFormFile gifFile)
         {
-            if (gif == null || gif.Length == 0)
-            {
-                return null; // Or throw an exception
-            }
+            if (gifFile == null || gifFile.Length == 0)
+                throw new ArgumentException("No file uploaded.");
 
-            using var inputStream = new MemoryStream();
-            await gif.CopyToAsync(inputStream);
-            inputStream.Position = 0; // Reset the stream position
-
-            // Step 1: Load the GIF using MagickImageCollection for animations
-            using var gifCollection = new MagickImageCollection(inputStream);
-
-            // Step 2: Optimize the GIF frames
-            var resize = false;
-            if (gifCollection[0].Width >= 1024 || gifCollection[0].Height >= 1024)
+            using (var stream = gifFile.OpenReadStream())
             {
-                resize = true;
-            } 
-            foreach (var frame in gifCollection)
-            {
-                if (resize)
+                using (var imageCollection = new MagickImageCollection(stream))
                 {
-                    frame.Resize(1024, 1024); // Resize to max dimensions
+                    // Determine the size to resize all frames to
+                    uint maxWidth = 500;
+                    uint maxHeight = 500;
+
+                    // Resize the entire collection to ensure consistent frame sizes
+                    imageCollection.Coalesce(); // Ensure all frames have the same size
+                    foreach (var frame in imageCollection)
+                    {
+                        if (frame.Width > maxWidth || frame.Height > maxHeight)
+                        {
+                            frame.Resize(new MagickGeometry(maxWidth, maxHeight)
+                            {
+                                IgnoreAspectRatio = false // Maintain aspect ratio
+                            });
+                        }
+                        frame.Quality = 30; // Set the quality (lower value = more compression, but lower quality)
+                    }
+
+                    // Create a memory stream to hold the compressed GIF
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        imageCollection.Write(memoryStream);
+                        return memoryStream.ToArray();
+                    }
                 }
-                frame.Strip(); // Remove unnecessary metadata
-                frame.Quantize(new QuantizeSettings
-                {
-                    Colors = 128 // Limit the number of colors to control size
-                });
             }
-            
-            
-            // Reduce file size by optimizing color palette and frames
-            gifCollection.Optimize();
-
-            // Step 3: Write the optimized GIF to a memory stream
-            using var outputStream = new MemoryStream();
-            gifCollection.Write(outputStream);
-
-            // Step 4: Return the byte array of the compressed GIF
-            return outputStream.ToArray();
         }
 
             

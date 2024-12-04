@@ -90,7 +90,7 @@
                                 <p>@cheep.Text</p>
                                 <div>
                                     @* If image reference is not null then make an image element *@
-                                    @if (cheep.ImageReference != null)
+                                    @if (cheep.ImageReference != "")
                                     {
                                         // (R0lGODlh) Is what all base64 encoded GIFs start with
                                         string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";

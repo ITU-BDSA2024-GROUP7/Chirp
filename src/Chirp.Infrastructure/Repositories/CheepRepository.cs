@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
@@ -615,16 +617,30 @@ namespace Chirp.Infrastructure.Repositories
 
             // Step 4: Save the processed image to a memory stream (compressed with quality)
             using var outputStream = new MemoryStream();
-            img.Save(outputStream, new JpegEncoder
+            if (image.ContentType == "image/png")
             {
-                Quality = 75  // Adjust quality as needed (0-100 scale)
-            });
+                img.Save(outputStream, new WebpEncoder
+                {
+                    Quality = 30, // Adjust quality as needed (0-100 scale)
+                    FileFormat = WebpFileFormatType.Lossy // Use lossy compression
+                });
+            }
+            else
+            {
+                img.Save(outputStream, new JpegEncoder
+                {
+                    Quality = 30  // Adjust quality as needed (0-100 scale)
+
+
+                });
+            }
 
             outputStream.Position = 0; // Reset position to the start of the stream
 
             // Step 5: Return the byte array of the compressed image
             return outputStream.ToArray();
         }
+
         
         public async Task<byte[]> CompressGIF(IFormFile gifFile)
         {

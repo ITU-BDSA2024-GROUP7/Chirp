@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Infrastructure.Repositories;
 
-public class CheepDBContext : IdentityDbContext<ApplicationUser>
+public class CheepDBContext(DbContextOptions<CheepDBContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public CheepDBContext(DbContextOptions<CheepDBContext> options) : base(options) { }
-    
     public  DbSet<Cheep> Cheeps { get; set; }
     public DbSet<Author> Authors { get; set; }
     

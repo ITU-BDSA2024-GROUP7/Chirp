@@ -12,7 +12,7 @@
 
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber;
-    AuthorDTO userAuthor = Model.UserAuthor;
+    AuthorDTO? userAuthor = Model.UserAuthor;
 }
 
 <div xmlns="http://www.w3.org/1999/html">
@@ -51,50 +51,50 @@
                         </a>
                         }
                         
-                        <div class="Cheep-Details">
-                            <div style="display: flex; align-items: center;">
+                <div class="Cheep-Details">
+                    <div style="display: flex; align-items: center;">
                                 
-                                <strong>
-                                    <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
-                                </strong>
+                        <strong>
+                            <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                        </strong>
 
-                                @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name && userAuthor != null)
+                        {
+                            <form style="display: flex;" method="post">
+                                @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
                                 {
-                                    <form style="display: flex;" method="post">
-                                        @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
-                                        {
-                                            <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                            <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
-                                        }
-                                        else
-                                        {
-                                            <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                            <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
-                                        }
-                                    </form>
+                                    <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
                                 }
-                                <div class="Delete">
-                                    @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
-                                    {
-                                        <form method="post">
-                                            <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                            <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    }
-                                </div>
-                            </div>
-                            <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
-                        </div>
+                                else
+                                {
+                                    <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                }
+                            </form>
+                        }
+                        <div class="Delete">
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            {
+                                <form method="post">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                             </div>
+                             </div>
+                             <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
+                         </div>
                     </div>
                     <br>
                     <p class="cheep-text">@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
                     <div>
                         @* If image reference is not null then make an image element *@
-                        @if (cheep.ImageReference != null)
+                        @if (cheep.ImageReference != "")
                         {
                             // (R0lGODlh) Is what all base64 encoded GIFs start with
                             string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
@@ -104,7 +104,7 @@
                         }
                     </div>
                     <div class="CheepReactions">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && userAuthor != null)
                         {
                             <form method="post">
                                 <div class="reactions-container">

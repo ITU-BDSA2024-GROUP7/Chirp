@@ -19,12 +19,12 @@ public class UserTimelineModel : PageModel
     public int AuthorKarma { get; set; }
     public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
     public required List<CheepDTO> Cheeps { get; set; }
-    public required List<String>? FollowingList { get; set; } 
-    public required List<String>? FollowingMeList { get; set; }
+    public required List<String> FollowingList { get; set; } 
+    public required List<String> FollowingMeList { get; set; }
     public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
 
     public string CurrentAuthor { get; set; } = string.Empty;
-    public AuthorDTO userAuthor { get; set; }
+    public AuthorDTO? UserAuthor { get; set; }
 
     public UserTimelineModel(CheepService service)
     {
@@ -111,7 +111,7 @@ public class UserTimelineModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            userAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
         
         // var followAuthorDto = await _service.FindAuthorByName(author);
@@ -138,9 +138,9 @@ public class UserTimelineModel : PageModel
     public async Task<IActionResult> OnPost()
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
-        CurrentAuthor = currentAuthor;
+        if (currentAuthor != null) CurrentAuthor = currentAuthor;
 
-        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        UserAuthor = await _service.FindAuthorByName(User.Identity?.Name ?? string.Empty);
         
         PageNumber = pageNumber;
         TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
@@ -165,7 +165,7 @@ public class UserTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
-                string imageBase64 = null;
+                string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);
@@ -176,7 +176,7 @@ public class UserTimelineModel : PageModel
                 {
                     Author = new AuthorDTO
                     {
-                        Name = authorName, // this needs to be changed to user names going forward
+                        Name = authorName, // this needs to be changed to usernames going forward
                         Email = authorEmail
                     },
                     Text = CheepText,
@@ -193,7 +193,7 @@ public class UserTimelineModel : PageModel
         // return RedirectToPage("UserTimeline", new { author = currentAuthor, page = 1 });
         
         // Returns to the users timeline
-        return RedirectToPage("UserTimeline", new { author = User.Identity.Name, page = 1 });
+        return RedirectToPage("UserTimeline", new { author = User.Identity!.Name, page = 1 });
     }
     
     /// <summary>
@@ -207,8 +207,11 @@ public class UserTimelineModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
             PageNumber = pageNumber;
-            var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.FollowAuthor(userAuthor, followedAuthorName);
+            var UserAuthor = User.Identity.Name; // Get the user's name
+            if (UserAuthor != null)
+            {
+                await _service.FollowAuthor(UserAuthor, followedAuthorName);
+            }
             
         }
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
@@ -225,23 +228,26 @@ public class UserTimelineModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
             PageNumber = pageNumber;
-            var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(userAuthor, followedAuthor);
-            
+            var UserAuthor = User.Identity.Name; // Get the user's name
+
+            if (UserAuthor != null)
+            {
+                await _service.UnfollowAuthor(UserAuthor, followedAuthor);
+            }
         }
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }

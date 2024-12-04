@@ -137,18 +137,25 @@
                             </form>
                             <p>@cheep.DislikesCount</p>
                         }
-                        <div class="TopReactions">
-                            <p>Top Reactions:</p>
-                            @if (Model.TopReactions.ContainsKey(cheep.CheepId))
-                            {
-                                <div class="emoji-container">
-                                    @foreach (var reaction in Model.TopReactions[cheep.CheepId])
-                                    {
-                                        <span>@reaction</span>
-                                    }
-                                </div>
-                            }
-                        </div>
+                        else
+                        {
+                            <i style="color: dimgrey" class="fas fa-thumbs-up fa-2x fareact"></i>
+                            <p>@cheep.LikesCount</p>
+                            <i style="color: dimgrey" class="fas fa-thumbs-down fa-2x fareact"></i>
+                            <p>@cheep.DislikesCount</p>
+                        }
+                        @if (Model.TopReactions.ContainsKey(cheep.CheepId) && Model.TopReactions[cheep.CheepId].Count > 0)
+                        {
+                            <div class="TopReactions">
+                                <p>Top Reactions:</p>
+                                    <div class="emoji-container">
+                                        @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                        {
+                                            <span>@reaction</span>
+                                        }
+                                    </div>
+                            </div>
+                        }
                     </div>
                     <div class="Comment">
                         <a href="/@cheep.CheepId/comments?page=@ViewData["pageNumber"]" style="display: flex; text-decoration: none;">

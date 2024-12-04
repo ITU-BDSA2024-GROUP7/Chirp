@@ -56,7 +56,7 @@ public class E2ETests : PageTest
 
         _appProcess.Start();
 
-        // Wait for the application to start
+        // Wait for the application to start 
         await Task.Delay(5000); // Adjust delay if needed
     }
 

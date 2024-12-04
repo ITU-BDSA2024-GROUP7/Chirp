@@ -1,3 +1,4 @@
+using System.Globalization;
 using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Core.Interfaces;
@@ -45,7 +46,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    ImageReference = cheep.ImageReference,
+                    ImageReference = cheep.ImageReference ?? "",
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -73,7 +74,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    ImageReference = cheep.ImageReference,
+                    ImageReference = cheep.ImageReference ?? "",
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -125,7 +126,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    ImageReference = cheep.ImageReference,
+                    ImageReference = cheep.ImageReference ?? "",
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -167,7 +168,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    ImageReference = cheep.ImageReference,
+                    ImageReference = cheep.ImageReference ?? "",
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -283,7 +284,7 @@ namespace Chirp.Infrastructure.Repositories
             var cheeps = await _dbContext.Cheeps
                 .Where(cheep => cheep.Author.Name == Author.Name)
                 .ToListAsync();
-            if (cheeps != null)
+            if (!cheeps.Count.Equals(0))
             {
                 _dbContext.Cheeps.RemoveRange(cheeps);
 
@@ -306,7 +307,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    FormattedTimeStamp = cheep.TimeStamp.ToString()
+                    FormattedTimeStamp = cheep.TimeStamp.ToString(CultureInfo.CurrentCulture)
                 });
             // Execute the query and return the list of messages
             return await query.ToListAsync();
@@ -494,7 +495,7 @@ namespace Chirp.Infrastructure.Repositories
                         ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
-                    ImageReference = cheep.ImageReference,
+                    ImageReference = cheep.ImageReference ?? "",
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
                     Likes = cheep.Likes,
                     Dislikes = cheep.Dislikes,
@@ -709,25 +710,22 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
         
-        public async Task AddCommentToCheep(CheepDTO cheepDto, string Text, string author )
+        public async Task AddCommentToCheep(CheepDTO cheepDto, string text, string author )
         {
             // Create a new Cheep 
-            if (cheepDto != null)
-            {
-                Comment comment = new Comment
+                var comment = new Comment
                 {
                     CommentId = 0,
                     CheepId = cheepDto.CheepId,
                     Author = await _authorRepository.FindAuthorByName(author),
-                    Text = Text,
+                    Text = text,
                     TimeStamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                     
                 };
-                
+            
                 // Add the new Cheep to the DbContext
                 await _dbContext.Comment.AddAsync(comment);
-            }
 
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
@@ -754,7 +752,7 @@ namespace Chirp.Infrastructure.Repositories
                     ImageReference = a.ImageReference
                 }).FirstOrDefaultAsync();
 
-            return cheep;
+            return cheep ?? throw new InvalidOperationException();
         }
         public async Task DeleteComment(int commentId)
         {

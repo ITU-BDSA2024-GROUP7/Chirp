@@ -67,7 +67,7 @@ public class E2ETests : PageTest
         if (_appProcess != null && !_appProcess.HasExited)
         {
             _appProcess.Kill();
-            _appProcess.WaitForExit(5000);
+            _appProcess.WaitForExit(5000); //closes after specified time
             _appProcess.Dispose();
         }
         

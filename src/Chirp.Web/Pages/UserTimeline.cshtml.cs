@@ -98,6 +98,12 @@ public class UserTimelineModel : PageModel
     
         CurrentAuthor = author;
         PageAuthor = await _service.FindAuthorByName(author);
+        
+        if (PageAuthor == null)
+        {
+            return RedirectToPage("Public", new { page = 1 });
+        }
+        
         PageNumber = page;
         AuthorKarma = await _service.GetKarmaForAuthor(author);
         

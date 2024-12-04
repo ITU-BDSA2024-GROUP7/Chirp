@@ -25,11 +25,11 @@
     <div class="Profile-Picture-Header">
         @if (pageAuthor.ProfilePicture == null)
         {
-        <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
+            <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
         }
         else
         {
-        <img class="Profile-Picture" src="data:jpeg;base64,@pageAuthor.ProfilePicture" alt="User profile image"/>
+            <img class="Profile-Picture" src="data:jpeg;base64,@pageAuthor.ProfilePicture" alt="User profile image"/>
         }
     </div>
     <div class="stat-container">
@@ -145,15 +145,15 @@
                     <div class="cheep-container">
                         @if (cheep.Author.ProfilePicture == null)
                         {
-                        <a href="/@cheep.Author.Name">
-                            <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
-                        </a>
+                            <a href="/@cheep.Author.Name">
+                                <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
+                            </a>
                         }
                         else
                         {
-                        <a href="/@cheep.Author.Name">
-                            <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
-                        </a>
+                            <a href="/@cheep.Author.Name">
+                                <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
+                            </a>
                         }
 
                         <div class="Cheep-Details">
@@ -165,30 +165,30 @@
 
                                 @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
                                 {
-                                <form style="display: flex;" method="post">
-                                    @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
-                                    {
-                                    <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
-                                    }
-                                    else
-                                    {
-                                    <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
-                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
-                                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
-                                    }
-                                </form>
+                                    <form style="display: flex;" method="post">
+                                        @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                                        {
+                                            <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                            <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                        }
+                                        else
+                                        {
+                                            <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                            <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                            <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                        }
+                                    </form>
                                 }
                                 <div class="Delete">
                                     @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
                                     {
-                                    <form method="post">
-                                        <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
-                                        <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                        <form method="post">
+                                            <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                            <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     }
                                 </div>
                             </div>
@@ -248,22 +248,22 @@
                         }
                         else
                         {
-                        <i style="color: dimgrey" class="fas fa-thumbs-up fa-2x fareact"></i>
-                        <p>@cheep.LikesCount</p>
-                        <i style="color: dimgrey" class="fas fa-thumbs-down fa-2x fareact"></i>
-                        <p>@cheep.DislikesCount</p>
+                            <i style="color: dimgrey" class="fas fa-thumbs-up fa-2x fareact"></i>
+                            <p>@cheep.LikesCount</p>
+                            <i style="color: dimgrey" class="fas fa-thumbs-down fa-2x fareact"></i>
+                            <p>@cheep.DislikesCount</p>
                         }
                         @if (Model.TopReactions.ContainsKey(cheep.CheepId) && Model.TopReactions[cheep.CheepId].Count > 0)
                         {
-                        <div class="TopReactions">
-                            <p>Top Reactions:</p>
-                            <div class="emoji-container">
-                                @foreach (var reaction in Model.TopReactions[cheep.CheepId])
-                                {
-                                <span>@reaction</span>
-                                }
+                            <div class="TopReactions">
+                                <p>Top Reactions:</p>
+                                <div class="emoji-container">
+                                    @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                    {
+                                        <span>@reaction</span>
+                                    }
+                                </div>
                             </div>
-                        </div>
                         }
                     </div>
                     <div class="Comment">

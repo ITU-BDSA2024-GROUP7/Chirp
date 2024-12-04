@@ -247,9 +247,22 @@ public class E2ETests : PageTest
     [Category("End2End")]
     public async Task NoCheepsOnUserTimeline()
     {
+        await RegisterUser();
+        await LoginUser();
+        
         // Go to a user page with no cheeps
-        await _page!.GotoAsync($"{AppUrl}/UserWithNoCheeps");
+        await _page!.GotoAsync($"{AppUrl}/{TestUsername}");
         await Expect(_page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+    }
+    
+    // Check for no cheeps on user timeline with no cheeps
+    [Test]
+    [Category("End2End")]
+    public async Task NoUserRedirectToPublicTimeline()
+    {
+        // Go to a user page with no cheeps
+        await _page!.GotoAsync($"{AppUrl}/AUserThatDoesNotExist");
+        await Expect(_page.GetByText("Public Timeline")).ToBeVisibleAsync();
     }
 
     // Check back button goes to public timeline

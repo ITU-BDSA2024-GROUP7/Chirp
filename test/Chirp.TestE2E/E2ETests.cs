@@ -253,6 +253,8 @@ public class E2ETests : PageTest
         // Go to a user page with no cheeps
         await _page!.GotoAsync($"{AppUrl}/{TestUsername}");
         await Expect(_page.GetByText("There are no cheeps so far.")).ToBeVisibleAsync();
+        
+        await DeleteUser();
     }
     
     // Check for no cheeps on user timeline with no cheeps
@@ -321,7 +323,6 @@ public class E2ETests : PageTest
     public async Task GoToPersonalTimeline()
     {
         await RegisterUser();
-        await LoginUser();
 
         await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
         await Expect(_page.GetByRole(AriaRole.Heading, new() { Name = $"{TestUsername}'s Timeline" }))
@@ -463,6 +464,7 @@ public class E2ETests : PageTest
     public async Task LoginSuccessfully()
     {
         await RegisterUser();
+        await LogoutUser();
 
         // Goes to login page
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Login");
@@ -554,7 +556,6 @@ public class E2ETests : PageTest
     public async Task LogoutButtonWorks()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GotoAsync($"{AppUrl}");
         await _page.GetByRole(AriaRole.Link, new() { Name = "Login Symbol Logout" }).ClickAsync();
@@ -573,7 +574,6 @@ public class E2ETests : PageTest
     public async Task LoadManageAccountPage()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GotoAsync($"{AppUrl}");
         
@@ -590,7 +590,6 @@ public class E2ETests : PageTest
     public async Task LoadManageUserPage()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GotoAsync($"{AppUrl}/Identity/Account/Manage");
         await _page.GetByRole(AriaRole.Link, new() { Name = "Personal data" }).ClickAsync();
@@ -685,7 +684,6 @@ public class E2ETests : PageTest
     public async Task DeleteUserCheeps()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GotoAsync($"{AppUrl}");
         
@@ -718,7 +716,6 @@ public class E2ETests : PageTest
     public async Task TestShareCheepsVisibilityPublicTimeline()
     {
         await RegisterUser();
-        await LoginUser();
         await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await Expect(_page.GetByText($"What's on your mind {TestUsername}? Share")).ToBeVisibleAsync();
         
@@ -731,7 +728,6 @@ public class E2ETests : PageTest
     public async Task TestShareCheepsVisibilityPrivateTimeline()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
         await Expect(_page.GetByText($"What's on your mind {TestUsername}? Share")).ToBeVisibleAsync();
@@ -745,7 +741,6 @@ public class E2ETests : PageTest
     public async Task CheepingCheeps()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await _page.Locator("#CheepText").ClickAsync();
@@ -764,7 +759,6 @@ public class E2ETests : PageTest
     {
         {
             await RegisterUser();
-            await LoginUser();
     
             await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
@@ -784,7 +778,6 @@ public class E2ETests : PageTest
     {
         {
             await RegisterUser();
-            await LoginUser();
             
             await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -800,7 +793,6 @@ public class E2ETests : PageTest
     {
         {
             await RegisterUser();
-            await LoginUser();
             
             await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
             await _page.Locator("#CheepText").ClickAsync();
@@ -818,7 +810,6 @@ public class E2ETests : PageTest
     {
         {
             await RegisterUser();
-            await LoginUser();
             
             
             await _page!.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
@@ -840,7 +831,6 @@ public class E2ETests : PageTest
     public async Task DoesFollowButtonLoad()
     {
         await RegisterUser();
-        await LoginUser();
 
         await Expect(_page.Locator("li").Locator("#followButton").First).ToBeVisibleAsync();
   
@@ -854,7 +844,6 @@ public class E2ETests : PageTest
     public async Task DoesUnfollowButtonLoad()
     {
         await RegisterUser();
-        await LoginUser();
 
         await _page.Locator("li").Locator("#followButton").First.ClickAsync();
         
@@ -872,7 +861,6 @@ public class E2ETests : PageTest
     public async Task DoesFollowedAuthorLoadCheeps()
     {
         await RegisterUser();
-        await LoginUser();
 
         await _page.Locator("li").Locator("#followButton").First.ClickAsync();
         
@@ -893,7 +881,6 @@ public class E2ETests : PageTest
     {
         // Follows another user and checks if the count for following is 1 and then unfollows the user and checks if the count is 0
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -902,7 +889,6 @@ public class E2ETests : PageTest
         await LogoutUser();
         
         await RegisterUser("2");
-        await LoginUser("2");
 
         await _page.Locator("li").First.Locator("#followButton").ClickAsync();
         
@@ -929,7 +915,6 @@ public class E2ETests : PageTest
         // Follows another user and checks if the count for followers is 1 and then unfollows the user and checks if the count is 0
 
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync($"HelloWorld!RasmusMathiasNikolajMarcusErTelos!+{DateTime.Now.ToString("HH:mm:ss")}");
@@ -938,7 +923,6 @@ public class E2ETests : PageTest
         await LogoutUser();
         
         await RegisterUser("2");
-        await LoginUser("2");
         
         await _page.Locator("li").First.Locator("#followButton").ClickAsync();
 
@@ -963,7 +947,6 @@ public class E2ETests : PageTest
     {
         // Follows another user and checks if a user shows up in the follower list popup
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -972,7 +955,6 @@ public class E2ETests : PageTest
         await LogoutUser();
         
         await RegisterUser("2");
-        await LoginUser("2");
     
         await _page.Locator("li").First.Locator("#followButton").ClickAsync();
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
@@ -992,7 +974,6 @@ public class E2ETests : PageTest
         // Follows another user and checks if a user shows up in the following list popup
 
         await RegisterUser();
-        await LoginUser();
     
         await _page.Locator("li").First.Locator("#followButton").ClickAsync();
         await _page.GetByRole(AriaRole.Link, new() { Name = "Home Symbol My timeline" }).ClickAsync();
@@ -1010,7 +991,6 @@ public class E2ETests : PageTest
     public async Task DoesDeleteButtonLoad()
     {
         await RegisterUser();
-        await LoginUser();
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("Testing that this is a deleteable cheep");
@@ -1030,7 +1010,6 @@ public class E2ETests : PageTest
     {
         // Like reaction another users post and check if the corresponding reaction shows up
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -1038,7 +1017,6 @@ public class E2ETests : PageTest
 
         await LogoutUser();
         await RegisterUser("2");
-        await LoginUser("2");
         
         // Hover over the like button to reveal the reactions
         await _page.Locator("li").First.Locator("#likeMethod").HoverAsync();
@@ -1060,7 +1038,6 @@ public class E2ETests : PageTest
     {
         // Dislike reaction another users post and check if the corresponding reaction shows up
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -1068,7 +1045,6 @@ public class E2ETests : PageTest
 
         await LogoutUser();
         await RegisterUser("2");
-        await LoginUser("2");
         
         // Hover over the dislike button to reveal the reactions
         await _page.Locator("li").First.Locator("#dislikeMethod").HoverAsync();
@@ -1090,7 +1066,6 @@ public class E2ETests : PageTest
     {
         // Dislike reaction another users post and switch to Like reaction and check if the corresponding reaction shows up
         await RegisterUser("1");
-        await LoginUser("1");
         
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -1098,7 +1073,6 @@ public class E2ETests : PageTest
 
         await LogoutUser();
         await RegisterUser("2");
-        await LoginUser("2");
         
         await _page.Locator("li").First.Locator("#likeMethod").HoverAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "👍" }).First.ClickAsync();
@@ -1120,7 +1094,6 @@ public class E2ETests : PageTest
     {
         // Like reaction another users post and switch to Dislike reaction and check if the corresponding reaction shows up
         await RegisterUser("1");
-        await LoginUser("1");
 
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("HelloWorld!RasmusMathiasNikolajMarcusErTelos!");
@@ -1128,7 +1101,6 @@ public class E2ETests : PageTest
 
         await LogoutUser();
         await RegisterUser("2");
-        await LoginUser("2");
 
         await _page.Locator("li").First.Locator("#dislikeMethod").HoverAsync();
         await _page.GetByRole(AriaRole.Button, new() { Name = "👎" }).First.ClickAsync();
@@ -1150,7 +1122,6 @@ public class E2ETests : PageTest
     public async Task CanUserUploadImage()
     {
         await RegisterUser();
-        await LoginUser();
         
         var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
         var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "icon1.png");
@@ -1171,7 +1142,6 @@ public class E2ETests : PageTest
     public async Task CanUserUploadGif()
     {
         await RegisterUser();
-        await LoginUser();
         
         var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
         var imagePath = Path.Combine(solutionDirectory, "src", "Chirp.Web", "wwwroot", "images", "TESTGIF.gif");
@@ -1193,7 +1163,6 @@ public class E2ETests : PageTest
     public async Task DoesCommentDeleteButtonLoad()
     {
         await RegisterUser();
-        await LoginUser();
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("CreateCheepTest");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -1213,7 +1182,6 @@ public class E2ETests : PageTest
     public async Task CommentPublicAvalable()
     {
         await RegisterUser();
-        await LoginUser();
         await _page.Locator("#CheepText").ClickAsync();
         await _page.Locator("#CheepText").FillAsync("TestCreateCheep");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
@@ -1233,7 +1201,6 @@ public class E2ETests : PageTest
     public async Task CommentTestLocator()
     {
         await RegisterUser();
-        await LoginUser();
 
         await Expect(_page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First).ToBeVisibleAsync();
         await  _page.GetByRole(AriaRole.Button, new() { Name = "View Comments" }).First.ClickAsync();

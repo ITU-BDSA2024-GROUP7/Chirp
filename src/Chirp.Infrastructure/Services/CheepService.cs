@@ -64,9 +64,9 @@ public class CheepService : ICheepService
         await _authorRepository.CreateAuthor(authorName, authorEmail, profilePicture);
     }
 
-    public async Task<AuthorDTO> FindAuthorByName(String name)
+    public async Task<AuthorDTO?> FindAuthorByName(String name)
     {
-        return await _authorRepository.FindAuthorByNameDTO(name) ?? throw new InvalidOperationException();
+        return await _authorRepository.FindAuthorByNameDTO(name);
     }
     
     public async Task CreateCheep(CheepDTO Cheep)

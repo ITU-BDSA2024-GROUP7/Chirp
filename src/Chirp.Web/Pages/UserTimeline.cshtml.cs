@@ -24,7 +24,7 @@ public class UserTimelineModel : PageModel
     public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
 
     public string CurrentAuthor { get; set; } = string.Empty;
-    public AuthorDTO PageAuthor { get; set; }
+    public AuthorDTO? PageAuthor { get; set; }
     public AuthorDTO? UserAuthor { get; set; }
 
     public UserTimelineModel(CheepService service)
@@ -103,6 +103,8 @@ public class UserTimelineModel : PageModel
         {
             return RedirectToPage("Public", new { page = 1 });
         }
+        
+        PageAuthor = await _service.FindAuthorByName(author);
         
         PageNumber = page;
         AuthorKarma = await _service.GetKarmaForAuthor(author);

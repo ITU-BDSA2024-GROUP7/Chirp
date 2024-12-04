@@ -41,7 +41,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference,
@@ -68,7 +69,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference,
@@ -119,7 +121,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference,
@@ -160,7 +163,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference,
@@ -215,7 +219,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -297,7 +302,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     FormattedTimeStamp = cheep.TimeStamp.ToString()
@@ -484,7 +490,8 @@ namespace Chirp.Infrastructure.Repositories
                     {
                         Name = cheep.Author.Name,
                         Email = cheep.Author.Email,
-                        AuthorsFollowed = cheep.Author.AuthorsFollowed
+                        AuthorsFollowed = cheep.Author.AuthorsFollowed,
+                        ProfilePicture = cheep.Author.ProfilePicture
                     },
                     Text = cheep.Text,
                     ImageReference = cheep.ImageReference,

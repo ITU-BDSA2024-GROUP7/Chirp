@@ -6,7 +6,7 @@ public interface IAuthorRepository
 {
     Task<AuthorDTO?> FindAuthorByNameDTO(String name);
     Task<Author?> FindAuthorByName(String name);
-    Task CreateAuthor(string authorName, string authorEmail);
+    Task CreateAuthor(string authorName, string authorEmail, string profilePicture);
     Task DeleteUser(AuthorDTO author);
     Task FollowAuthor(string userAuthor, string followedAuthor);
     Task UnfollowAuthor(string userAuthor, string authorToBeRemoved);

@@ -60,9 +60,9 @@ public class CheepService : ICheepService
         return await _cheepRepository.RetrieveAllCheepsForEndPoint();
     }
 
-    public async Task CreateAuthor(string authorName, string authorEmail)
+    public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture = null)
     {
-        await _authorRepository.CreateAuthor(authorName, authorEmail);
+        await _authorRepository.CreateAuthor(authorName, authorEmail, profilePicture);
     }
 
     public async Task<AuthorDTO>? FindAuthorByName(String name)
@@ -178,5 +178,15 @@ public class CheepService : ICheepService
     public async Task<List<Core.DTOs.CommentDTO>> RetrieveAllCommentsFromAnAuthor(string authorName)
     {
         return await _cheepRepository.RetriveAllCommentsFromAnAuthor(authorName);
+    }
+    
+    public async Task UpdateProfilePicture(string authorName, IFormFile profilePicture)
+    {
+        await _authorRepository.UpdateProfilePicture(authorName, profilePicture);
+    }
+    
+    public async Task ClearProfilePicture(string authorName, IFormFile profilePicture)
+    {
+        await _authorRepository.ClearProfilePicture(authorName, profilePicture);
     }
 }

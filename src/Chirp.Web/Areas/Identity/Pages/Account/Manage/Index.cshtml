@@ -1,0 +1,90 @@
+﻿@page
+@using Chirp.Core.DTOs
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    
+    AuthorDTO userAuthor = Model.UserAuthor;
+}
+
+<h1 id="settingTitle">@ViewData["Title"]</h1>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div>
+    <div class="Profile-Information-Setting">
+        <h3>Profile information</h3>
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled/>
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            @* <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button> *@
+        </form>
+    </div>
+    <div class="Profile-Picture-Setting">
+        <h3>Profile Picture</h3>
+        @if (userAuthor.ProfilePicture == null)
+        {
+            <img id="profile-picture" class="Profile-Picture" src="~/images/DefaultUser.png" alt="Default profile image"/>
+            <form id="profile-picture-form" method="post" enctype="multipart/form-data">
+                <input id="profile-picture-input" value="Upload Image" type="file" asp-for="ProfilePictureImage" accept="image/*">
+                <button type="submit" asp-page-handler="UploadProfilePicture" style="display: block; margin-top: 10px;">Upload profile picture</button>
+                <span asp-validation-for="ProfilePictureImage" class="text-danger"></span>
+            </form>
+        }
+        else
+        {
+            <img id="profile-picture" class="Profile-Picture" src="data:jpeg;base64,@userAuthor.ProfilePicture" alt="Profile image"/>
+            // Clear profile picture button
+            <form id="clear-profile-picture-form" method="post">
+                <button id="clear-profile-picture-button" asp-page-handler="ClearProfilePicture" type="submit">Clear Profile Picture</button>
+            </form>
+        }
+        
+    </div>
+
+    @section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    document.getElementById('profile-picture-input').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const size = 500;
+                    canvas.width = size;
+                    canvas.height = size;
+
+                    const aspectRatio = img.width / img.height;
+                    let drawWidth, drawHeight, offsetX, offsetY;
+
+                    if (aspectRatio > 1) {
+                        drawWidth = size * aspectRatio;
+                        drawHeight = size;
+                        offsetX = (drawWidth - size) / 2;
+                        offsetY = 0;
+                    } else {
+                        drawWidth = size;
+                        drawHeight = size / aspectRatio;
+                        offsetX = 0;
+                        offsetY = (drawHeight - size) / 2;
+                    }
+
+                    ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
+                    document.getElementById('profile-picture').src = canvas.toDataURL('image/jpeg');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+}
+    
+</div>

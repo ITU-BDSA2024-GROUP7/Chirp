@@ -1,11 +1,15 @@
 /*Images for background taken from https://www.spriters-resource.com/mobile/flappybird/sheet/59894/*/
+:root {
+    --day-gradient-height: cover; /* Default value */
+}
+
 body {
     background-image:
             url("../images/DayGradient.png"),  /* Gradient image */
             url("../images/Day.png");  /* Main image */
     background-position: top center, bottom center;  /* Position gradient at the top and image at the bottom */
     background-repeat: no-repeat, no-repeat;  /* No repetition for both images */
-    background-size: 100% 85%, 100% auto;  /* Stretch gradient vertically and maintain aspect ratio for image */
+    background-size: 100% var(--day-gradient-height), 100% auto;  /* Stretch gradient vertically and maintain aspect ratio for image */
     
     min-height: 100vh;
     font-family: 'Trebuchet MS', sans-serif;

@@ -74,13 +74,13 @@ div.page h1 img {
 
 div.page div.navigation {
     position: fixed;
-    left: auto; /* Distance from the left edge of the viewport */
-    margin-left: -220px; /* Adjust to place content right next to the navbar */
-    top: 50px; /* Distance from the top to align with the header */
-    width: 150px; /* Set a fixed width */
+    left: auto; 
+    margin-left: -220px; 
+    top: 50px; 
+    width: 150px; 
     padding: 10px;
     color: white;
-    overflow-y: auto; /* Allow scrolling if content overflows */
+    overflow-y: auto;
 }
 
 div.page div.navigation a {
@@ -91,7 +91,7 @@ div.page div.navigation a {
     font-size: 22px;
     margin-bottom: 15px;
     display: inline-flex;
-    align-items: center; /* Align children (image and text) vertically at the center */
+    align-items: center; 
     transition: background-color 0.4s ease;
     border-radius: 20px;
 }
@@ -131,15 +131,15 @@ div.page h2 {
 
 .timeline-header {
     display: flex;
-    justify-content: center; /* Center the content */
+    justify-content: center; 
     align-items: center;
-    position: relative; /* Ensures the button can be placed to the left */
+    position: relative; 
     width: 100%;
 }
 
 .timeline-button {
     position: absolute;
-    left: 0; /* Position the button to the left of the container */
+    left: 0; 
 }
 
 div.page div.body {
@@ -190,12 +190,14 @@ div.page ul.cheeps p.cheep-text {
 }
 
 div.page ul.cheeps li img {
-    display: block; /* Ensures it takes its own line */
-    margin: 0 auto!important; /* Centers the image horizontally */
-    max-width: 100%; /* Ensures the image doesn't overflow the cheep container */
-    height: auto; /* Maintains aspect ratio */
-    border-radius: 5px; /* Optional: adds rounded corners */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
+    display: block; 
+    margin: 0 auto!important; 
+    max-width: 40%;
+    width: 40%;
+    max-height: 40%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     float: left;
 }
 
@@ -306,7 +308,7 @@ button {
     background-color: #cc6e6e;
     border: none;
     color: white;
-    padding: 8px 16px; /* Add padding for even spacing */
+    padding: 8px 16px;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
@@ -377,17 +379,6 @@ ul.nav li a:hover {
     background-color: #cc6e6e;
 }
 
-div.page ul.cheeps li img {
-    display: block; /* Ensure the image appears on its own line */
-    max-width: 100%; /* Prevent the image from exceeding the container's width */
-    max-height: 200px;
-    height: auto; /* Maintain aspect ratio */
-    margin: 10px auto; /* Add space above and below the image, center it horizontally */
-    border-radius: 5px; /* Optional: Add rounded corners for a polished look */
-    border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
-    float: left;
-}
-
 .providerImg {
     height: 2em;
     width: auto;
@@ -396,8 +387,8 @@ div.page ul.cheeps li img {
 
 .CheepReactions {
     display: flex;
-    align-items: center; /* Vertically center elements */
-    gap: 0px; /* Space between elements */
+    align-items: center; 
+    gap: 0px; 
 }
 
 .CheepReactions p {
@@ -458,20 +449,20 @@ div.page ul.cheeps li img {
     border: 2px solid #cc6e6e;
     border-radius: 15px;
     display: flex;
-    flex-direction: column; /* Keeps the content stacked vertically */
-    align-items: center; /* Center all children horizontally within the border */
-    justify-content: center; /* Center children vertically */
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
     padding: 10px 0;
 }
 .stat-container .followcontainer {
     display: inline-flex;
-    align-items: center; /* Align items vertically in the center */
+    align-items: center;
 }
 
 .stat-container .karma-counter-container {
-    display: flex; /* Use flexbox for alignment */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
 }
 
 .stat-container h3 {
@@ -479,7 +470,7 @@ div.page ul.cheeps li img {
     margin: 3px 0!important;
 }
 .stat-container div {
-    margin: 0 10px; /* Optional spacing between child divs */
+    margin: 0 10px; 
 }
 
 /* Java scriptless popup from https://jsfiddle.net/kzgjr6so/ */
@@ -515,14 +506,14 @@ div.page ul.cheeps li img {
 }
 
 .popup {
-    margin: 70px auto; /* Centers the popup horizontally */
+    margin: 70px auto;
     padding: 30px;
     background: #fff;
     border-radius: 5px;
     width: 30%;
     position: relative;
     transition: 2s ease-in;
-    box-sizing: border-box; /* Ensure padding is part of the total width */
+    box-sizing: border-box; 
 }
 
 .popup h2 {
@@ -554,8 +545,8 @@ div.page ul.cheeps li img {
 }
 
 .popup .content li {
-    display: flex; /* Use flexbox to align items horizontally */
-    align-items: center; /* Vertically center the items */
+    display: flex; 
+    align-items: center; 
     padding: 5px;
     background: #F0FAF9;
     border: 1px solid #DBF3F1;
@@ -566,12 +557,12 @@ div.page ul.cheeps li img {
 }
 
 .popup .content li a {
-    margin-right: 10px; /* Add space between the link and the button */
+    margin-right: 10px; 
     font-weight: bold;
 }
 
 .popup .content li button {
-    margin-left: 5px; /* Ensures button is aligned to the right side of the link */
+    margin-left: 5px; 
 }
 
 #followButton {
@@ -612,8 +603,8 @@ div.page ul.cheeps li img {
 .dropdown-btn {
     background-color: #cc6e6e;
     color: white;
-    padding: 8px 12px; /* Smaller padding */
-    font-size: 14px;   /* Smaller font size */
+    padding: 8px 12px; 
+    font-size: 14px;  
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -622,15 +613,15 @@ div.page ul.cheeps li img {
 }
 
 .dropdown-btn:hover {
-    background-color: #b05c5c; /* Darker shade on hover */
+    background-color: #b05c5c; 
 }
 
 #selectedOption {
-    margin-right: 8px; /* Adjust space between text and arrow */
+    margin-right: 8px; 
 }
 
 .arrow {
-    font-size: 10px;  /* Smaller arrow */
+    font-size: 10px;  
 }
 
 .dropdown-content {
@@ -643,10 +634,10 @@ div.page ul.cheeps li img {
 }
 
 .dropdown-item {
-    padding: 10px 14px; /* Smaller padding for items */
+    padding: 10px 14px; 
     cursor: pointer;
     background-color: #ffd2d2;
-    color: black; /* Set text color to match the scheme */
+    color: black; 
     border-radius: 5px;
     border: 1px solid #b05c5c;
 }
@@ -662,7 +653,7 @@ div.page ul.cheeps li img {
 
 .Delete button {
     background-color: transparent;
-    border: none;  /* Make sure the button doesn't have a border */
+    border: none;  
 }
 
 .Delete form button i {
@@ -687,12 +678,12 @@ div.page ul.cheeps li img {
 .CommentForm {
     margin: 10px 0;
     padding: 5px;
-    gap: 5px; /* Space between elements */
+    gap: 5px; 
     
 }
 .CommentForm input[type="text"] {
-    width: 100%; /* Fill the remaining space */
-    padding: 5px; /* Add padding for better input size */
+    width: 100%; 
+    padding: 5px; 
     border: 1px solid #e6c0bf;
     border-radius: 2px;
     font-family: 'Trebuchet MS', sans-serif;
@@ -702,12 +693,12 @@ div.page ul.cheeps li img {
     background: #571010;
     border: 1px solid #3b0707;
     font-family: 'Trebuchet MS', sans-serif;
-    font-size: 12px; /* Adjust font size to match input */
+    font-size: 12px;
     font-weight: bold;
     border-radius: 2px;
     color: white;
-    padding: 5px 10px; /* Add padding for better button size */
-    cursor: pointer; /* Add pointer cursor on hover */
+    padding: 5px 10px; 
+    cursor: pointer;
 }
 
 
@@ -836,22 +827,22 @@ div.page ul.cheeps li img {
     margin-bottom: 0px;
 }
 .Cheepforcomments img {
-    max-width: 100%; /* Prevent the image from exceeding the container's width */
+    max-width: 100%; 
     max-height: 200px;
-    height: auto; /* Maintain aspect ratio */
-    margin: 10px auto; /* Add space above and below the image, center it horizontally */
-    border-radius: 5px; /* Optional: Add rounded corners for a polished look */
-    border: 1px solid #DBF3F1; /* Optional: Add a border for better visibility */
+    height: auto; 
+    margin: 10px auto; 
+    border-radius: 5px;
+    border: 1px solid #DBF3F1; 
 }
 .CommentForm {
     margin: 10px 0;
     padding: 5px;
-    gap: 5px; /* Space between elements */
+    gap: 5px; 
     
 }
 .CommentForm input[type="text"] {
-    width: 100%; /* Fill the remaining space */
-    padding: 5px; /* Add padding for better input size */
+    width: 100%;
+    padding: 5px; 
     border: 1px solid #e6c0bf;
     border-radius: 2px;
     font-family: 'Trebuchet MS', sans-serif;
@@ -861,12 +852,12 @@ div.page ul.cheeps li img {
     background: #571010;
     border: 1px solid #3b0707;
     font-family: 'Trebuchet MS', sans-serif;
-    font-size: 12px; /* Adjust font size to match input */
+    font-size: 12px; 
     font-weight: bold;
     border-radius: 2px;
     color: white;
-    padding: 5px 10px; /* Add padding for better button size */
-    cursor: pointer; /* Add pointer cursor on hover */
+    padding: 5px 10px; 
+    cursor: pointer; 
 }
 
 div.page ul.cheeps li img.Profile-Picture {

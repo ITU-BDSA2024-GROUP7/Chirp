@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Chirp.Core;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
 using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Caching.Distributed;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
 
 namespace Chirp.Web.Pages;
@@ -18,9 +15,8 @@ public class PopularTimelineModel : PageModel
     private readonly CheepService _service;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
-    public AuthorDTO UserAuthor { get; set; }
+    public AuthorDTO? UserAuthor { get; set; }
     public bool ShowPopularCheeps { get; set; }
-
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
 
@@ -50,7 +46,7 @@ public class PopularTimelineModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
         
         foreach (var cheep in Cheeps)
@@ -82,9 +78,9 @@ public class PopularTimelineModel : PageModel
             
             TotalPageNumber = await _service.GetTotalPageNumberForPopular();
             
-            var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
-            
+            var currentUserName = User.Identity!.Name;
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+
             return Page(); // Return the page with validation messages
         }
 
@@ -95,7 +91,7 @@ public class PopularTimelineModel : PageModel
 
             if (authorName != null && authorEmail != null)
             {
-                string imageBase64 = null;
+                string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
                     imageBase64 = await _service.HandleImageUpload(CheepImage);
@@ -132,8 +128,7 @@ public class PopularTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.FollowAuthor(userAuthor, followedAuthorName);
-            
+            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect($"/popular?page={PageNumber}");
     }
@@ -149,22 +144,21 @@ public class PopularTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(userAuthor, followedAuthor);
-            
+            if (userAuthor != null) await _service.UnfollowAuthor(userAuthor, followedAuthor);
         }
         return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity.Name, cheepId, emoji);
+        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
@@ -180,7 +174,7 @@ public class PopularTimelineModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
         }
 
         return Page();

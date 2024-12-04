@@ -1,10 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Chirp.Core;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Services;
-using Chirp.Web.Pages.Views;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CheepDTO = Chirp.Core.DTOs.CheepDTO;
@@ -17,19 +14,19 @@ public class CheepCommentModel : PageModel
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public required List<CommentDTO> Comments { get; set; }
-    public string CurrentAuthor { get; set; } = string.Empty;
     public int CheepId { get; set; }
-    public AuthorDTO userAuthor { get; set; }
-    public CheepDTO OriginalCheep { get; set; }
+    public AuthorDTO? UserAuthor { get; set; }
+    public CheepDTO? OriginalCheep { get; set; }
     
     [BindProperty]
     [Required(ErrorMessage = "At least write something before you click me....")]
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CommentText { get; set; } = string.Empty;
-
+    
     public CheepCommentModel(CheepService service)
     {
         _service = service;
+        
     }
     public string GetFormattedTimeStamp(string timeStamp)
     {
@@ -107,7 +104,10 @@ public class CheepCommentModel : PageModel
         {
             return NotFound();
         }
-        userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+        if (User.Identity!.IsAuthenticated)
+        {
+            UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
+        }
         Comments = await _service.GetCommentsByCheepId(cheepId);
         PageNumber = pageNumber;
         
@@ -129,8 +129,7 @@ public class CheepCommentModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.FollowAuthor(userAuthor, followedAuthorName);
-            
+            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect(Request.Headers["Referer"].ToString());
     }
@@ -145,8 +144,8 @@ public class CheepCommentModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated) // Check if the user is authenticated
         {
             PageNumber = pageNumber;
-            var userAuthor = User.Identity.Name; // Get the user's name
-            await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            var UserAuthor = User.Identity.Name; // Get the user's name
+            if (UserAuthor != null) await _service.UnfollowAuthor(UserAuthor, followedAuthor);
             
         }
         return Redirect(Request.Headers["Referer"].ToString());
@@ -157,10 +156,10 @@ public class CheepCommentModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
-
-            if (authorName != null && !string.IsNullOrEmpty(CommentText))
+            var cheepDtoId = await _service.GetCheepFromId(cheepId);
+            if (authorName != null && cheepDtoId != null && !string.IsNullOrEmpty(CommentText))
             {
-                await _service.AddCommentToCheep(await _service.GetCheepFromId(cheepId), CommentText, authorName);
+                await _service.AddCommentToCheep(cheepDtoId, CommentText, authorName);
             }
             else
             {
@@ -168,7 +167,7 @@ public class CheepCommentModel : PageModel
                 // Ensure Cheeps and other required properties are populated
                 OriginalCheep = await _service.GetCheepFromId(cheepId);
                 Comments = await _service.GetCommentsByCheepId(cheepId);
-                userAuthor = await _service.FindAuthorByName(User.Identity.Name);
+                UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
                 return Page(); // Return the page with validation messages
             }
         }

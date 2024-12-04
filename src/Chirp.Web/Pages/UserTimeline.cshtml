@@ -10,7 +10,7 @@
     var authorName = HttpContext.GetRouteValue("author");
     int pageNumber = Model.PageNumber;
     int totalPages = Model.TotalPageNumber == 0 ? 1 : Model.TotalPageNumber;
-    AuthorDTO userAuthor = Model.userAuthor;
+    AuthorDTO? userAuthor = Model.UserAuthor;
     int authorKarma = Model.AuthorKarma;
     AuthorDTO pageAuthor = Model.PageAuthor;
 }
@@ -62,7 +62,7 @@
                     {
                         <li>
                             <a href="/@author">@author</a>
-                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name && userAuthor != null)
                             {
                                 <form method="post">
                                     @if (!userAuthor.AuthorsFollowed.Contains(author))
@@ -100,7 +100,7 @@
                     {
                         <li>
                             <a href="/@author">@author</a>
-                            @if (User.Identity.IsAuthenticated && author != User.Identity.Name)
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && author != User.Identity.Name && userAuthor != null)
                             {
                                 <form method="post">
                                     @if (!userAuthor.AuthorsFollowed.Contains(author))
@@ -163,7 +163,7 @@
                                     <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
                                 </strong>
 
-                                @if (User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name)
+                                @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name && userAuthor != null)
                                 {
                                     <form style="display: flex;" method="post">
                                         @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
@@ -181,7 +181,7 @@
                                     </form>
                                 }
                                 <div class="Delete">
-                                    @if (User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                                    @if (User.Identity!.IsAuthenticated && cheep.Author.Name == User.Identity.Name) 
                                     {
                                         <form method="post">
                                             <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
@@ -200,7 +200,7 @@
                     <p>@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p>
                     <div>
                         @* If image reference is not null then make an image element *@
-                        @if (cheep.ImageReference != null)
+                        @if (cheep.ImageReference != "")
                         {
                             // (R0lGODlh) Is what all base64 encoded GIFs start with
                             string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
@@ -210,7 +210,7 @@
                         }
                     </div>
                     <div class="CheepReactions">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity.IsAuthenticated && userAuthor != null)
                         {
                             <form method="post">
                                 <div class="reactions-container">

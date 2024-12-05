@@ -913,3 +913,17 @@ div.page ul.cheeps li img.Profile-Picture {
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
+
+.Profile-Picture-Header {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.Profile-Picture-Header img {
+    width: 250px;
+    height: 250px;
+    border-radius: 10%;
+    overflow: hidden;
+    margin: 0 5px 0 0!important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}

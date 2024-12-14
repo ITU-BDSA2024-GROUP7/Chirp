@@ -1,8 +1,8 @@
 ---
-title: "_Chirp!_ Project Report"
+title: "Chirp Project Report!"
 subtitle: "ITU BDSA 2024 Group `07`"
 author:
-- "Marcus Løfberg <loef@itu.dk>"
+- "Marcus Løfberg <loef@itu.dk>" 
 - "Nikolaj Ho Alsøe <nals@itu.dk>"
 - "Nikolaj Heuer Løjmand Carlson <nhca@itu.dk>"
 - "Rasmus Alexander Christiansen <ralc@itu.dk>"
@@ -32,7 +32,7 @@ Here comes a description of our domain model.
 
 ## Team work
 
-## How to make _Chirp!_ work locally
+## How to make Chirp! work locally
 
 ## How to run test suite locally
 

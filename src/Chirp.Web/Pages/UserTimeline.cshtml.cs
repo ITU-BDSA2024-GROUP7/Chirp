@@ -148,8 +148,12 @@ public class UserTimelineModel : PageModel
     public async Task<IActionResult> OnPost()
     {
         string? currentAuthor = RouteData.Values["author"]?.ToString();
-        if (currentAuthor != null) CurrentAuthor = currentAuthor;
-
+        if (currentAuthor != null)
+        {
+            CurrentAuthor = currentAuthor;
+            PageAuthor = await _service.FindAuthorByName(currentAuthor);
+        }
+        
         UserAuthor = await _service.FindAuthorByName(User.Identity?.Name ?? string.Empty);
         
         PageNumber = pageNumber;
@@ -165,6 +169,10 @@ public class UserTimelineModel : PageModel
             } else {
                 Cheeps = await _service.GetCheepsFromAuthor(CurrentAuthor, PageNumber); 
             }
+            
+            FollowingList = await _service.GetFollowedAuthors(CurrentAuthor);
+            FollowingMeList = await _service.GetFollowingAuthors(CurrentAuthor);
+            
             return Page(); // Return the page with validation messages
         }
         

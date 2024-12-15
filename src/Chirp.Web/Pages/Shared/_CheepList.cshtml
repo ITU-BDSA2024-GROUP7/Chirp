@@ -1,0 +1,148 @@
+﻿@using Chirp.Core.DTOs
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Chirp.Web.ViewModels.CheepListViewModel
+
+
+@{
+    AuthorDTO? userAuthor = Model.UserAuthor;
+}
+
+@if (Model.Cheeps.Any())
+    {
+        <ul id="messagelist" class="cheeps">
+            @foreach (var cheep in Model.Cheeps)
+            {
+                <li>
+                    <div class="cheep-container">
+                        @if (cheep.Author.ProfilePicture == null)
+                        {
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
+                        </a>
+                        }
+                        else
+                        {
+                        <a href="/@cheep.Author.Name">
+                            <img class="Profile-Picture" src="data:jpeg;base64,@cheep.Author.ProfilePicture" alt="User profile image"/>
+                        </a>
+                        }
+                        
+                <div class="Cheep-Details">
+                    <div style="display: flex; align-items: center;">
+                                
+                        <strong>
+                            <a class="Profile-Author-Name" href="/@cheep.Author.Name">@cheep.Author.Name</a>
+                        </strong>
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name != User.Identity.Name && userAuthor != null)
+                        {
+                            <form style="display: flex;" method="post">
+                                @if (!userAuthor.AuthorsFollowed.Contains(cheep.Author.Name))
+                                {
+                                    <input type="hidden" name="followedAuthorName" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <button id="followButton" type="submit" asp-page-handler="FollowMethod">Follow</button>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="followedAuthor" value="@cheep.Author.Name"/>
+                                    <input type="hidden" name="PageNumber" value="@ViewData["pageNumber"]"/>
+                                    <button id="unfollowButton" type="submit" asp-page-handler="UnfollowMethod">Unfollow</button>
+                                }
+                            </form>
+                        }
+                        <div class="Delete">
+                            @if (User.Identity != null && User.Identity.IsAuthenticated && cheep.Author.Name == User.Identity.Name)
+                            {
+                                <form method="post">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="deleteButton" type="submit" asp-page-handler="DeleteMethod">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                             </div>
+                             </div>
+                             <small>@Model.GetFormattedTimeStamp(cheep.FormattedTimeStamp)</small>
+                         </div>
+                    </div>
+                    <br>
+                    <p class="cheep-text">@Html.Raw(Model.ConvertLinksToAnchors(cheep.Text))</p><br/>
+                    <div>
+                        @* If image reference is not null then make an image element *@
+                        @if (cheep.ImageReference != "")
+                        {
+                            // (R0lGODlh) Is what all base64 encoded GIFs start with
+                            string mimeType = cheep.ImageReference.StartsWith("R0lGODlh") ? "image/gif" : "image/png";
+                            <a href="data:@mimeType;base64,@cheep.ImageReference" style="cursor: pointer;">
+                                <img src="data:@mimeType;base64,@cheep.ImageReference" alt="Cheep Image"/>
+                            </a>
+                        }
+                    </div>
+                    <div class="CheepReactions">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && userAuthor != null)
+                        {
+                            <form method="post">
+                                <div class="reactions-container">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="likeMethod" class="@(cheep.Likes.Any(like => like.AuthorId == userAuthor.AuthorId) ? "likedButton" : "")"
+                                            type="submit" asp-page-handler="LikeMethod">
+                                        <i class="fas fa-thumbs-up fa-2x fareact"></i>
+                                    </button>
+                                    <div class="reactions">
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="👍">👍</button>
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="❤️">❤️</button>
+                                        <button type="submit" asp-page-handler="LikeMethod" asp-route-emoji="😂">😂</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <p>@cheep.LikesCount</p>
+                            <form method="post">
+                                <div class="reactions-container">
+                                    <input type="hidden" name="cheepId" value="@cheep.CheepId"/>
+                                    <button id="dislikeMethod" class="@(cheep.Dislikes.Any(dislike => dislike.AuthorId == userAuthor.AuthorId) ? "dislikedButton" : "")"
+                                            type="submit" asp-page-handler="DisLikeMethod">
+                                        <i class="fas fa-thumbs-down fa-2x fareact"></i>
+                                    </button>
+                                    <div class="reactions">
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="👎">👎</button>
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="😡">😡</button>
+                                        <button type="submit" asp-page-handler="DislikeMethod" asp-route-emoji="💀">💀</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <p>@cheep.DislikesCount</p>
+                        }
+                        else
+                        {
+                            <i style="color: dimgrey" class="fas fa-thumbs-up fa-2x fareact"></i>
+                            <p>@cheep.LikesCount</p>
+                            <i style="color: dimgrey" class="fas fa-thumbs-down fa-2x fareact"></i>
+                            <p>@cheep.DislikesCount</p>
+                        }
+                        @if (Model.TopReactions.ContainsKey(cheep.CheepId) && Model.TopReactions[cheep.CheepId].Count > 0)
+                        {
+                            <div class="TopReactions">
+                                <p>Top Reactions:</p>
+                                    <div class="emoji-container">
+                                        @foreach (var reaction in Model.TopReactions[cheep.CheepId])
+                                        {
+                                            <span>@reaction</span>
+                                        }
+                                    </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="Comment">
+                        <a href="/@cheep.CheepId/comments?page=@ViewData["pageNumber"]" style="display: flex; text-decoration: none;">
+                            <button id="ViewComments" type="button">View Comments (@cheep.CommentsCount)</button>
+                        </a>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <em>There are no cheeps so far.</em>
+    }

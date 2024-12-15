@@ -31,7 +31,20 @@ public class CheepListViewModel : PageModel
 
 
         // Replace URLs with anchor tags
-        return regex.Replace(text, match => $"<a href=\"{match.Value}\" target=\"_blank\">{match.Value}</a>");
+        return regex.Replace(text, match =>
+        {
+            // Keep the original match value (text) as is
+            var url = match.Value;
+
+            // If the URL doesn't already have a protocol, add 'https://'
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+            {
+                url = "https://" + url;
+            }
+
+            // Generate the anchor tag with the potentially updated URL (with https://)
+            return $"<a href=\"{url}\" target=\"_blank\">{match.Value}</a>";
+        });
     }
     
     public string GetFormattedTimeStamp(string timeStamp)

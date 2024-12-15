@@ -23,7 +23,7 @@
         <h2> @authorName's Timeline </h2>
     </div>
     <div class="Profile-Picture-Header">
-        @if (pageAuthor.ProfilePicture == null)
+        @if (pageAuthor?.ProfilePicture == null)
         {
             <img class="Profile-Picture" src="~/images/DefaultUser.png" alt="User profile image"/>
         }

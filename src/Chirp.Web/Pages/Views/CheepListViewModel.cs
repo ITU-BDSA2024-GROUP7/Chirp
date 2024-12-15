@@ -20,44 +20,6 @@ public class CheepListViewModel : PageModel
     public AuthorDTO? UserAuthor { get; set; }
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public Dictionary<int, List<string>> TopReactions { get; set; } = new Dictionary<int, List<string>>();
-
-    public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
-    {
-        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
-        return RedirectToPage();
-    }
-
-    public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
-    {
-        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
-        return RedirectToPage();
-    }
-
-    public async Task<IActionResult> OnPostFollowMethod(string followedAuthorName)
-    {
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var userAuthor = User.Identity.Name;
-            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
-        }
-        return RedirectToPage();
-    }
-
-    public async Task<IActionResult> OnPostUnfollowMethod(string followedAuthor)
-    {
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var userAuthor = User.Identity.Name;
-            if (userAuthor != null) await _service.UnfollowAuthor(userAuthor, followedAuthor);
-        }
-        return RedirectToPage();
-    }
-
-    public async Task<IActionResult> OnPostDeleteMethod(int cheepId)
-    {
-        await _service.DeleteCheep(cheepId);
-        return RedirectToPage();
-    }
     
     public string ConvertLinksToAnchors(string text)
     {

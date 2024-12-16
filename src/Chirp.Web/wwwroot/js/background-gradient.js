@@ -18,7 +18,7 @@ function ResizeBackground(){
         const actualDayImageWidth = dayImage.getBoundingClientRect().width;
         document.body.removeChild(dayImage); // Remove the image after getting its size
 
-        const bodyHeight = document.body.clientHeight;
+        const bodyHeight = document.body.clientHeight+10;
         const bodyWidth = document.body.clientWidth;
         const aspectRatio = actualDayImageWidth / actualDayImageHeight;
         const dayImageHeight = bodyWidth / aspectRatio;

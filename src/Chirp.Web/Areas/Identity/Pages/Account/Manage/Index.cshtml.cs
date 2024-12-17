@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Chirp.Core;
 using Chirp.Core.DTOs;
 using Chirp.Infrastructure.Data;
 using Chirp.Infrastructure.Services;
@@ -19,18 +20,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly CheepService _service;
+        private readonly CheepService _cheepService;
+        private readonly AuthorService _authorService;
         
         public AuthorDTO UserAuthor { get; set; }
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            CheepService service)
+            CheepService cheepService,
+            AuthorService authorService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _service = service;
+            _cheepService = cheepService;
+            _authorService = authorService;
         }
 
         /// <summary>
@@ -92,7 +96,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            UserAuthor = await _service.FindAuthorByName(user.UserName);
+            UserAuthor = await _authorService.FindAuthorByName(user.UserName);
 
             await LoadAsync(user);
             return Page();
@@ -135,7 +139,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            UserAuthor = await _service.FindAuthorByName(user.UserName);
+            UserAuthor = await _authorService.FindAuthorByName(user.UserName);
             await LoadAsync(user);
             
             if (!ModelState.IsValid)
@@ -143,14 +147,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
             
-            await _service.UpdateProfilePicture(User.Identity.Name, ProfilePictureImage);
+            await _authorService.UpdateProfilePicture(User.Identity.Name, ProfilePictureImage);
         
             return RedirectToPage();
         }
         
         public async Task<IActionResult> OnPostClearProfilePicture()
         {
-            await _service.ClearProfilePicture(User.Identity.Name, ProfilePictureImage);
+            await _authorService.ClearProfilePicture(User.Identity.Name, ProfilePictureImage);
         
             return RedirectToPage();
         }

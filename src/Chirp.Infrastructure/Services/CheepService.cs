@@ -1,30 +1,10 @@
 using Chirp.Core.DTOs;
+using Chirp.Core.Interfaces;
 using Chirp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 
 namespace Chirp.Infrastructure.Services;
-public interface ICheepService
-{
-    public Task<List<Core.DTOs.CheepDTO>> GetCheeps(int page);
-    public Task<List<Core.DTOs.CheepDTO>> GetCheepsFromAuthor(string author, int page);
-    
-    public Task<int> GetTotalPageNumber(string authorName);
-    
-    public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheeps();
-    
-    public Task CreateCheep(CheepDTO Cheep);
-    
-    public Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheepsFromAnAuthor(string authorName);
-   
-    public Task DeleteUserCheeps(AuthorDTO Author);
-    
-    public Task <List<string>>GetFollowedAuthors(string userName);
-    public Task HandleLike(string authorName, int cheepId, string? emoji);
-    public Task HandleDislike(string authorName, int cheepId, string? emoji);
-    public Task<List<CheepDTO>> GetPopularCheeps(int page);
-    public Task<int> GetTotalPageNumberForPopular();
-    public Task<string> HandleImageUpload(IFormFile image);
-}
+
 public class CheepService : ICheepService
 {
     private readonly CheepRepository _cheepRepository;
@@ -58,16 +38,6 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.RetrieveAllCheepsForEndPoint();
     }
-
-    public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture = null)
-    {
-        await _authorRepository.CreateAuthor(authorName, authorEmail, profilePicture);
-    }
-
-    public async Task<AuthorDTO?> FindAuthorByName(String name)
-    {
-        return await _authorRepository.FindAuthorByNameDTO(name);
-    }
     
     public async Task CreateCheep(CheepDTO Cheep)
     {
@@ -76,11 +46,6 @@ public class CheepService : ICheepService
     public async Task DeleteUserCheeps(AuthorDTO Author)
     {
         await _cheepRepository.DeleteUserCheeps(Author);
-    }
-
-    public async Task DeleteUser(AuthorDTO Author)
-    {
-        await _authorRepository.DeleteUser(Author);
     }
     
     public async Task DeleteCheep(int cheepId)
@@ -92,30 +57,11 @@ public class CheepService : ICheepService
     {
         await _cheepRepository.DeleteComment(commentId);
     }
-
-    public async Task FollowAuthor(string userAuthorName, string followedAuthorName)
-    {
-        await _authorRepository.FollowAuthor(userAuthorName, followedAuthorName);
-    }
-
-    public async Task UnfollowAuthor(string userAuthor, string authorToBeRemoved)
-    {
-        await _authorRepository.UnfollowAuthor(userAuthor, authorToBeRemoved);
-    }
+    
     public async Task<List<Core.DTOs.CheepDTO>> RetrieveAllCheepsFromAnAuthor(string authorName)
     {
         return await _cheepRepository.RetrieveAllCheepsFromAnAuthor(authorName);
     }
-    
-    public async Task RemovedAuthorFromFollowingList(string authorName)
-    {
-        await _authorRepository.RemovedAuthorFromFollowingList(authorName);
-    }
-    public async Task<List<string>> GetFollowedAuthors(string userName)
-    {
-        return await _authorRepository.GetFollowedAuthors(userName);
-    }
-
 
     public async Task HandleLike(string authorName, int cheepId, string? emoji)
     {
@@ -127,17 +73,7 @@ public class CheepService : ICheepService
         await _cheepRepository.HandleDislike(authorName, cheepId, emoji);
 
     }
-
-    /// <summary>
-    /// Returns the list of authors that follows a user
-    /// </summary>
-    /// <param name="userName">The username from the url</param>
-    /// <returns></returns>
-    public async Task<List<string>> GetFollowingAuthors(string userName)
-    {
-        return await _authorRepository.GetFollowingAuthors(userName);
-    }
-
+    
     public async Task<List<CheepDTO>> GetPopularCheeps(int page)
     {
         return await _cheepRepository.GetPopularCheeps(page);
@@ -164,10 +100,6 @@ public class CheepService : ICheepService
     {
         return await _cheepRepository.GetCheepFromId(cheepId);
     }
-    public async Task<int> GetKarmaForAuthor(string authorName)
-    {
-        return await _authorRepository.GetKarmaForAuthor(authorName);
-    }
     
     public async Task<List<String>> GetTopReactions (int cheepId)
     {
@@ -179,13 +111,4 @@ public class CheepService : ICheepService
         return await _cheepRepository.RetriveAllCommentsFromAnAuthor(authorName);
     }
     
-    public async Task UpdateProfilePicture(string authorName, IFormFile profilePicture)
-    {
-        await _authorRepository.UpdateProfilePicture(authorName, profilePicture);
-    }
-    
-    public async Task ClearProfilePicture(string authorName, IFormFile profilePicture)
-    {
-        await _authorRepository.ClearProfilePicture(authorName, profilePicture);
-    }
 }

@@ -31,21 +31,21 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<ExternalLoginModel> _logger;
-        private readonly CheepService _service;
+        private readonly AuthorService _authorService;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            CheepService service)
+            AuthorService authorService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _logger = logger;
-            _service = service;
+            _authorService = authorService;
         }
         
         public string ReturnUrl { get; set; }
@@ -120,7 +120,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 
                 if (accountResult.Succeeded) // If the account is successfully created.
                 {
-                    await _service.CreateAuthor(name, email, profilePicture);
+                    await _authorService.CreateAuthor(name, email, profilePicture);
                     
                     accountResult = await _userManager.AddLoginAsync(user, info); // Add the external login to the user account.
                     if (accountResult.Succeeded) // If the external login is successfully added to the user account.

@@ -12,7 +12,8 @@ namespace Chirp.Web.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly CheepService _service;
+    private readonly CheepService _cheepService;
+    private readonly AuthorService _authorService;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public AuthorDTO? UserAuthor { get; set; } 
@@ -22,9 +23,10 @@ public class PublicModel : PageModel
     public required List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
-    public PublicModel(CheepService service)
+    public PublicModel(CheepService cheepService, AuthorService authorService)
     {
-        _service = service;
+        _cheepService = cheepService;
+        _authorService = authorService;
     }
     public string GetFormattedTimeStamp(string timeStamp)
     {
@@ -95,19 +97,19 @@ public class PublicModel : PageModel
         }
 
         PageNumber = page;
-        Cheeps = await _service.GetCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumber();
+        Cheeps = await _cheepService.GetCheeps(page);
+        TotalPageNumber = await _cheepService.GetTotalPageNumber();
 
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
         }
         
         foreach (var cheep in Cheeps)
         {
-            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
+            TopReactions[cheep.CheepId] = await _cheepService.GetTopReactions(cheep.CheepId);
         }
         
         return Page();
@@ -135,12 +137,12 @@ public class PublicModel : PageModel
             PageNumber = pageNumber;
             
             // Ensure Cheeps and other required properties are populated
-            Cheeps = await _service.GetCheeps(PageNumber);
+            Cheeps = await _cheepService.GetCheeps(PageNumber);
             
-            TotalPageNumber = await _service.GetTotalPageNumber();
+            TotalPageNumber = await _cheepService.GetTotalPageNumber();
             
             var currentUserName = User.Identity!.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
 
             return Page(); // Return the page with validation messages
         }
@@ -157,7 +159,7 @@ public class PublicModel : PageModel
                 string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
-                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                    imageBase64 = await _cheepService.HandleImageUpload(CheepImage);
                 }
                     
                 // Create the new CheepDTO
@@ -173,7 +175,7 @@ public class PublicModel : PageModel
                     FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
     
-                await _service.CreateCheep(cheepDTO);
+                await _cheepService.CreateCheep(cheepDTO);
             }
         }
 
@@ -191,7 +193,7 @@ public class PublicModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
+            if (userAuthor != null) await _authorService.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect($"/?page={PageNumber}");
     }
@@ -207,21 +209,21 @@ public class PublicModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            if (userAuthor != null) await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            if (userAuthor != null) await _authorService.UnfollowAuthor(userAuthor, followedAuthor);
         }
         return Redirect($"/?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleDislike(User.Identity!.Name!, cheepId, emoji);
 
         return Redirect($"/?page={PageNumber}");
     }
@@ -229,7 +231,7 @@ public class PublicModel : PageModel
     
     public async Task<IActionResult> OnPostDeleteMethod(int cheepId)
     {
-        await _service.DeleteCheep(cheepId);
+        await _cheepService.DeleteCheep(cheepId);
         
         return Redirect($"/?page={PageNumber}");
     }

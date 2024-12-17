@@ -20,16 +20,19 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
-        private readonly CheepService _service;
+        private readonly CheepService _cheepService;
+        private readonly AuthorService _authorService;
 
         public DownloadPersonalDataModel(
             UserManager<ApplicationUser> userManager,
             ILogger<DownloadPersonalDataModel> logger,
-            CheepService service)
+            CheepService cheepService,
+            AuthorService authorService)
         {
             _userManager = userManager;
             _logger = logger;
-            _service = service;
+            _cheepService = cheepService;
+            _authorService = authorService;
         }
 
         public IActionResult OnGet()
@@ -76,7 +79,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             // Retrieve authors that the user follows
             if (user.UserName != null)
             {
-                var followedAuthors = await _service.FindAuthorByName(user.UserName);
+                var followedAuthors = await _authorService.FindAuthorByName(user.UserName);
                 var i = 0;
                 foreach (var author in followedAuthors.AuthorsFollowed)
                 {
@@ -89,7 +92,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             // Retrieve cheeps that the user has made
             if (user.UserName != null)
             {
-                var ListOfCheeps = await _service.RetrieveAllCheepsFromAnAuthor(user.UserName);
+                var ListOfCheeps = await _cheepService.RetrieveAllCheepsFromAnAuthor(user.UserName);
             
                 int pictureCounter = 0; // Counter for images and GIFs
                 foreach (var cheep in ListOfCheeps) 
@@ -111,7 +114,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             var k = 0;
             if (user.UserName != null)
             {
-                var ListOfComments = await _service.RetrieveAllCommentsFromAnAuthor(user.UserName);
+                var ListOfComments = await _cheepService.RetrieveAllCommentsFromAnAuthor(user.UserName);
                 foreach (var Comment in ListOfComments)
                 {
                     csvContent.AppendLine($"Comment {k}: Comment.Text {Comment.Text}, Author: {Comment.Author.Name}, Comment TimeStamp: {Comment.FormattedTimeStamp}");

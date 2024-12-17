@@ -99,6 +99,7 @@ namespace Chirp.Web
             builder.Services.AddScoped<CheepRepository>();
             builder.Services.AddScoped<AuthorRepository>();
             builder.Services.AddScoped<CheepService>();
+            builder.Services.AddScoped<AuthorService>();
 
             // Build the application
             var app = builder.Build();
@@ -181,9 +182,9 @@ namespace Chirp.Web
                 return Results.Ok(cheeps);
             });
             
-            app.MapGet("/{userName}/follows", async (string userName, CheepService cheepService) =>
+            app.MapGet("/{userName}/follows", async (string userName, AuthorService authorService) =>
             {
-                var followedAuthors = await cheepService.GetFollowedAuthors(userName);
+                var followedAuthors = await authorService.GetFollowedAuthors(userName);
                 return Results.Ok(followedAuthors);
             });
             

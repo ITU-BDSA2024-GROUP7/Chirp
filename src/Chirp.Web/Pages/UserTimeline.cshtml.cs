@@ -13,7 +13,8 @@ namespace Chirp.Web.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly CheepService _service;
+    private readonly CheepService _cheepService;
+    private readonly AuthorService _authorService;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public int AuthorKarma { get; set; }
@@ -27,9 +28,10 @@ public class UserTimelineModel : PageModel
     public AuthorDTO? PageAuthor { get; set; }
     public AuthorDTO? UserAuthor { get; set; }
 
-    public UserTimelineModel(CheepService service)
+    public UserTimelineModel(CheepService cheepService, AuthorService authorService)
     {
-        _service = service;
+        _cheepService = cheepService;
+        _authorService = authorService;
     }
     
     public string GetFormattedTimeStamp(string timeStamp)
@@ -97,41 +99,41 @@ public class UserTimelineModel : PageModel
         }
     
         CurrentAuthor = author;
-        PageAuthor = await _service.FindAuthorByName(author);
+        PageAuthor = await _authorService.FindAuthorByName(author);
         
         if (PageAuthor == null)
         {
             return RedirectToPage("Public", new { page = 1 });
         }
         
-        PageAuthor = await _service.FindAuthorByName(author);
+        PageAuthor = await _authorService.FindAuthorByName(author);
         
         PageNumber = page;
-        AuthorKarma = await _service.GetKarmaForAuthor(author);
+        AuthorKarma = await _authorService.GetKarmaForAuthor(author);
         
         if (User.Identity != null && User.Identity.Name == author) 
         {
-            Cheeps = await _service.GetPrivateCheeps(page, author);
+            Cheeps = await _cheepService.GetPrivateCheeps(page, author);
         } else {
-            Cheeps = await _service.GetCheepsFromAuthor(author, page); 
+            Cheeps = await _cheepService.GetCheepsFromAuthor(author, page); 
         }
 
-        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
+        TotalPageNumber = await _cheepService.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _cheepService.GetTotalPageNumber(CurrentAuthor);
         
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
         }
         
         // var followAuthorDto = await _service.FindAuthorByName(author);
         // FollowList = followAuthorDto.AuthorsFollowed as List<string>;
-        FollowingList = await _service.GetFollowedAuthors(author);
-        FollowingMeList = await _service.GetFollowingAuthors(author);
+        FollowingList = await _authorService.GetFollowedAuthors(author);
+        FollowingMeList = await _authorService.GetFollowingAuthors(author);
         
         foreach (var cheep in Cheeps)
         {
-            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
+            TopReactions[cheep.CheepId] = await _cheepService.GetTopReactions(cheep.CheepId);
         }
         
         return Page();
@@ -151,13 +153,13 @@ public class UserTimelineModel : PageModel
         if (currentAuthor != null)
         {
             CurrentAuthor = currentAuthor;
-            PageAuthor = await _service.FindAuthorByName(currentAuthor);
+            PageAuthor = await _authorService.FindAuthorByName(currentAuthor);
         }
         
-        UserAuthor = await _service.FindAuthorByName(User.Identity?.Name ?? string.Empty);
+        UserAuthor = await _authorService.FindAuthorByName(User.Identity?.Name ?? string.Empty);
         
         PageNumber = pageNumber;
-        TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
+        TotalPageNumber = await _cheepService.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _cheepService.GetTotalPageNumber(CurrentAuthor);
         
         if (!ModelState.IsValid) // Check if the model state is invalid
         {
@@ -165,13 +167,13 @@ public class UserTimelineModel : PageModel
             // Ensure Cheeps and other required properties are populated
             if (User.Identity != null && User.Identity.Name == CurrentAuthor) 
             {
-                Cheeps = await _service.GetPrivateCheeps(PageNumber, CurrentAuthor);
+                Cheeps = await _cheepService.GetPrivateCheeps(PageNumber, CurrentAuthor);
             } else {
-                Cheeps = await _service.GetCheepsFromAuthor(CurrentAuthor, PageNumber); 
+                Cheeps = await _cheepService.GetCheepsFromAuthor(CurrentAuthor, PageNumber); 
             }
             
-            FollowingList = await _service.GetFollowedAuthors(CurrentAuthor);
-            FollowingMeList = await _service.GetFollowingAuthors(CurrentAuthor);
+            FollowingList = await _authorService.GetFollowedAuthors(CurrentAuthor);
+            FollowingMeList = await _authorService.GetFollowingAuthors(CurrentAuthor);
             
             return Page(); // Return the page with validation messages
         }
@@ -186,7 +188,7 @@ public class UserTimelineModel : PageModel
                 string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
-                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                    imageBase64 = await _cheepService.HandleImageUpload(CheepImage);
                 }
                 
                 // Create the new CheepDTO
@@ -203,7 +205,7 @@ public class UserTimelineModel : PageModel
                         DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
 
-                await _service.CreateCheep(cheepDTO);
+                await _cheepService.CreateCheep(cheepDTO);
             }
         }
 
@@ -228,7 +230,7 @@ public class UserTimelineModel : PageModel
             var UserAuthor = User.Identity.Name; // Get the user's name
             if (UserAuthor != null)
             {
-                await _service.FollowAuthor(UserAuthor, followedAuthorName);
+                await _authorService.FollowAuthor(UserAuthor, followedAuthorName);
             }
             
         }
@@ -250,7 +252,7 @@ public class UserTimelineModel : PageModel
 
             if (UserAuthor != null)
             {
-                await _service.UnfollowAuthor(UserAuthor, followedAuthor);
+                await _authorService.UnfollowAuthor(UserAuthor, followedAuthor);
             }
         }
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
@@ -258,21 +260,21 @@ public class UserTimelineModel : PageModel
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string currentAuthorPageName, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleDislike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDeleteMethod(int cheepId, string currentAuthorPageName)
     {
-        await _service.DeleteCheep(cheepId);
+        await _cheepService.DeleteCheep(cheepId);
         
         return Redirect($"/{currentAuthorPageName}?page={PageNumber}");
     }

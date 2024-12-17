@@ -17,19 +17,22 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
-        private readonly CheepService _service;
+        private readonly CheepService _cheepService;
+        private readonly AuthorService _authorService;
         
 
         public DeletePersonalDataModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<DeletePersonalDataModel> logger,
-            CheepService service)
+            CheepService cheepService,
+            AuthorService authorService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _service = service;
+            _cheepService = cheepService;
+            _authorService = authorService;
         }
 
         /// <summary>
@@ -95,9 +98,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                             Name = authorName,
                             Email = authorEmail
                         };
-                        await _service.RemovedAuthorFromFollowingList(authorName);
-                        await _service.DeleteUserCheeps(author);
-                        await _service.DeleteUser(author);
+                        await _authorService.RemovedAuthorFromFollowingList(authorName);
+                        await _cheepService.DeleteUserCheeps(author);
+                        await _authorService.DeleteUser(author);
                     }
                 }
             }

@@ -10,7 +10,8 @@ namespace Chirp.Web.Pages;
 
 public class CheepCommentModel : PageModel
 {
-    private readonly CheepService _service;
+    private readonly CheepService _cheepService;
+    private readonly AuthorService _authorService;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public required List<CommentDTO> Comments { get; set; }
@@ -23,10 +24,11 @@ public class CheepCommentModel : PageModel
     [StringLength(160, ErrorMessage = "Maximum length is {1} characters")]
     public string CommentText { get; set; } = string.Empty;
     
-    public CheepCommentModel(CheepService service)
+    public CheepCommentModel(CheepService cheepService, AuthorService authorService)
     {
-        _service = service;
-        
+        _cheepService = cheepService;
+        _authorService = authorService;
+
     }
     public string GetFormattedTimeStamp(string timeStamp)
     {
@@ -99,16 +101,16 @@ public class CheepCommentModel : PageModel
 
         //TotalPageNumber = await _service.GetTotalPageNumber(CurrentAuthor) == 0 ? 1 : await _service.GetTotalPageNumber(CurrentAuthor);
         
-        OriginalCheep = await _service.GetCheepFromId(cheepId);
+        OriginalCheep = await _cheepService.GetCheepFromId(cheepId);
         if (OriginalCheep == null)
         {
             return NotFound();
         }
         if (User.Identity!.IsAuthenticated)
         {
-            UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
+            UserAuthor = await _authorService.FindAuthorByName(User.Identity.Name!);
         }
-        Comments = await _service.GetCommentsByCheepId(cheepId);
+        Comments = await _cheepService.GetCommentsByCheepId(cheepId);
         PageNumber = pageNumber;
         
 
@@ -129,7 +131,7 @@ public class CheepCommentModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
+            if (userAuthor != null) await _authorService.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect(Request.Headers["Referer"].ToString());
     }
@@ -145,7 +147,7 @@ public class CheepCommentModel : PageModel
         {
             PageNumber = pageNumber;
             var UserAuthor = User.Identity.Name; // Get the user's name
-            if (UserAuthor != null) await _service.UnfollowAuthor(UserAuthor, followedAuthor);
+            if (UserAuthor != null) await _authorService.UnfollowAuthor(UserAuthor, followedAuthor);
             
         }
         return Redirect(Request.Headers["Referer"].ToString());
@@ -156,18 +158,18 @@ public class CheepCommentModel : PageModel
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var authorName = User.Identity.Name;
-            var cheepDtoId = await _service.GetCheepFromId(cheepId);
+            var cheepDtoId = await _cheepService.GetCheepFromId(cheepId);
             if (authorName != null && cheepDtoId != null && !string.IsNullOrEmpty(CommentText))
             {
-                await _service.AddCommentToCheep(cheepDtoId, CommentText, authorName);
+                await _cheepService.AddCommentToCheep(cheepDtoId, CommentText, authorName);
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Comment text cannot be empty.");
                 // Ensure Cheeps and other required properties are populated
-                OriginalCheep = await _service.GetCheepFromId(cheepId);
-                Comments = await _service.GetCommentsByCheepId(cheepId);
-                UserAuthor = await _service.FindAuthorByName(User.Identity.Name!);
+                OriginalCheep = await _cheepService.GetCheepFromId(cheepId);
+                Comments = await _cheepService.GetCommentsByCheepId(cheepId);
+                UserAuthor = await _authorService.FindAuthorByName(User.Identity.Name!);
                 return Page(); // Return the page with validation messages
             }
         }
@@ -177,7 +179,7 @@ public class CheepCommentModel : PageModel
     public async Task<IActionResult> OnPostDeleteMethod(int CommentId)
     {
         Console.WriteLine("Comment ID: " + CommentId);
-        await _service.DeleteComment(CommentId);
+        await _cheepService.DeleteComment(CommentId);
         
         return Redirect(Request.Headers["Referer"].ToString());
     }

@@ -12,7 +12,8 @@ namespace Chirp.Web.Pages;
 
 public class PopularTimelineModel : PageModel
 {
-    private readonly CheepService _service;
+    private readonly CheepService _cheepService;
+    private readonly AuthorService _authorService;
     public int PageNumber { get; set; }
     public int TotalPageNumber { get; set; }
     public AuthorDTO? UserAuthor { get; set; }
@@ -22,9 +23,10 @@ public class PopularTimelineModel : PageModel
 
     public SharedChirpViewModel SharedChirpView { get; set; } = new SharedChirpViewModel();
 
-    public PopularTimelineModel(CheepService service)
+    public PopularTimelineModel(CheepService cheepService, AuthorService authorService)
     {
-        _service = service;
+        _cheepService = cheepService;
+        _authorService = authorService;
     }
     
     /// <summary>
@@ -39,19 +41,19 @@ public class PopularTimelineModel : PageModel
         }
 
         PageNumber = page;
-        Cheeps = await _service.GetPopularCheeps(page);
-        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
+        Cheeps = await _cheepService.GetPopularCheeps(page);
+        TotalPageNumber = await _cheepService.GetTotalPageNumberForPopular();
 
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
         }
         
         foreach (var cheep in Cheeps)
         {
-            TopReactions[cheep.CheepId] = await _service.GetTopReactions(cheep.CheepId);
+            TopReactions[cheep.CheepId] = await _cheepService.GetTopReactions(cheep.CheepId);
         }
         
         return Page();
@@ -74,12 +76,12 @@ public class PopularTimelineModel : PageModel
             PageNumber = pageNumber;
             
             // Ensure Cheeps and other required properties are populated
-            Cheeps = await _service.GetCheeps(PageNumber);
+            Cheeps = await _cheepService.GetCheeps(PageNumber);
             
-            TotalPageNumber = await _service.GetTotalPageNumberForPopular();
+            TotalPageNumber = await _cheepService.GetTotalPageNumberForPopular();
             
             var currentUserName = User.Identity!.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
 
             return Page(); // Return the page with validation messages
         }
@@ -94,7 +96,7 @@ public class PopularTimelineModel : PageModel
                 string? imageBase64 = null;
                 if (CheepImage != null && CheepImage.Length > 0)
                 {
-                    imageBase64 = await _service.HandleImageUpload(CheepImage);
+                    imageBase64 = await _cheepService.HandleImageUpload(CheepImage);
                 }
                 
                 // Create the new CheepDTO
@@ -110,7 +112,7 @@ public class PopularTimelineModel : PageModel
                     FormattedTimeStamp = DateTime.UtcNow.ToString(CultureInfo.CurrentCulture) // Or however you want to format this
                 };
 
-                await _service.CreateCheep(cheepDTO);
+                await _cheepService.CreateCheep(cheepDTO);
             }
         }
 
@@ -128,7 +130,7 @@ public class PopularTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            if (userAuthor != null) await _service.FollowAuthor(userAuthor, followedAuthorName);
+            if (userAuthor != null) await _authorService.FollowAuthor(userAuthor, followedAuthorName);
         }
         return Redirect($"/popular?page={PageNumber}");
     }
@@ -144,21 +146,21 @@ public class PopularTimelineModel : PageModel
         {
             PageNumber = pageNumber;
             var userAuthor = User.Identity.Name; // Get the user's name
-            if (userAuthor != null) await _service.UnfollowAuthor(userAuthor, followedAuthor);
+            if (userAuthor != null) await _authorService.UnfollowAuthor(userAuthor, followedAuthor);
         }
         return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostLikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleLike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleLike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
     
     public async Task<IActionResult> OnPostDislikeMethod(int cheepId, string? emoji = null)
     {
-        await _service.HandleDislike(User.Identity!.Name!, cheepId, emoji);
+        await _cheepService.HandleDislike(User.Identity!.Name!, cheepId, emoji);
         
         return Redirect($"/popular?page={PageNumber}");
     }
@@ -168,13 +170,13 @@ public class PopularTimelineModel : PageModel
         PageNumber = pageNumber;
         ShowPopularCheeps = true;
 
-        Cheeps = await _service.GetPopularCheeps(pageNumber);
-        TotalPageNumber = await _service.GetTotalPageNumberForPopular();
+        Cheeps = await _cheepService.GetPopularCheeps(pageNumber);
+        TotalPageNumber = await _cheepService.GetTotalPageNumberForPopular();
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             var currentUserName = User.Identity.Name;
-            if (currentUserName != null) UserAuthor = await _service.FindAuthorByName(currentUserName);
+            if (currentUserName != null) UserAuthor = await _authorService.FindAuthorByName(currentUserName);
         }
 
         return Page();

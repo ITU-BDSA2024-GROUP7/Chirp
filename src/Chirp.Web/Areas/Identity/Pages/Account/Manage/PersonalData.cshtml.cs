@@ -18,7 +18,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
-        private readonly CheepService _service;
+        private readonly CheepService _cheepService;
+        private readonly AuthorService _authorService;
         public int PageNumber { get; set; }
         public int TotalPageNumber { get; set; }
         public SharedChirpViewModel SharedViewModel { get; set; } = new SharedChirpViewModel();
@@ -30,11 +31,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 
         public PersonalDataModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<PersonalDataModel> logger, CheepService service)
+            ILogger<PersonalDataModel> logger, 
+            CheepService cheepService,
+            AuthorService authorService)
         {
             _userManager = userManager;
             _logger = logger;
-            _service = service;
+            _cheepService = cheepService;
+            _authorService = authorService;
         }
 
         public async Task<IActionResult> OnGet()
@@ -49,13 +53,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 
             if (User.Identity != null && User.Identity.Name == CurrentAuthor)
             {
-                Cheeps = await _service.GetCheepsFromAuthor(CurrentAuthor, 0);
+                Cheeps = await _cheepService.GetCheepsFromAuthor(CurrentAuthor, 0);
             }
 
             // Retrieve authors that the user follows
-            var authorDTO = await _service.FindAuthorByName(user.UserName ?? string.Empty);
+            var authorDTO = await _authorService.FindAuthorByName(user.UserName ?? string.Empty);
             // FollowList = authorDTO.AuthorsFollowed as List<string>;
-            FollowList = await _service.GetFollowedAuthors(user.UserName ?? string.Empty);
+            FollowList = await _authorService.GetFollowedAuthors(user.UserName ?? string.Empty);
 
             userAuthor = authorDTO;
 

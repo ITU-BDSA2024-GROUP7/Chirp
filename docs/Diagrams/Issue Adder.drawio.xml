@@ -1,0 +1,51 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0" version="25.0.3">
+  <diagram name="Page-1" id="EDdMOCvim6a14t-OsbIa">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="4ff3YPIGkOHjZh3M-lpt-2" target="4ff3YPIGkOHjZh3M-lpt-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="160" />
+              <mxPoint x="160" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-2" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=#FF0000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4ff3YPIGkOHjZh3M-lpt-4" target="4ff3YPIGkOHjZh3M-lpt-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-4" value="Issue opened" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="120" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-21" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeColor=#FF0000;" vertex="1" parent="1">
+          <mxGeometry x="770" y="134" width="52" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-22" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="776" y="140" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4ff3YPIGkOHjZh3M-lpt-28" target="4ff3YPIGkOHjZh3M-lpt-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-28" value="Issue added to Project Board" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="600" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4ff3YPIGkOHjZh3M-lpt-31" target="4ff3YPIGkOHjZh3M-lpt-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-31" value="&lt;div&gt;Workflow started&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="280" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4ff3YPIGkOHjZh3M-lpt-33" target="4ff3YPIGkOHjZh3M-lpt-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4ff3YPIGkOHjZh3M-lpt-33" value="Execute &#39;actions/add-to-project&#39;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="440" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

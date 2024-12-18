@@ -18,7 +18,11 @@ namespace Chirp.Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
-        
+        /// <summary>
+        /// Finds an author in the database using the name of the author
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public async Task<AuthorDTO?> FindAuthorByNameDTO(string name)
         {
             var author = await (from a in _dbContext.Authors
@@ -34,8 +38,10 @@ namespace Chirp.Infrastructure.Repositories
 
             return author;
         }
-        
-        // Find The author by name
+        /// <summary>
+        ///  This method finds a given author based on the name
+        /// </summary>
+        /// <param name="name"></param>
         public async Task<Author?> FindAuthorByName(string name)
         {
             return await _dbContext.Authors
@@ -43,6 +49,13 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         // Used for creating a new author when the author is not existing
+        
+        /// <summary>
+        ///  This method is for creating a new author
+        /// </summary>
+        /// <param name="authorName"></param>
+        /// <param name="authorEmail"></param>
+        /// <param name="profilePicture"></param>
         public async Task CreateAuthor(string authorName, string authorEmail, string profilePicture)
         {
             string? base64ProfilePicture = null;
@@ -62,7 +75,10 @@ namespace Chirp.Infrastructure.Repositories
             await _dbContext.Authors.AddAsync(author);
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
-        
+        /// <summary>
+        /// This method is used for deleting an author
+        /// </summary>
+        /// <param name="Author"></param>
         public async Task DeleteUser(AuthorDTO Author)
         {
             // Retrieve the author by name and then remove them
@@ -78,7 +94,7 @@ namespace Chirp.Infrastructure.Repositories
         }
         
         /// <summary>
-        /// Follows an author
+        /// This Method is for Following an author
         /// </summary>
         /// <param name="userAuthorName"></param>
         /// <param name="followedAuthorName"></param>
@@ -158,7 +174,11 @@ namespace Chirp.Infrastructure.Repositories
 
             return followingAuthors;
         }
-
+        /// <summary>
+        /// This methods returns the amount of karma a specific user has
+        /// </summary>
+        /// <param name="authorName"></param>
+        /// <returns>Karma</returns>
         public async Task<int> GetKarmaForAuthor(string authorName)
         {
             var author = await FindAuthorByName(authorName);
@@ -180,7 +200,12 @@ namespace Chirp.Infrastructure.Repositories
             var karma = likesCount - dislikesCount;
             return karma;
         }
-        
+        /// <summary>
+        /// Downloads an image from a given URL and converts it to a Base64 string.
+        /// </summary>
+        /// <param name="imageUrl">The URL of the image to download.</param>
+        /// <returns>A Base64 string representation of the downloaded image.</returns>
+        /// <exception cref="Exception">Thrown when there is an error downloading or converting the image.</exception>
         public async Task<string> DownloadAndConvertToBase64Async(string imageUrl)
         {
             // Create an HTTP client
@@ -200,7 +225,11 @@ namespace Chirp.Infrastructure.Repositories
                 throw;
             }
         }
-        
+        /// <summary>
+        /// Method for updating your profile picture
+        /// </summary>
+        /// <param name="authorName"></param>
+        /// <param name="profilePicture"></param>
         public async Task UpdateProfilePicture(string authorName, IFormFile profilePicture)
         {
             var author = await FindAuthorByName(authorName);
@@ -212,7 +241,11 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        
+        /// <summary>
+        /// Compresses an image file.
+        /// </summary>
+        /// <param name="image">The image file to compress.</param>
+        /// <returns>The byte array of the compressed image.</returns>
         public async Task<byte[]> CompressImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
@@ -248,7 +281,11 @@ namespace Chirp.Infrastructure.Repositories
             // Step 5: Return the byte array of the compressed image
             return outputStream.ToArray();
         }
-        
+        /// <summary>
+        /// Method for clearing a users profilepicture
+        /// </summary>
+        /// <param name="authorName"></param>
+        /// <param name="profilePicture"></param>
         public async Task ClearProfilePicture(string authorName, IFormFile profilePicture)
         {
             var author = await FindAuthorByName(authorName);

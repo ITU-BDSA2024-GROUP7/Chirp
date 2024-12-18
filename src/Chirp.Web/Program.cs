@@ -112,14 +112,6 @@ namespace Chirp.Web
                 
                 context.Database.Migrate();
                 
-                // if (isTesting)
-                // {
-                //     TestDbInitializer.SeedDatabase(context);
-                // }
-                // else
-                // {
-                //     DbInitializer.SeedDatabase(context);
-                // }
                 DbInitializer.SeedDatabase(context);
             }
             
@@ -130,14 +122,6 @@ namespace Chirp.Web
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-            
-            // // set the Content-Security-Policy header
-            // app.Use(async (context, next) =>
-            // {
-            //     // The Content-Security-Policy header helps to protect the webapp from XSS attacks
-            //     context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';");
-            //     await next();
-            // });
             
             app.Use(async (context, next) =>
             {

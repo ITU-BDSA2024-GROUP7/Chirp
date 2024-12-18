@@ -33,7 +33,11 @@ public class UserTimelineModel : PageModel
         _cheepService = cheepService;
         _authorService = authorService;
     }
-    
+    /// <summary>
+    /// A method for returning a timestamp that is displayed as "posted 2 hours ago"
+    /// </summary>
+    /// <param name="timeStamp"></param>
+    /// <returns>Time</returns>
     public string GetFormattedTimeStamp(string timeStamp)
     {
         if (!DateTime.TryParse(timeStamp, out DateTime timeStampDateTime))

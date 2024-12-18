@@ -31,7 +31,9 @@ public class E2ETests : PageTest
 
         if (_page == null) throw new InvalidOperationException("Page is not initialized");
     }
-
+    /// <summary>
+    /// One time Setup for setting up the process of running the test enviroment
+    /// </summary>
     [OneTimeSetUp]
     public async Task OneTimeSetUp()
     {

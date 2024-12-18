@@ -26,7 +26,12 @@ namespace Chirp.Infrastructure.Repositories
             _authorRepository = authorRepository;
         }
 
-        // Read messages by a specific user and map to CheepDTO
+        /// <summary>
+        /// Reads cheeps from a specific author and maps them to CheepDTO.
+        /// </summary>
+        /// <param name="userName">The name of the author.</param>
+        /// <param name="page">The page number for pagination.</param>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> ReadCheepsFromAuthor(string userName, int page)
         {
             var query = _dbContext.Cheeps
@@ -57,7 +62,12 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-
+        
+        /// <summary>
+        /// Retrieves all cheeps from a specific author.
+        /// </summary>
+        /// <param name="Username">The name of the author.</param>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> RetrieveAllCheepsFromAnAuthor(string Username)
         {
             var query = _dbContext.Cheeps
@@ -85,6 +95,12 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+        
+        /// <summary>
+        /// Retrieves all comments from a specific author.
+        /// </summary>
+        /// <param name="Username">The name of the author.</param>
+        /// <returns>A list of CommentDTO objects.</returns>
         public async Task<List<CommentDTO>> RetriveAllCommentsFromAnAuthor(string Username)
         {
             var query = _dbContext.Comment
@@ -107,7 +123,12 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-
+        
+        /// <summary>
+        /// Reads all cheeps with pagination.
+        /// </summary>
+        /// <param name="page">The page number for pagination.</param>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> ReadAllCheeps(int page)
         {
             var query = _dbContext.Cheeps
@@ -137,7 +158,13 @@ namespace Chirp.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-
+        
+        /// <summary>
+        /// Reads private cheeps for a specific user with pagination.
+        /// </summary>
+        /// <param name="page">The page number for pagination.</param>
+        /// <param name="userName">The name of the user.</param>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> ReadPrivateCheeps(int page, string userName)
         {
             // Resolve the user and their followed authors first
@@ -180,7 +207,11 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        // get total count of pages 
+        /// <summary>
+        /// Gets the total number of pages for cheeps.
+        /// </summary>
+        /// <param name="authorName">The name of the author (optional).</param>
+        /// <returns>The total number of pages.</returns>
         public async Task<int> GetTotalPages(string authorName = "")
         {
             var query = _dbContext.Cheeps.AsQueryable();
@@ -206,7 +237,11 @@ namespace Chirp.Infrastructure.Repositories
 
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
-
+        
+        /// <summary>
+        /// Gets the total number of pages for popular cheeps.
+        /// </summary>
+        /// <returns>The total number of pages.</returns>
         public async Task<int> GetTotalPageNumberForPopular()
         {
             var query = _dbContext.Cheeps
@@ -238,7 +273,10 @@ namespace Chirp.Infrastructure.Repositories
             return (int)Math.Ceiling((double)totalCheeps / 32); // Math.Ceiling (round up) to ensure all pages
         }
 
-        // Create a new message
+        /// <summary>
+        /// Creates a new cheep.
+        /// </summary>
+        /// <param name="cheepDTO">The CheepDTO object containing cheep details.</param>
         public async Task CreateCheep(CheepDTO cheepDTO)
         {
             // Find the author by name
@@ -262,13 +300,20 @@ namespace Chirp.Infrastructure.Repositories
 
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
-
-        // Update message (to be implemented)
+        
+        /// <summary>
+        /// Updates an existing cheep.
+        /// </summary>
+        /// <param name="alteredCheep">The CheepDTO object containing updated cheep details.</param>
         public Task UpdateCheep(CheepDTO alteredCheep)
         {
             throw new NotImplementedException();
         }
-
+        
+        /// <summary>
+        /// Deletes a cheep by its ID.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep to delete.</param>
         public async Task DeleteCheep(int cheepId)
         {
             var cheep = await _dbContext.Cheeps.FindAsync(cheepId);
@@ -278,7 +323,11 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-
+        
+        /// <summary>
+        /// Deletes all cheeps from a specific author.
+        /// </summary>
+        /// <param name="Author">The AuthorDTO object containing author details.</param>
         public async Task DeleteUserCheeps(AuthorDTO Author)
         {
             var cheeps = await _dbContext.Cheeps
@@ -291,7 +340,11 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-
+        
+        /// <summary>
+        /// Retrieves all cheeps for an endpoint.
+        /// </summary>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> RetrieveAllCheepsForEndPoint()
         {
             var query = _dbContext.Cheeps
@@ -312,7 +365,12 @@ namespace Chirp.Infrastructure.Repositories
             // Execute the query and return the list of messages
             return await query.ToListAsync();
         }
-
+        
+        /// <summary>
+        /// Likes a cheep.
+        /// </summary>
+        /// <param name="authorId">The ID of the author.</param>
+        /// <param name="cheepId">The ID of the cheep to like.</param>
         public async Task HandleLike(string authorName, int cheepId, string? emoji = null)
         {
             // Find the author by Id (or by name if needed)
@@ -369,7 +427,12 @@ namespace Chirp.Infrastructure.Repositories
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Likes a cheep.
+        /// </summary>
+        /// <param name="authorId">The ID of the author.</param>
+        /// <param name="cheepId">The ID of the cheep to like.</param>
         public async Task LikeCheep(int authorId, int cheepId)
         {
             // Create a new Like record
@@ -385,7 +448,10 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-
+        /// <summary>
+        /// Unlikes a cheep.
+        /// </summary>
+        /// <param name="existingLike">The existing Like object to remove.</param>
         public async Task UnlikeCheep(Like existingLike)
         {
             // Remove the Like from the DbContext
@@ -394,7 +460,13 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-
+        
+        /// <summary>
+        /// Handles disliking a cheep.
+        /// </summary>
+        /// <param name="authorName">The name of the author.</param>
+        /// <param name="cheepId">The ID of the cheep to dislike.</param>
+        /// <param name="emoji">The emoji reaction (optional).</param>
         public async Task HandleDislike(string authorName, int cheepId, string? emoji = null)
         {
             // Find the author by Id (or by name if needed)
@@ -450,7 +522,12 @@ namespace Chirp.Infrastructure.Repositories
                 }
             }
         }
-
+        
+        /// <summary> 
+        /// Dislikes a cheep.
+        /// </summary>
+        /// <param name="authorId">The ID of the author.</param>
+        /// <param name="cheepId">The ID of the cheep to dislike.</param>
         public async Task DislikeCheep(int authorId, int cheepId)
         {
             // Create a new Dislike record
@@ -466,7 +543,10 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-
+        /// <summary>
+        /// Undislikes a cheep.
+        /// </summary>
+        /// <param name="existingLike">The existing Dislike object to remove.</param>
         public async Task UnDislikeCheep(Dislike existingLike)
         {
             // Remove the Dislike from the DbContext
@@ -475,7 +555,12 @@ namespace Chirp.Infrastructure.Repositories
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
         }
-
+        
+        /// <summary>
+        /// Gets popular cheeps with pagination.
+        /// </summary>
+        /// <param name="page">The page number for pagination.</param>
+        /// <returns>A list of CheepDTO objects.</returns>
         public async Task<List<CheepDTO>> GetPopularCheeps(int page)
         {
             var query = _dbContext.Cheeps
@@ -507,7 +592,12 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-
+        /// <summary>
+        /// Adds a reaction to a cheep.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <param name="authorName">The name of the author.</param>
+        /// <param name="emoji">The emoji reaction.</param>
         public async Task AddReaction(int cheepId, string authorName, string emoji)
         {
             // Find the author by Id (or by name if needed)
@@ -529,10 +619,14 @@ namespace Chirp.Infrastructure.Repositories
             await _dbContext.Reaction.AddAsync(reaction);
             await _dbContext.SaveChangesAsync();
         }
-
+        
+        /// <summary>
+        /// Removes a reaction from a cheep.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <param name="authorName">The name of the author.</param>
         public async Task RemoveReaction(int cheepId, string authorName)
         {
-            // Find the author by Id (or by name if needed)
             var author = await _authorRepository.FindAuthorByName(authorName);
             var authorId = author!.AuthorId;
             if (author == null)
@@ -550,7 +644,13 @@ namespace Chirp.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-
+        
+        /// <summary>
+        /// Gets the top reactions for a cheep.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <param name="topN">The number of top reactions to retrieve.</param>
+        /// <returns>A list of top emoji reactions.</returns>
         public async Task<List<String>> GetTopReactions(int cheepId, int topN = 3)
         {
             return await _dbContext.Reaction
@@ -561,7 +661,13 @@ namespace Chirp.Infrastructure.Repositories
                 .Select(g => g.First().Emoji)
                 .ToListAsync();
         }
-
+        
+        /// <summary>
+        /// Updates a reaction for a cheep.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <param name="authorName">The name of the author.</param>
+        /// <param name="emoji">The new emoji reaction.</param>
         public async Task UpdateReaction(int cheepId, string authorName, string emoji)
         {
             var author = await _authorRepository.FindAuthorByName(authorName);
@@ -584,6 +690,12 @@ namespace Chirp.Infrastructure.Repositories
                 await AddReaction(cheepId, authorName, emoji);
             }
         }
+        
+        /// <summary>
+        /// Handles image upload and compression.
+        /// </summary>
+        /// <param name="image">The image file to upload.</param>
+        /// <returns>The base64 string of the compressed image.</returns>
         public async Task<string> HandleImageUpload(IFormFile image)
         {
             // Check if the file is a GIF
@@ -601,6 +713,11 @@ namespace Chirp.Infrastructure.Repositories
             return base64String;
         }
         
+        /// <summary>
+        /// Compresses an image file.
+        /// </summary>
+        /// <param name="image">The image file to compress.</param>
+        /// <returns>The byte array of the compressed image.</returns>
         public async Task<byte[]> CompressImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
@@ -649,7 +766,11 @@ namespace Chirp.Infrastructure.Repositories
             return outputStream.ToArray();
         }
 
-        
+        /// <summary>
+        /// Compresses a GIF file.
+        /// </summary>
+        /// <param name="gifFile">The GIF file to compress.</param>
+        /// <returns>The byte array of the compressed GIF.</returns>
         public async Task<byte[]> CompressGIF(IFormFile gifFile)
         {
             if (gifFile == null || gifFile.Length == 0)
@@ -664,7 +785,7 @@ namespace Chirp.Infrastructure.Repositories
                     uint maxHeight = 500;
 
                     // Resize the entire collection to ensure consistent frame sizes
-                    imageCollection.Coalesce(); // Ensure all frames have the same size
+                    imageCollection.Coalesce();
                     foreach (var frame in imageCollection)
                     {
                         if (frame.Width > maxWidth || frame.Height > maxHeight)
@@ -674,7 +795,7 @@ namespace Chirp.Infrastructure.Repositories
                                 IgnoreAspectRatio = false // Maintain aspect ratio
                             });
                         }
-                        frame.Quality = 30; // Set the quality (lower value = more compression, but lower quality)
+                        frame.Quality = 30; 
                     }
 
                     // Create a memory stream to hold the compressed GIF
@@ -687,7 +808,11 @@ namespace Chirp.Infrastructure.Repositories
             }
         }
 
-            
+        /// <summary>
+        /// Gets comments by cheep ID.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <returns>A list of CommentDTO objects.</returns>
         public async Task<List<CommentDTO>> GetCommentsByCheepId(int cheepId)
         {
             var query = _dbContext.Comment
@@ -710,9 +835,14 @@ namespace Chirp.Infrastructure.Repositories
             return await query.ToListAsync();
         }
         
+        /// <summary>
+        /// Adds a comment to a cheep.
+        /// </summary>
+        /// <param name="cheepDto">The CheepDTO object containing cheep details.</param>
+        /// <param name="text">The text of the comment.</param>
+        /// <param name="author">The name of the author.</param>
         public async Task AddCommentToCheep(CheepDTO cheepDto, string text, string author )
         {
-            // Create a new Cheep 
                 var comment = new Comment
                 {
                     CommentId = 0,
@@ -729,7 +859,12 @@ namespace Chirp.Infrastructure.Repositories
 
             await _dbContext.SaveChangesAsync(); // Persist the changes to the database
         }
-
+        
+        /// <summary>
+        /// Gets a cheep by its ID.
+        /// </summary>
+        /// <param name="cheepId">The ID of the cheep.</param>
+        /// <returns>The CheepDTO object.</returns>
         public async Task<CheepDTO> GetCheepFromId(int cheepId)
         {
             var cheep = await (from a in _dbContext.Cheeps
@@ -754,6 +889,11 @@ namespace Chirp.Infrastructure.Repositories
 
             return cheep ?? throw new InvalidOperationException();
         }
+        
+        /// <summary>
+        /// Deletes a comment by its ID.
+        /// </summary>
+        /// <param name="commentId">The ID of the comment to delete.</param>
         public async Task DeleteComment(int commentId)
         {
             var comment = await _dbContext.Comment.FindAsync(commentId);

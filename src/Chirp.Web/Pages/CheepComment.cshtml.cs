@@ -30,6 +30,11 @@ public class CheepCommentModel : PageModel
         _authorService = authorService;
 
     }
+    /// <summary>
+    /// Returns a timestamp displayed in the style as ie "posted 2 hours ago"
+    /// </summary>
+    /// <param name="timeStamp"></param>
+    /// <returns>Time</returns>
     public string GetFormattedTimeStamp(string timeStamp)
     {
         if (!DateTime.TryParse(timeStamp, out DateTime timeStampDateTime))

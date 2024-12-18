@@ -5,8 +5,8 @@
 
 body {
     background-image:
-            url("../images/DayGradient.png"),  /* Gradient image */
-            url("../images/Day.png");  /* Main image */
+            url("../images/DayGradient.png"),  
+            url("../images/Day.png");  
     background-position: top center, bottom center;  /* Position gradient at the top and image at the bottom */
     background-repeat: no-repeat, no-repeat;  /* No repetition for both images */
     background-size: 100% var(--day-gradient-height), 100% auto;  /* Stretch gradient vertically and maintain aspect ratio for image */
@@ -877,21 +877,21 @@ div.page ul.cheeps li img.Profile-Picture {
 
 .cheep-details {
     display: flex;
-    flex-direction: column; /* Stacks the name/buttons and timestamp vertically */
-    flex: 1; /* Makes this section take up the remaining space */
-    justify-content: space-between; /* Ensures spacing between name/buttons and timestamp */
+    flex-direction: column; 
+    flex: 1; 
+    justify-content: space-between; 
 }
 
 .cheep-header {
     display: flex;
-    align-items: center; /* Aligns items (name, buttons) vertically */
-    justify-content: space-between; /* Places name on the left and buttons on the right */
-    gap: 10px; /* Adds spacing between elements */
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 10px; 
 }
 
 .cheep-actions {
     display: flex;
-    gap: 5px; /* Space between buttons */
+    gap: 5px; /
 }
 
 .Profile-Author-Name {
@@ -903,7 +903,7 @@ div.page ul.cheeps li img.Profile-Picture {
 
 .Cheep-Details {
     display: flex;
-    flex-direction: column; /* Stack the children vertically */
+    flex-direction: column; 
     align-items: flex-start;
     justify-content: center;
 }

@@ -1,3 +1,9 @@
+---
+header-includes:
+  - \usepackage{listings}
+  - \lstset{breaklines=true, breakatwhitespace=true}
+---
+
 # Chirp\! Project Report
 
 ## ITU BDSA 2024 Group 7
@@ -100,12 +106,9 @@ When an issue has been opened, the issue adder workflow begins. This executes th
    ``dotnet user-secrets init``
      
    3. Then write and execute each following command separately:  
-   ```bash
-   dotnet user-secrets set "authentication/_github/_clientId" "Ov23liFuhCLOJY4s2nRA"
-   ```
-   ```bash
-   dotnet user-secrets set "authentication/_github/_clientSecret" "32064af9ea476229907a38ef4bd92a15bc1e2778"
-   ```  
+      1. `dotnet user-secrets set "authentication/_github/_clientId" "Ov23liFuhCLOJY4s2nRA"`
+
+      2. `dotnet user-secrets set "authentication/_github/_clientSecret" "32064af9ea476229907a38ef4bd92a15bc1e2778"`  
 
 4. Navigate to the directory of the repo called Chirp.Web and run the command `Dotnet watch` to start the application
 

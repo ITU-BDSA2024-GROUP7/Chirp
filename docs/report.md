@@ -12,11 +12,11 @@ Mathias Niklas Larsen [mnla@itu.dk](mailto:mnla@itu.dk)
 
 ## Domain Model
 
-![](/docs/images/Domain%20Model.png)
+![](images/Domain%20Model.png)
 
 ## Architecture — In the small 
 
-![](/docs/images/Onion%20Architecture.png) 
+![](images/Onion%20Architecture.png) 
 The Onion Architecture has been implemented in the project. Each layer of the diagram represents a separate isolated .NET project. A layer may only interact with adjacent layers. 
 
 ## Architecture of deployed application
@@ -24,12 +24,12 @@ The Onion Architecture has been implemented in the project. Each layer of the di
 The application was hosted using Microsoft’s Azure App Service. Via this service, a given client can connect to our Chirp.Web application that contains our Razor Pages.  
 Chirp.Infrastructure facilitates functionality between client interactions, our database model, and our repositories.  
 
-![](/docs/images/Deployed_Architecture_Diagram.png)  
+![](images/Deployed_Architecture_Diagram.png)  
 A user will connect to the Chirp.Web application to interact with its features. Chirp.Web will then call Chirp.Infrastructure to store the data. If the user chooses to log in via GitHub, Chirp.Web will call GitHub's authentication service using OAuth \- otherwise Chirp.Infrastructure handles the login request. The internal sign-in manager in Chirp.Web is used to create a user or retrieve credentials from a user in the database. The user credentials from GitHub or local user creation are stored in the database.
 
 ### Database ER-Diagram
 
-![](/docs/images/ER-Diagram.png)
+![](images/ER-Diagram.png)
 (A Reaction requires the Author to have either a like or a dislike on the same Cheep)
 
 When implementing the first feature where Authors could follow each other, a decision was made, such that the Author entity created a list of strings to store the usernames of followed authors called AuthorsFollowed. However, this creates a multi-valued attribute in the Author entity which will decrease performance if an Author follows a lot of other Authors. The process for displaying a user's timeline can therefore be costly as it consists of querying the user’s followed authors in the database based on the username, and then retrieving the subsequent cheeps to display in the user timeline.  
@@ -39,11 +39,11 @@ The application currently gathers the list of authors that follow a user by iter
 
 ## User activities
 
-![](/docs/images/User%20Activities%20Diagram.png)
+![](images/User%20Activities%20Diagram.png)
 
 ## Sequence of functionality/calls through Chirp\! 
 
-![](/docs/images/Sequence%20of%20functionality.png)  
+![](images/Sequence%20of%20functionality.png)  
 This sequence illustrates the calls made when fetching data from the application. This diagram illustrates how an unauthorized user can access the homepage.
 
 # Process
@@ -51,24 +51,24 @@ This sequence illustrates the calls made when fetching data from the application
 ## Build, test, release, and deployment
 
 ### Build and Test Workflow
-![](/docs/images/Workflow%20Build%20And%20Test.png)
+![](images/Workflow%20Build%20And%20Test.png)
 The workflow begins when a branch has been merged into the main branch. The workflow starts by attempting to restore dependencies and then build the project. If the workflow´s build is successful, it will run the unit-, integration- and end-to-end tests.  The workflow also makes sure to run the application in the background, otherwise Playwright won’t work (as it tests UI). The workflow also has to install PlayWright Dependencies for it to work. Once all that is done, the E2E tests will run.
 
 ### Deploying To Azure Workflow
-![](/docs/images/Workflow%20Deploy%20to%20Azure.png)
+![](images/Workflow%20Deploy%20to%20Azure.png)
 Once a pull request's branc has been merged into the main branch, the workflow for deploying to Azure will start. It starts by installing .NET 8, followed by building the application. It then uses ‘dotnet publish’ to create a self-contained deployment-ready package, and uploads the necessary artifacts.  The workflow will then begin to prepare for deployment. It downloads the previously uploaded artifacts and proceeds to log in to Azure using credentials given by the repository secrets. It will then deploy the artifacts to Azure, and the web app will now be available on Azure’s website. 
 
 ### Release Workflow
-![](/docs/images/Workflow%20Release.png)
+![](images/Workflow%20Release.png)
 The release workflow starts when a commit has the tag ‘v’ in its name. After the workflow will retrieve the newest code from the repository and install .NET 8\. The workflow restores the application’s projects to make sure all dependencies have been installed, and afterward, it will build the application. It will run all the tests, to make sure everything works as intended. Afterward, it will create the release name and run ‘dotnet publish’ to create a deployment-ready package. In the end, it creates the different ZIP releases for the different platforms, and creates the GitHub release with all the files.
 
 ### Issue Adder Workflow
-![](/docs/images/Workflow%20Issue%20Adder.png)
+![](images/Workflow%20Issue%20Adder.png)
 When an issue has been opened, the issue adder workflow begins. This executes the action, ‘add-to-project’ that adds the issue itself to the project board. The purpose is to streamline creating issues.
 
 
 ## Teamwork
-![](/docs/images/GitHub%20Project%20Board.png)
+![](images/GitHub%20Project%20Board.png)
 
 ### Flow from creating issue to final implementation of a feature:
 

@@ -8,7 +8,7 @@ header-includes:
 
 
 ## ITU BDSA 2024 - Group 7
-Course code: BSANDSA1KU
+Analysis, Design and Software Architecture - BSANDSA1KU
 
 Marcus Løfberg [loef@itu.dk](mailto:loef@itu.dk)  
 Nikolaj Ho Alsøe [nals@itu.dk](mailto:nals@itu.dk)  

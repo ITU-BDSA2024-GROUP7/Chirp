@@ -6,7 +6,9 @@ header-includes:
 
 # Chirp\! Project Report
 
-## ITU BDSA 2024 Group 7
+
+## ITU BDSA 2024 - Group 7
+Course code: BSANDSA1KU
 
 Marcus Løfberg [loef@itu.dk](mailto:loef@itu.dk)  
 Nikolaj Ho Alsøe [nals@itu.dk](mailto:nals@itu.dk)  
